@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>FRC 4931 - Scouting Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="./css/style.css" />
+</head>
+
+<body>
+    <div id="connection-error">
+        <div class="grid">
+            <div class="location-span background-box content-centered">
+                <h2>Connection Error</h2>
+                <p>Trying again in 10 seconds</p>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="menu-team-comment-add" class="popup-closed">
+        <form class="grid" onsubmit="newCommentFromForm(this); return false;">
+            <div class="location-centered-small background-box">
+                <h2 class="content-centered">Add comment for <span id="comment-popup-comment-name"></span> - <span id="comment-popup-comment-number"></span></h2>
+            </div>
+
+            <div class="location-centered-small">
+                <div class="background-box">
+                    <input type="text" name="comment-title" placeholder="Comment Title" required>
+                </div>
+
+                <div class="background-box">
+                    <textarea rows="10" type="text" name="comment-content" placeholder="Comment" required></textarea>
+                </div>
+
+                <div class="background-box">
+                    <select name="comment-points" required>
+                        <option value="Invalid" selected="selected" disabled>Select Point Value for Comment</option>
+                        <option value="-1">-1</option>
+                        <option value="-2">-2</option>
+                        <option value="0">Neutral</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="location-centered-small background-box"><input type="submit"></div>
+
+        </form>
+    </div>
+
+    <div id="menu-team-add" class="popup-closed">
+        <form class="grid">
+            <div class="location-centered background-box">
+                <h2 class="content-centered">Add team</h2>
+            </div>
+
+            <div class="location-left-padded background-box">
+                <input type="text" name="team-name" placeholder="Team Name">
+            </div>
+
+            <div class="location-right-padded background-box">
+                <input type="number" pattern="[0-9]*" max="9999" min="1" name="team-number" placeholder="Team Number">
+            </div>
+
+            <div class="location-centered background-box"><input type="submit"></div>
+
+        </form>
+    </div>
+
+    <div id="menu-team-view" class="popup-closed">
+        <div class="grid">
+            <div id="team-popup-done" class="location-centered-small background-box background-box-hover content-centered">
+                <h3>Done</h3>
+            </div>
+
+            <div class="location-centered background-box">
+                <h2 class="content-centered"><span id="team-popup-name"></span> - <span id="team-popup-number"></span></h2>
+            </div>
+
+            <div class="location-left-padded">
+                <div class="background-box background-box-hover content-expand-toggle">
+                    <h3 class="content-centered">Total Objective Points: <span id="team-popup-objectivepoints"></span></h3>
+                </div>
+
+                <div class="content-expandable">
+                    <div class="background-box grid-perminant">
+                        <p class="location-left-giant">Test</p>
+                        <p class="location-right-tiny">Test</p>
+                    </div>
+
+                    <div class="background-box">
+                        <p>Test</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="location-right-padded">
+                <div class="background-box background-box-hover content-expand-toggle">
+                    <h3 class="content-centered">Total Comment Points: <span id="team-popup-commentpoints"></span></h3>
+                </div>
+
+                <div id="team-popup-addcomment" class="background-box background-box-hover">
+                    <h3 class="content-centered">Add comment</h3>
+                </div>
+
+                <div id="team-popup-comments" class="content-expandable">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="menu-main" class="popup-opened">
+        <div class="grid">
+            <div class="location-span background-box">
+                <h1 class="content-centered">FRC 4931 Scouting app</h1>
+                <p>This is my (Damian) scouting application for FRC 4931. It's only a proof of concept at this state</p>
+            </div>
+
+            <div class="location-left-large">
+                <div class="background-box">
+                    <h2 class="content-centered">Leaderboard</h2>
+                    <p>Teams are given a rating by combining various different pieces of information collected by team
+                        members</p>
+                </div>
+
+                <div class="background-box leaderboard-team">
+                    <div>
+                        <p>Team Name</p>
+                    </div>
+                    <div>
+                        <p>Team Number</p>
+                    </div>
+
+                    <div>
+                        <p>Objective Points</p>
+                    </div>
+
+                    <div>
+                        <p>Comment Points</p>
+                    </div>
+
+                    <div>
+                        <p>Total Points</p>
+                    </div>
+                </div>
+                
+
+                <div id="leaderboard-container">
+
+                </div>
+            </div>
+
+            <div class="location-right-small">
+                <div class="background-box">
+                    <h2 class="content-centered">Tools</h2>
+                    <a id="tools-add-team">Add team</a>
+                    <p>Remove team</p>
+                    <p>Edit member permissions</p>
+                </div>
+
+                <div class="background-box">
+                    <h2 class="content-centered">Member Leaderboard</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
