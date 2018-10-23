@@ -36,14 +36,14 @@
             
 
             <div id="leaderboard-container">
-                <LeaderboardTeam :homePage="homePage" :openTeam="openTeam"></LeaderboardTeam>
+                <LeaderboardTeam v-for="(teamData, teamkey) in teams" v-bind:key="teamkey" :teamdata="teamData" :pages="pages"></LeaderboardTeam>
             </div>
         </div>
 
         <div class="location-right-small">
             <div class="background-box">
                 <h2 class="content-centered">Tools</h2>
-                <a id="tools-add-team" v-on:click="teamPage()">Add team</a>
+                <a id="tools-add-team" v-on:click="pages.toMenuAddTeam()">Add team</a>
                 <p>Remove team</p>
                 <p>Edit member permissions</p>
             </div>
@@ -65,10 +65,34 @@ export default {
     LeaderboardTeam
   },
   props: {
-    msg: String,
-    teamPage: Function,
-    homePage: Function,
-    openTeam: Function
+    pages: Object,
+    localdb: Object
+  },
+  data: function() {
+    return {
+      teams: {}
+    };
+  },
+  methods: {},
+  created: function() {
+    var dThis = this;
+    var addToBoard = function(team_doc) {
+      var teamID = team_doc["doc"]["_id"];
+      if (teamID !== undefined)
+        dThis.$set(dThis.teams, teamID, team_doc["doc"]);
+    };
+
+    this.localdb
+      .allDocs({
+        include_docs: true,
+        startkey: "TEAM_0",
+        endkey: "TEAM_\ufff0"
+      })
+      .then(function(result) {
+        for (var docID in result["rows"]) {
+          addToBoard(result["rows"][docID]);
+        }
+      });
   }
 };
 </script>

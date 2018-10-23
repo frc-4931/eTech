@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <component v-bind:is="ativeComponent" :openTeam="openTeam" :teamPage="addTeamPage" :homePage="menuMain" :teamNumber="teamNumber"></component>
+    <component v-bind:is="ativeComponent" :localdb="localdb" :pages="pages" :teamNumber="teamNumber"></component>
     <ConnectionError v-if="isConnectionError"></ConnectionError>
   </div>
 </template>
@@ -25,22 +25,28 @@ export default {
       ativeComponent: "MenuMain",
       isConnectionError: false,
       teamNumber: 4931,
-      localdb: new PouchDB("localdb")
+      localdb: new PouchDB("localdb"),
+      pages: {}
     };
   },
   methods: {
-    addTeamPage: function() {
-      this.ativeComponent = "MenuTeamAdd";
-    },
-    menuMain: function() {
+    toMenuMain: function() {
       this.ativeComponent = "MenuMain";
     },
-    openTeam: function(team) {
+    toMenuAddTeam: function() {
+      this.ativeComponent = "MenuTeamAdd";
+    },
+    toMenuTeamView: function(team) {
       this.teamNumber = team;
       this.ativeComponent = "MenuTeamView";
     }
   },
-  created: function() {}
+  created: function() {
+    //Register app pages
+    this.pages.toMenuMain = this.toMenuMain;
+    this.pages.toMenuAddTeam = this.toMenuAddTeam;
+    this.pages.toMenuTeamView = this.toMenuTeamView;
+  }
 };
 </script>
 

@@ -6,14 +6,14 @@
         </div>
 
         <div class="location-left-padded background-box">
-            <input type="text" name="team-name" placeholder="Team Name">
+            <input v-model="name" type="text" name="team-name" placeholder="Team Name">
         </div>
 
         <div class="location-right-padded background-box">
-            <input type="number" pattern="[0-9]*" max="9999" min="1" name="team-number" placeholder="Team Number">
+            <input v-model="number" type="number" pattern="[0-9]*" max="9999" min="1" name="team-number" placeholder="Team Number">
         </div>
 
-        <div class="location-centered background-box"><input type="button" value="Submit" v-on:click="homePage"></div>
+        <div class="location-centered background-box"><input type="button" value="Submit" v-on:click="submitTeam"></div>
 
     </div>
 </div>
@@ -23,12 +23,28 @@
 export default {
   name: "MenuTeamAdd",
   props: {
-    homePage: Function
+    pages: Object,
+    localdb: Object
+  },
+  data: function() {
+    return {
+      number: "",
+      name: ""
+    };
   },
   methods: {
     submitTeam: function() {
-      //TODO
-      this.homePage();
+      var team = {
+        name: this.name,
+        number: parseInt(this.number),
+        objectivePoints: 0,
+        commentPoints: 0,
+        _id: "TEAM_" + this.number
+      };
+      if (team.number != "" && this.number != "" && team.number != 0) {
+        this.localdb.put(team);
+      }
+      this.pages.toMenuMain();
     }
   }
 };

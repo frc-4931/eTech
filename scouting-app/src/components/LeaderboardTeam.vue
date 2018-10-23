@@ -1,5 +1,5 @@
 <template>
-<div v-on:click="openTeam(team.number)" class="background-box background-box-hover leaderboard-team">
+<div v-on:click="teamView()" class="background-box background-box-hover leaderboard-team">
     <div v-for="(teamEl, teamTitle) in team" v-bind:key="teamTitle">
         <p>{{ teamEl }}</p>
     </div>
@@ -14,8 +14,8 @@
 export default {
   name: "LeaderboardTeam",
   props: {
-    homePage: Function,
-    openTeam: Function
+    pages: Object,
+    teamdata: Object
   },
   data: function() {
     return {
@@ -27,15 +27,21 @@ export default {
       }
     };
   },
+  methods: {
+    teamView: function() {
+      this.pages.toMenuTeamView(this.team.number);
+    }
+  },
   computed: {
     totalPoints: function() {
       return this.team.commentPoints + this.team.objectivePoints;
     }
   },
-  methods: {
-    teamClicked: function() {
-      this.$root.$emit("open-team", this.team.number);
-    }
+  created() {
+    this.$set(this.team, "name", this.teamdata["name"]);
+    this.$set(this.team, "number", this.teamdata["number"]);
+    this.$set(this.team, "objectivePoints", this.teamdata["objectivePoints"]);
+    this.$set(this.team, "commentPoints", this.teamdata["commentPoints"]);
   }
 };
 </script>
