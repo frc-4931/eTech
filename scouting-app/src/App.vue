@@ -10,6 +10,7 @@ import MenuMain from "./components/MenuMain.vue";
 import MenuTeamAdd from "./components/MenuTeamAdd.vue";
 import ConnectionError from "./components/ConnectionError.vue";
 import MenuTeamView from "./components/MenuTeamView.vue";
+import PouchDB from "pouchdb";
 
 export default {
   name: "app",
@@ -23,7 +24,8 @@ export default {
     return {
       ativeComponent: "MenuMain",
       isConnectionError: false,
-      teamNumber: 4931
+      teamNumber: 4931,
+      localdb: new PouchDB("localdb")
     };
   },
   methods: {
@@ -37,6 +39,9 @@ export default {
       this.teamNumber = team;
       this.ativeComponent = "MenuTeamView";
     }
+  },
+  created: function() {
+    this.localdb.put({ _id: "pizza2", data: "pizza is yummy" });
   }
 };
 </script>
