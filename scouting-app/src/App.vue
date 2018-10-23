@@ -40,9 +40,7 @@ export default {
       this.ativeComponent = "MenuTeamView";
     }
   },
-  created: function() {
-    this.localdb.put({ _id: "pizza2", data: "pizza is yummy" });
-  }
+  created: function() {}
 };
 </script>
 
