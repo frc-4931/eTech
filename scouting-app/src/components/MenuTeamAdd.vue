@@ -28,7 +28,7 @@ export default {
   methods: {
     submitTeam: function() {
       //TODO
-      homePage();
+      this.homePage();
     }
   }
 };

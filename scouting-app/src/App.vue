@@ -26,10 +26,10 @@ export default {
     };
   },
   methods: {
-    addTeamPage: function(event) {
+    addTeamPage: function() {
       this.ativeComponent = "MenuTeamAdd";
     },
-    menuMain: function(event) {
+    menuMain: function() {
       this.ativeComponent = "MenuMain";
     }
   }
