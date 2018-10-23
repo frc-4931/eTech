@@ -1,5 +1,5 @@
 <template>
-<div id="menu-team-add" class="popup-closed">
+<div id="menu-team-add">
     <div class="grid">
         <div class="location-centered background-box">
             <h2 class="content-centered">Add team</h2>
@@ -33,3 +33,6 @@ export default {
   }
 };
 </script>
+
+<style>
+</style>

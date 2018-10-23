@@ -14,3 +14,6 @@ export default {
   name: "ConnectionError"
 };
 </script>
+
+<style>
+</style>

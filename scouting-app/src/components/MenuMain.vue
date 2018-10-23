@@ -1,5 +1,5 @@
 <template>
-<div id="menu-main" class="popup-opened">
+<div id="menu-main">
     <div class="grid">
         <div class="location-span background-box">
             <h1 class="content-centered">FRC 4931 Scouting app</h1>
@@ -36,7 +36,7 @@
             
 
             <div id="leaderboard-container">
-
+                <LeaderboardTeam :homePage="homePage" :openTeam="openTeam"></LeaderboardTeam>
             </div>
         </div>
 
@@ -57,11 +57,21 @@
 </template>
 
 <script>
+import LeaderboardTeam from "./LeaderboardTeam.vue";
+
 export default {
   name: "MenuMain",
+  components: {
+    LeaderboardTeam
+  },
   props: {
     msg: String,
-    teamPage: Function
+    teamPage: Function,
+    homePage: Function,
+    openTeam: Function
   }
 };
 </script>
+
+<style>
+</style>

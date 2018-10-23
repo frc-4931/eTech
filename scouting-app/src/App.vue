@@ -1,28 +1,29 @@
 <template>
   <div id="app">
-    <component v-bind:is="ativeComponent" :teamPage="addTeamPage" :homePage="menuMain"></component>
+    <component v-bind:is="ativeComponent" :openTeam="openTeam" :teamPage="addTeamPage" :homePage="menuMain" :teamNumber="teamNumber"></component>
     <ConnectionError v-if="isConnectionError"></ConnectionError>
   </div>
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld.vue";
 import MenuMain from "./components/MenuMain.vue";
 import MenuTeamAdd from "./components/MenuTeamAdd.vue";
 import ConnectionError from "./components/ConnectionError.vue";
+import MenuTeamView from "./components/MenuTeamView.vue";
 
 export default {
   name: "app",
   components: {
     MenuMain,
-    HelloWorld,
     MenuTeamAdd,
-    ConnectionError
+    ConnectionError,
+    MenuTeamView
   },
   data: function() {
     return {
       ativeComponent: "MenuMain",
-      isConnectionError: false
+      isConnectionError: false,
+      teamNumber: 4931
     };
   },
   methods: {
@@ -31,19 +32,18 @@ export default {
     },
     menuMain: function() {
       this.ativeComponent = "MenuMain";
+    },
+    openTeam: function(team) {
+      this.teamNumber = team;
+      this.ativeComponent = "MenuTeamView";
     }
   }
 };
 </script>
 
 <style>
-#app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
 @import url("https://fonts.googleapis.com/css?family=Open+Sans");
+@import url("css/normalize.css");
 
 .leaderboard-team {
   display: grid;

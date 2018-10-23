@@ -1,12 +1,12 @@
 <template>
-<div id="menu-team-view" class="popup-closed">
+<div id="menu-team-view">
     <div class="grid">
-        <div id="team-popup-done" class="location-centered-small background-box background-box-hover content-centered">
+        <div v-on:click="homePage()" class="location-centered-small background-box background-box-hover content-centered">
             <h3>Done</h3>
         </div>
 
         <div class="location-centered background-box">
-            <h2 class="content-centered"><span id="team-popup-name"></span> - <span id="team-popup-number"></span></h2>
+            <h2 class="content-centered"><span id="team-popup-name"></span> - <span id="team-popup-number">{{ teamNumber }}</span></h2>
         </div>
 
         <div class="location-left-padded">
@@ -41,3 +41,17 @@
     </div>
 </div>
 </template>
+
+<script>
+export default {
+  name: "MenuTeamView",
+  props: {
+    homePage: Function,
+    teamNumber: Number
+  }
+};
+</script>
+
+<style>
+</style>
+
