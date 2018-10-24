@@ -41,7 +41,7 @@ export default {
         commentPoints: 0,
         _id: "TEAM_" + this.number
       };
-      if (team.number != "" && this.number != "" && team.number != 0) {
+      if (this.name != "" && this.number != "" && team.number != 0) {
         this.localdb.put(team);
       }
       this.pages.toMenuMain();

@@ -1,6 +1,8 @@
 <template>
   <div id="app">
-    <component v-bind:is="ativeComponent" :localdb="localdb" :pages="pages" :teamNumber="teamNumber"></component>
+    <transition name="component-fade" mode="out-in">
+      <component v-bind:is="ativeComponent" :localdb="localdb" :pages="pages" :teamNumber="teamNumber" :callback="callback"></component>
+    </transition>
     <ConnectionError v-if="isConnectionError"></ConnectionError>
   </div>
 </template>
@@ -8,6 +10,7 @@
 <script>
 import MenuMain from "./components/MenuMain.vue";
 import MenuTeamAdd from "./components/MenuTeamAdd.vue";
+import MenuTeamCommentAdd from "./components/MenuTeamCommentAdd.vue";
 import ConnectionError from "./components/ConnectionError.vue";
 import MenuTeamView from "./components/MenuTeamView.vue";
 import PouchDB from "pouchdb";
@@ -18,7 +21,8 @@ export default {
     MenuMain,
     MenuTeamAdd,
     ConnectionError,
-    MenuTeamView
+    MenuTeamView,
+    MenuTeamCommentAdd
   },
   data: function() {
     return {
@@ -26,6 +30,7 @@ export default {
       isConnectionError: false,
       teamNumber: 4931,
       localdb: new PouchDB("localdb"),
+      callback: Function,
       pages: {}
     };
   },
@@ -39,6 +44,11 @@ export default {
     toMenuTeamView: function(team) {
       this.teamNumber = team;
       this.ativeComponent = "MenuTeamView";
+    },
+    toMenuTeamCommentAdd: function(team, callback) {
+      this.teamNumber = team;
+      this.callback = callback;
+      this.ativeComponent = "MenuTeamCommentAdd";
     }
   },
   created: function() {
@@ -46,6 +56,7 @@ export default {
     this.pages.toMenuMain = this.toMenuMain;
     this.pages.toMenuAddTeam = this.toMenuAddTeam;
     this.pages.toMenuTeamView = this.toMenuTeamView;
+    this.pages.toMenuTeamCommentAdd = this.toMenuTeamCommentAdd;
   }
 };
 </script>
@@ -53,6 +64,15 @@ export default {
 <style>
 @import url("https://fonts.googleapis.com/css?family=Open+Sans");
 @import url("css/normalize.css");
+
+.component-fade-enter-active,
+.component-fade-leave-active {
+  transition: opacity 0.1s ease;
+}
+.component-fade-enter,
+.component-fade-leave-to {
+  opacity: 0;
+}
 
 .leaderboard-team {
   display: grid;
@@ -72,10 +92,6 @@ body {
 }
 .content-right {
   text-align: right;
-}
-
-.content-fade-in {
-  animation: fade-in 0.2s ease-in-out;
 }
 
 .background-box {
