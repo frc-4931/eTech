@@ -62,137 +62,117 @@ export default {
 </script>
 
 <style>
-@import url("https://fonts.googleapis.com/css?family=Open+Sans");
-@import url("css/normalize.css");
-
-.component-fade-enter-active,
-.component-fade-leave-active {
-  transition: opacity 0.1s ease;
-}
-.component-fade-enter,
-.component-fade-leave-to {
-  opacity: 0;
-}
+@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+@import url("./normalize.css");
 
 .leaderboard-team {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  text-align: center;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    text-align: center;
 }
-
 body {
-  font-family: "Open Sans", sans-serif;
-  background-color: #455a64;
-  color: #eceff1;
-  overflow: auto;
+    font-family: 'Open Sans', sans-serif;
+    background-color: #455a64;
+    color: #eceff1;
 }
-
 .content-centered {
-  text-align: center;
+    text-align: center;
 }
 .content-right {
-  text-align: right;
+	text-align: right;
 }
-
+.content-fade-in {
+	animation: fade-in 0.2s ease-in-out;
+}
 .background-box {
-  background-color: #37474f;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.6);
-  padding: 10px;
-  margin: 10px;
+    background-color: #37474f;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.6	);
+	padding: 10px;
+	margin: 10px;
 }
 .background-box-hover {
-  transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
 }
 .background-box-hover:hover {
-  background-color: #546e7a;
+    background-color: #546e7a;
 }
-
-h1,
-h2,
-h3,
-p {
-  margin: 0;
-  font-weight: normal;
+h1, h2, h3, p {
+	margin: 0;
+	font-weight: normal;
 }
-
 a {
-  transition: all 0.2s ease-in-out;
-  color: #2196f3;
+	transition: all 0.2s ease-in-out;
+	color: #2196f3;
 }
 a:hover {
-  color: #0069c0;
+	color: #0069c0;
 }
-
-input,
-textarea,
-select {
-  width: 100%;
-  padding: 10px;
-  display: inline-block;
-  box-sizing: border-box;
-  background-color: #37474f;
-  border: #455a64 solid 1px;
-  color: #eceff1;
+input, textarea, select {
+    width: 100%;
+	padding: 10px;
+    display: inline-block;
+	box-sizing: border-box;
+	background-color: #37474f;
+	border: #455a64 solid 1px;
+	color: #eceff1;
 }
-
 .grid-perminant {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
+	display: grid;
+	grid-template-columns: repeat(6, 1fr);
 }
-
 .location-span {
-  grid-column: 1/7;
+	grid-column: 1/7;
 }
 .location-left {
-  grid-column: 1/4;
+	grid-column: 1/4;
 }
 .location-right {
-  grid-column: 4/7;
+	grid-column: 4/7;
 }
 .location-centered {
-  grid-column: 2/6;
+	grid-column: 2/6;
 }
 .location-centered-small {
-  grid-column: 3/5;
+	grid-column: 3/5;
 }
 .location-left-small {
-  grid-column: 1/3;
+	grid-column: 1/3;
 }
 .location-left-large {
-  grid-column: 1/5;
+	grid-column: 1/5;
 }
 .location-right-small {
-  grid-column: 5/7;
+	grid-column: 5/7;
 }
 .location-right-large {
-  grid-column: 3/7;
+	grid-column: 3/7;
 }
-
 .location-left-tiny {
-  grid-column: 1/2;
+	grid-column: 1/2;
 }
 .location-left-giant {
-  grid-column: 1/6;
+	grid-column: 1/6;
 }
-
 .location-right-tiny {
-  grid-column: 6/7;
+	grid-column: 6/7;
 }
 .location-right-giant {
-  grid-column: 2/7;
+	grid-column: 2/7;
 }
 .location-left-padded {
-  grid-column: 2/4;
+	grid-column: 2/4;
 }
-
 .location-right-padded {
-  grid-column: 4/6;
+	grid-column: 4/6;
 }
-
-@media (min-width: 700px) {
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-  }
+@media(min-width: 700px) {
+	.grid {
+		display: grid;
+		grid-template-columns: repeat(6, 1fr);
+	}
+}
+@keyframes fade-in {
+	from {opacity: 0;}
+	to {opacity: 1;}
 }
 </style>

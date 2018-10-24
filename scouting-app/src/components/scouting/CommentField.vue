@@ -1,11 +1,9 @@
 <template>
-  <div class="background-box">
-    <div class="grid-perminant">
-      <h2 class="location-left-giant content-centered">{{ title }}</h2>
-      <p :style="color" class="location-right-tiny">{{getRating}}</p>
-    </div>
-    <p> {{comment}} </p>
-  </div>
+	<div class="background-box grid-perminant">
+		<h2 class="location-span content-centered"> {{title}} </h2>
+		<p class="location-right-giant"> {{comment}} </p>
+		<p :style="color" class="location-right-tiny content-right"> {{getRating}} </p>
+	</div>
 </template>
 
 <script>

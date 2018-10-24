@@ -14,17 +14,6 @@
                 <h3 class="content-centered">Total Objective Points: <span>{{ team.objectivePoints }}</span></h3>
             </div>
 
-            <div class="content-expandable">
-                <div class="background-box grid-perminant">
-                    <p class="location-left-giant">Test</p>
-                    <p class="location-right-tiny">Test</p>
-                </div>
-
-                <div class="background-box">
-                    <p>Test</p>
-                </div>
-            </div>
-
             <form class="grid-perminant pit-scout-div">
                 <div class="background-box location-left">
                     <p>Blocks scored etc?</p>
