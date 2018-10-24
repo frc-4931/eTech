@@ -96,6 +96,9 @@ body {
 .background-box-hover:hover {
     background-color: #546e7a;
 }
+.background-box:hover:active{
+	background-color: #b0bec5
+}
 h1, h2, h3, p {
 	margin: 0;
 	font-weight: normal;
