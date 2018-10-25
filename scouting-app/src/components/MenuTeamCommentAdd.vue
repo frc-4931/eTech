@@ -3,7 +3,7 @@
 
     <div class="grid">
         <div v-on:click="callback" class="location-centered-small background-box background-box-hover content-centered">
-            <h3>Back</h3>
+            <h3>Cancel</h3>
         </div>
 
         <div class="location-centered-small background-box">

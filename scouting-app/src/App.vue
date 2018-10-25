@@ -108,12 +108,10 @@ body {
 .background-box-hover {
   transition: all 0.2s ease-in-out;
 }
-.background-box-hover:hover {
-  background-color: #546e7a;
-}
 .background-box-hover:active {
   background-color: #b0bec5;
 }
+
 .comment-contents {
   padding-left: 20px;
   padding-right: 20px;
@@ -133,7 +131,7 @@ a {
   transition: all 0.2s ease-in-out;
   color: #2196f3;
 }
-a:hover {
+a:active {
   color: #0069c0;
 }
 input,
@@ -200,6 +198,15 @@ select {
   .grid {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
+  }
+  .background-box-hover:hover {
+    background-color: #546e7a;
+  }
+  .background-box-hover:active {
+    background-color: #b0bec5;
+  }
+  a:hover {
+    color: #0069c0;
   }
 }
 @keyframes fade-in {

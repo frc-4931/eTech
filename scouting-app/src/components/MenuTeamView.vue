@@ -10,76 +10,20 @@
         </div>
 
         <div class="location-left-padded">
-            <div class="background-box background-box-hover content-expand-toggle">
+          <div class="line"></div>
+
+            <div class="background-box">
                 <h3 class="content-centered">Total Objective Points: <span>{{ team.objectivePoints }}</span></h3>
             </div>
 
-            <form class="grid-perminant pit-scout-div">
-                <div class="background-box location-left">
-                    <p>Blocks scored etc?</p>
-                </div>
-
-
-                <div class="background-box location-right">
-                    <input class="pit-scout-input" type="number" pattern="[0-9]*" max="9999" min="-9999" placeholder="Value" name="changethisplz">
-                </div>
-            </form>
-
-            <form class="grid-perminant pit-scout-div">
-                <div class="background-box location-left">
-                    <p>Drivetrain?</p>
-                </div>
-
-
-                <div class="background-box location-right">
-                    <select class="pit-scout-input" required>
-                        <option value="invalid" selected disabled>Please Select</option>
-                        <option value="normal">Normal</option>
-                        <option value="weird">Weird</option>
-                        <option value="otherweird">Other Weird</option>
-                    </select>
-                </div>
-            </form>
-
-            <form class="grid-perminant pit-scout-div">
-                <div class="background-box location-left">
-                    <p>Are they good?</p>
-                </div>
-
-                <div class="location-right background-box grid-perminant">
-                    <label class="location-left">
-                        <input class="radio-button" type="radio" name="radio1">
-                        True
-                    </label>
-
-                    <label class="location-right">
-                        <input class="radio-button" type="radio" name="radio1">
-                        False
-                    </label>
-                </div>
-            </form>
-
-          <form class="grid-perminant pit-scout-div">
-            <div class="location-left background-box">
-              <p>Blocks Scored</p>
-            </div>
-
-            <div class="background-box content-centered background-box-hover">
-              <p>+</p>
-            </div>
-
-            <div class="background-box content-centered">
-              <p>1</p>
-            </div>
-
-            <div class="background-box content-centered background-box-hover">
-              <p>-</p>
-            </div>
-          </form>
+            <!-- Insert Scouting Fields Here -->
+            <PitScout></PitScout>
 
         </div>
 
         <div class="location-right-padded">
+            <div class="line"></div>
+
             <div class="background-box">
                 <h3 class="content-centered">Total Comment Points: <span> {{team.commentPoints}} </span></h3>
             </div>
@@ -97,12 +41,14 @@
 <script>
 import MenuTeamCommentAdd from "./MenuTeamCommentAdd.vue";
 import CommentField from "./scouting/CommentField.vue";
+import PitScout from "./scouting/PitScout.vue";
 
 export default {
   name: "MenuTeamView",
   components: {
     MenuTeamCommentAdd,
-    CommentField
+    CommentField,
+    PitScout
   },
   props: {
     pages: Object,
