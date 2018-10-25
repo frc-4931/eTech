@@ -1,0 +1,42 @@
+types:
+
+"DropdownField"
+"BooleanField"
+"NumberField"
+"NumberFieldInc"
+"TitleField"
+
+{
+	fields: [
+		{
+			type: "TitleField",
+			title: "Autonomous"
+		},
+		{
+			type: "DropdownField",
+			options: ["Option 1", "Option 2"],
+			default: "",
+			title: "Drivetrain:",
+			field: "drivetrain"
+		},
+		{
+			type: "BooleanField",
+			default: false,
+			title: "Cross Center Line:",
+			field: "auto_centerline"
+		},
+		{
+			type: "NumberField",
+			default: 0,
+			title: "Blocks In Switch:",
+			field: "auto_switch"
+		},
+		{
+			type: "NumberFieldInc",
+			default: 0,
+			title: "Blocks In Switch:",
+			field: "teleop_centerline",
+			min: 0
+		}
+	]
+}

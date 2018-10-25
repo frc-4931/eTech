@@ -16,7 +16,12 @@
                 <h3 class="content-centered">Total Objective Points: <span>{{ team.objectivePoints }}</span></h3>
             </div>
 
-            <!-- Insert Scouting Fields Here -->
+            <div id="scouting-select" class="background-box">
+              <select style="text-align-last:center">
+                <option value="test" selected>Test</option>
+              </select>
+            </div>
+            <!-- Insert Scouting Fields Here -->            
             <PitScout></PitScout>
 
         </div>
@@ -140,31 +145,8 @@ export default {
   padding: 5px;
   margin: 10px;
 }
-.pit-scout-input {
-  padding: 0px;
-}
-.pit-scout-div div {
-  margin-top: 0px;
-}
-.pit-scout-div:nth-child(1) div {
-  margin-top: 10px;
-}
-.radio-button {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  border-radius: 50%;
-  width: 16px;
-  height: 16px;
-  border: 2px solid #eceff1;
-  transition: 0.2s all ease-in-out;
-  outline: none;
-  margin-right: 5px;
-  position: relative;
-  top: 4px;
-}
-.radio-button:checked {
-  border: 6px solid #607d8b;
+#scouting-select {
+  margin-bottom: 20px;
 }
 </style>
 
