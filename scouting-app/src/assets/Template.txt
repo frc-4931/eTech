@@ -1,3 +1,8 @@
+TEAM_####
+COMMENT_####_#
+PITSCOUT_####_#
+MATCHSCOUT_####_#
+
 types:
 
 "DropdownField"
@@ -17,8 +22,8 @@ types:
 			title: "Drivetrain:",
 			field: "drivetrain",
 			options: ["Option 1", "Option 2"],
-			points: [0, 5],
-			default: ""
+			default: "",
+			points: [0, 5]
 		},
 		{
 			type: "BooleanField",
@@ -41,7 +46,8 @@ types:
 			field: "teleop_switch",
 			default: 0,
 			points: 1,
-			min: 0
+			min: 0,
+			max: 10
 		}
 	]
 }
