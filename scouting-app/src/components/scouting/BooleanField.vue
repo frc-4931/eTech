@@ -1,5 +1,5 @@
 <template>
-<form class="grid-perminant pit-scout-div">
+<div class="grid-perminant pit-scout-div">
   <div class="background-box location-left">
     <p>{{ title }}</p>
   </div>
@@ -15,7 +15,7 @@
       False
     </label>
   </div>
-</form>
+</div>
 </template>
 
 <script>

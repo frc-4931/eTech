@@ -2,10 +2,6 @@
 <div id="menu-team-comment-modify">
 
     <div class="grid">
-        <div v-on:click="callback()" class="location-centered-small background-box background-box-hover content-centered">
-            <h3>Cancel</h3>
-        </div>
-
         <div class="location-centered-small background-box">
             <h2 class="content-centered">Modify comment: {{ name }} #{{ number }}</h2>
         </div>
@@ -32,13 +28,16 @@
         </div>
 
         <div class="location-centered-small">
+          <div v-on:click="submitComment()" class="location-centered-small background-box background-box-hover content-centered">
+            <h3>Save</h3>
+          </div>
           <div v-on:click="deleteComment()" class="location-centered-small background-box background-box-hover content-centered">
             <h3>Delete</h3>
           </div>
+        </div>
 
-          <div v-on:click="submitComment()" class="location-centered-small background-box background-box-hover content-centered">
-            <h3>Submit</h3>
-          </div>
+        <div v-on:click="callback()" class="location-centered-small background-box background-box-hover content-centered">
+            <h3>Cancel</h3>
         </div>
     </div>
 

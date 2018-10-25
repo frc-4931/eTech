@@ -2,10 +2,6 @@
 <div id="menu-team-comment-add">
 
     <div class="grid">
-        <div v-on:click="callback" class="location-centered-small background-box background-box-hover content-centered">
-            <h3>Cancel</h3>
-        </div>
-
         <div class="location-centered-small background-box">
             <h2 class="content-centered">Add comment: {{ name }} #{{ teamNumber }}</h2>
         </div>
@@ -31,7 +27,14 @@
             </div>
         </div>
 
-        <div class="location-centered-small background-box background-box-hover"><input v-on:click="submitComment()" type="button" value="Submit"></div>
+        <div class="location-centered-small">
+          <div v-on:click="submitComment()" class="location-centered-small background-box background-box-hover content-centered">
+            <h3>Add</h3>
+          </div>
+          <div v-on:click="callback" class="location-centered-small background-box background-box-hover content-centered">
+            <h3>Cancel</h3>
+          </div>
+        </div>
     </div>
 
     <FieldError v-if="error"></FieldError>

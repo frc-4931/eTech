@@ -1,45 +1,50 @@
 <template>
 <div id="menu-team-view">
-    <div class="grid">
-        <div v-on:click="pages.toMenuMain()" class="location-centered-small background-box background-box-hover content-centered">
-            <h3>Done</h3>
-        </div>
-
-        <div class="location-centered background-box">
-            <h2 class="content-centered"><span>{{ team.name }}</span> - <span>{{ team.number }}</span></h2>
-        </div>
-
-        <div class="location-left-padded">
-          <div class="line"></div>
-
-            <div class="background-box">
-                <h3 class="content-centered">Total Objective Points: <span>{{ team.objectivePoints }}</span></h3>
-            </div>
-
-            <div id="scouting-select" class="background-box">
-              <select style="text-align-last:center">
-                <option value="test" selected>Test</option>
-              </select>
-            </div>
-            <!-- Insert Scouting Fields Here -->            
-            <PitScout></PitScout>
-
-        </div>
-
-        <div class="location-right-padded">
-            <div class="line"></div>
-
-            <div class="background-box">
-                <h3 class="content-centered">Total Comment Points: <span> {{team.commentPoints}} </span></h3>
-            </div>
-
-            <CommentField v-for="(comment, id) in comments" :modify="function() {pages.toMenuTeamCommentModify(id, closeCommentMenu)}" v-bind:key="id" :rating="comment.rating" :comment="comment.comment" :title="comment.title"></CommentField>
-
-            <div v-on:click="pages.toMenuTeamCommentAdd(teamNumber, closeCommentMenu)" class="background-box background-box-hover">
-                <h3 class="content-centered">Add comment</h3>
-            </div>
-        </div>
+  <div class="grid">
+    <div v-on:click="pages.toMenuMain()" id="done-button" class="location-centered-small background-box background-box-hover content-centered">
+      <h3>Done</h3>
     </div>
+
+    <div id="team-title" class="location-centered background-box">
+        <h2 class="content-centered"><span>{{ team.name }}</span> - <span>{{ team.number }}</span></h2>
+    </div>
+
+    <div class="location-left-padded">
+      <!--<div class="line"></div>-->
+
+      <div class="background-box">
+        <h3 class="content-centered">Total Objective Points: <span>{{ team.objectivePoints }}</span></h3>
+      </div>
+
+      <div id="scouting-select" class="background-box">
+        <select v-model="scoutingSelect">
+          <option value="none">Select A Scouting Option</option>
+          <option value="test">Pit Scouting - 1</option>
+          <option value="test1">Pit Scouting - 2</option>
+          <option value="test2">Match Scouting - Match 1</option>
+          <option value="test3">Match Scouting - Match 2</option>
+        </select>
+      </div>
+      <!-- Insert Scouting Fields Here -->     
+      <transition enter-active-class="content-fade-in" leave-active-class="content-fade-out" mode="out-in">       
+        <PitScout v-if="scoutingSelect != 'none' "></PitScout>
+      </transition>
+    </div>
+
+    <div class="location-right-padded">
+      <!--<div class="line"></div>-->
+
+      <div class="background-box">
+        <h3 class="content-centered">Total Comment Points: <span> {{team.commentPoints}} </span></h3>
+      </div>
+
+      <CommentField v-for="(comment, id) in comments" :modify="function() {pages.toMenuTeamCommentModify(id, closeCommentMenu)}" v-bind:key="id" :rating="comment.rating" :comment="comment.comment" :title="comment.title"></CommentField>
+
+      <div v-on:click="pages.toMenuTeamCommentAdd(teamNumber, closeCommentMenu)" class="background-box background-box-hover">
+        <h3 class="content-centered">Add comment</h3>
+      </div>
+    </div>
+  </div>
 </div>
 </template>
 
@@ -70,8 +75,9 @@ export default {
       },
       openAddCommentMenu: false,
       comments: {
-        //Change to array of _id's and make CommentField load the comment itself.
-      }
+        //Change to array of _id's and make CommentField load the comment itself. Maybe?
+      },
+      scoutingSelect: "none"
     };
   },
   methods: {
@@ -79,7 +85,7 @@ export default {
       this.pages.toMenuTeamView(this.teamNumber);
     },
     loadComments: function() {
-      //Load all comments from db then shove them into comments (make array)
+      //Load all comments from db then shove them into comments
       //Then check if sum of comment values == team.commentPoints
       //If not then db.get file modify commentPoints then db.put
       var dThis = this;
@@ -113,6 +119,9 @@ export default {
             }
           });
         });
+    },
+    loadScouting: function() {
+      var dThis = this;
     }
   },
   created: function() {
@@ -147,6 +156,14 @@ export default {
 }
 #scouting-select {
   margin-bottom: 20px;
+  text-align-last: center;
+  font-size: 20px;
+}
+@media (max-width: 700px) {
+  #done-button {
+    margin-left: 25px;
+    margin-right: 25px;
+  }
 }
 </style>
 

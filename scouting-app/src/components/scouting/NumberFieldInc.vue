@@ -1,5 +1,5 @@
 <template>
-<form class="grid-perminant pit-scout-div">
+<div class="grid-perminant pit-scout-div">
   <div class="location-left background-box">
     <p>{{ title }}</p>
   </div>
@@ -15,7 +15,7 @@
   <div @click="decrement()" class="noselect background-box content-centered background-box-hover">
     <p>-</p>
   </div>
-</form>  
+</div>  
 </template>
 
 <script>

@@ -1,5 +1,5 @@
 <template>
-  <form class="grid-perminant pit-scout-div">
+  <div class="grid-perminant pit-scout-div">
     <div class="background-box location-left">
       <p>{{ title }}</p>
     </div>
@@ -9,7 +9,7 @@
           <option v-for="option in options" :key="option" :value="option">{{ option }}</option>
       </select>
     </div>
-  </form>
+  </div>
 </template>
 
 <script>

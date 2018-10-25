@@ -14,28 +14,33 @@ types:
 		},
 		{
 			type: "DropdownField",
-			options: ["Option 1", "Option 2"],
-			default: "",
 			title: "Drivetrain:",
-			field: "drivetrain"
+			field: "drivetrain",
+			options: ["Option 1", "Option 2"],
+			points: [0, 5],
+			default: ""
 		},
 		{
 			type: "BooleanField",
-			default: false,
 			title: "Cross Center Line:",
-			field: "auto_centerline"
+			field: "auto_centerline",
+			default: false,
+			pointsTrue: 5,
+			pointsFalse: 0
 		},
 		{
 			type: "NumberField",
-			default: 0,
 			title: "Blocks In Switch:",
-			field: "auto_switch"
+			field: "auto_switch",
+			default: 0,
+			points: 2
 		},
 		{
 			type: "NumberFieldInc",
-			default: 0,
 			title: "Blocks In Switch:",
-			field: "teleop_centerline",
+			field: "teleop_switch",
+			default: 0,
+			points: 1,
 			min: 0
 		}
 	]

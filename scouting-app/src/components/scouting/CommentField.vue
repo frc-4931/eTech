@@ -35,7 +35,7 @@ export default {
         dThis.color = "color: red";
       } else {
         prefix = "";
-        dThis.color = "color: white";
+        dThis.color = "color: gray";
       }
       return prefix + this.rating;
     }
