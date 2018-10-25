@@ -1,7 +1,7 @@
 <template>
-	<div class="background-box grid-perminant">
-		<h2 class="location-span content-centered"> {{title}} </h2>
-		<p class="location-right-giant"> {{comment}} </p>
+	<div @click="modify()" class="background-box background-box-hover grid-perminant">
+		<h2 class="location-span comment-title content-centered"> {{title}} </h2>
+		<p class="location-span comment-contents"> {{comment}} </p>
 		<p :style="color" class="location-right-tiny content-right"> {{getRating}} </p>
 	</div>
 </template>
@@ -15,7 +15,8 @@ export default {
   props: {
     comment: String,
     rating: Number,
-    title: String
+    title: String,
+    modify: Function
   },
   data: function() {
     return {

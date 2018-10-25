@@ -59,14 +59,32 @@
                 </div>
             </form>
 
+          <form class="grid-perminant pit-scout-div">
+            <div class="location-left background-box">
+              <p>Blocks Scored</p>
+            </div>
+
+            <div class="background-box content-centered background-box-hover">
+              <p>+</p>
+            </div>
+
+            <div class="background-box content-centered">
+              <p>1</p>
+            </div>
+
+            <div class="background-box content-centered background-box-hover">
+              <p>-</p>
+            </div>
+          </form>
+
         </div>
 
         <div class="location-right-padded">
-            <div class="background-box background-box-hover content-expand-toggle">
+            <div class="background-box">
                 <h3 class="content-centered">Total Comment Points: <span> {{team.commentPoints}} </span></h3>
             </div>
 
-            <CommentField v-for="(comment, id) in comments" v-bind:key="id" :rating="comment.rating" :comment="comment.comment" :title="comment.title"></CommentField>
+            <CommentField v-for="(comment, id) in comments" :modify="function() {pages.toMenuTeamCommentModify(id, closeCommentMenu)}" v-bind:key="id" :rating="comment.rating" :comment="comment.comment" :title="comment.title"></CommentField>
 
             <div v-on:click="pages.toMenuTeamCommentAdd(teamNumber, closeCommentMenu)" class="background-box background-box-hover">
                 <h3 class="content-centered">Add comment</h3>
@@ -138,8 +156,10 @@ export default {
           dThis.$set(dThis.team, "commentPoints", totalCommentRating);
 
           dThis.localdb.get("TEAM_" + dThis.teamNumber).then(function(doc) {
-            doc.commentPoints = totalCommentRating;
-            dThis.localdb.put(doc);
+            if (doc.commentPoints != totalCommentRating) {
+              doc.commentPoints = totalCommentRating;
+              dThis.localdb.put(doc);
+            }
           });
         });
     }
