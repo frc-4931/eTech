@@ -55,7 +55,7 @@ export default {
     },
     {
       "type": "BooleanField",
-      "title": "Auto Can Work Around Us:",
+      "title": "Work Around Us:",
       "field": "auto_aroundus",
       "default": false,
       "points": [

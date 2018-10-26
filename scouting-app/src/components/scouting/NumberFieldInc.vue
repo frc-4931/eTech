@@ -22,16 +22,7 @@
 export default {
   name: "NumberFieldInc",
   props: {
-    title: {
-      type: String,
-      required: true
-    },
-    value: {
-      type: Number,
-      required: true
-    },
-    min: Number,
-    max: Number
+    data: Object
   },
   data: function() {
     return {
@@ -42,13 +33,13 @@ export default {
   },
   methods: {
     increment: function() {
-      if ((this.useMax && this.curValue < this.max) || !this.useMax) {
+      if ((this.useMax && this.curValue < this.data.max) || !this.useMax) {
         this.curValue++;
         this.emitValue();
       }
     },
     decrement: function() {
-      if ((this.useMin && this.curValue > this.min) || !this.useMin) {
+      if ((this.useMin && this.curValue > this.data.min) || !this.useMin) {
         this.curValue--;
         this.emitValue();
       }
@@ -58,11 +49,11 @@ export default {
     }
   },
   created() {
-    this.curValue = this.value;
-    if (Number.isInteger(this.max)) {
+    this.curValue = this.data.value;
+    if (Number.isInteger(this.data.max)) {
       this.useMax = true;
     }
-    if (Number.isInteger(this.min)) {
+    if (Number.isInteger(this.data.min)) {
       this.useMin = true;
     }
   }

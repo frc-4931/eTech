@@ -1,26 +1,6 @@
 <template>
 <div>
-  <!-- Title Field -->
-  <TitleField title="Autonomous"></TitleField>
-
-  <!-- Drop Down Field -->
-  <DropdownField title="Dropdowns yay!!!" :options="options" value="Option 2"></DropdownField>
-
-  <!-- Booleon Field -->
-  <BooleanField title="Bools yay" :value="true"></BooleanField>
-
-  <!-- Number field -->
-  <NumberField title="New num" :value="5" @valuechange="valueChangeNum"></NumberField>
-
-  <!-- Number field inc -->
-  <NumberFieldInc title="How many blocks?" :min="0" :max="10" :value="value" @valuechange="valueChange" ></NumberFieldInc>
-
-  <!-- Second panel -->
-  <TitleField title="TeleOp"></TitleField>
-  <DropdownField title="Dropdowns yay!!!" :options="options" value="Option 2"></DropdownField>
-  <BooleanField title="Bools yay" :value="true"></BooleanField>
-  <NumberField title="New num" :value="5" @valuechange="valueChangeNum"></NumberField>
-  <NumberFieldInc title="How many blocks?" :min="0" :max="10" :value="value" @valuechange="valueChange" ></NumberFieldInc>
+  <component v-for="scField in pitTemplate" :key="scField.field || scField.title" :is="scField.type" :data="objectWithValue(scField)" @valuechange="valueChange(scField.field, $event)"></component>
 
   <div class="location-centered-small background-box background-box-hover content-centered">
     <h3>Save</h3>
@@ -35,6 +15,8 @@ import NumberField from "./NumberField.vue";
 import BooleanField from "./BooleanField.vue";
 import DropdownField from "./DropdownField.vue";
 import TitleField from "./TitleField.vue";
+//Pre genereated template incase there is not one in the db
+import PitTemplate from "../../assets/pitscout.js";
 
 export default {
   name: "PitScout",
@@ -47,23 +29,55 @@ export default {
   },
   props: {
     localdb: Object,
-    teamNumber: Number,
     id: String
   },
   data: function() {
     return {
+      pitTemplate: Array,
+      scoutFields: Object,
       value: 2,
       value2: 0,
       options: ["Option 1", "Option 2"]
     };
   },
   methods: {
-    valueChange: function(event) {
-      this.value = event;
+    valueChange(field, value) {
+      this.$set(this.scoutFields, field, value);
     },
-    valueChangeNum: function(event) {
-      this.value2 = event;
+    objectWithValue(obj) {
+      if (obj["field"] != undefined) {
+        obj.value = this.scoutFields[obj["field"]];
+      }
+      return obj;
+    },
+    getScoutData() {
+      var dThis = this;
+      this.localdb.get(this.id).then(function(doc) {
+        for (var field of dThis.pitTemplate) {
+          if (field["field"] != undefined) {
+            var fieldData;
+
+            if (doc["field"] != undefined) fieldData = doc["field"];
+            else fieldData = field["default"];
+
+            dThis.$set(dThis.scoutFields, field["field"], fieldData);
+          }
+        }
+      });
     }
+  },
+  created() {
+    var dThis = this;
+    this.localdb
+      .get("TEMPLATE_PITSCOUT")
+      .then(function(doc) {
+        dThis.pitTemplate = doc.fields;
+      })
+      .catch(function() {
+        //If can't pull template use local pre generated
+        dThis.pitTemplate = PitTemplate.fields;
+      });
+    this.getScoutData();
   }
 };
 </script>

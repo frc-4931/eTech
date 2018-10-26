@@ -62,14 +62,13 @@ export default {
             dThis.createPitScout(pitScoutNumber);
           });
       } else if (this.seleted == "MatchScout") {
+        //TODO: add MatchScout creation
         alert("Match Scout not supported yet");
       } else {
         alert("You must choose a scouting type!");
       }
     },
     createPitScout(number) {
-      alert(number);
-
       var doc = {
         _id: this.pitScoutPrefix + this.teamNumber + "_" + number
       };
@@ -86,18 +85,15 @@ export default {
   created() {
     var dThis = this;
     //FINSIH ME. Loads all scouting files and puts ID's into array.
+    //TODO: Add match scout loading
     this.localdb
       .get("TEMPLATE_PITSCOUT")
       .then(function(doc) {
         dThis.pitTemplate = doc.fields;
       })
       .catch(function() {
-        var doc = {
-          fields: PitTemplate.fields,
-          _id: "TEMPLATE_PITSCOUT"
-        };
-        dThis.localdb.put(doc);
-        dThis.pitTemplate = doc.fields;
+        //If can't pull template use local pre generated
+        dThis.pitTemplate = PitTemplate.fields;
       });
   }
 };

@@ -1,6 +1,6 @@
 <template>
 <div style="margin-top: 10px;" class="background-box content-centered">
-    <h2>{{ title }}</h2>
+    <h2>{{ data.title }}</h2>
 </div>
 </template>
 
@@ -8,7 +8,7 @@
 export default {
   name: "TitleField",
   props: {
-    title: String
+    data: Object
   }
 };
 </script>

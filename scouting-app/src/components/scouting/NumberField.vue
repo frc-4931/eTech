@@ -1,7 +1,7 @@
 <template>
 <div class="grid-perminant pit-scout-div">
   <div class="background-box location-left">
-    <p>{{ title }}</p>
+    <p>{{ data.title }}</p>
   </div>
 
   <div class="background-box location-right">
@@ -14,8 +14,7 @@
 export default {
   name: "NumberField",
   props: {
-    title: String,
-    value: Number
+    data: Object
   },
   data: function() {
     return {
@@ -28,7 +27,7 @@ export default {
     }
   },
   created() {
-    this.curValue = this.value;
+    this.curValue = this.data.value;
   }
 };
 </script>

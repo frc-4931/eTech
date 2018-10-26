@@ -1,7 +1,7 @@
 <template>
-<div class="grid-perminant pit-scout-div">
+<form onsubmit="return false;" class="grid-perminant pit-scout-div">
   <div class="background-box location-left">
-    <p>{{ title }}</p>
+    <p>{{ data.title }}</p>
   </div>
 
   <div class="location-right background-box grid-perminant">
@@ -15,15 +15,14 @@
       False
     </label>
   </div>
-</div>
+</form>
 </template>
 
 <script>
 export default {
   name: "BooleanField",
   props: {
-    title: String,
-    value: Boolean
+    data: Object
   },
   data: function() {
     return {
@@ -44,7 +43,7 @@ export default {
     }
   },
   created() {
-    this.curValue = this.value;
+    this.curValue = this.data.value;
   }
 };
 </script>

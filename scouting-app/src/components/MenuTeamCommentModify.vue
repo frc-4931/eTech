@@ -18,11 +18,17 @@
           <div class="background-box">
             <select v-model="rating" name="comment-points" required>
               <option value="Invalid" selected="selected" disabled>Select Point Value for Comment</option>
+              <option value="5">+5</option>
+              <option value="4">+4</option>
+              <option value="3">+3</option>
               <option value="2">+2</option>
               <option value="1">+1</option>
               <option value="0">Neutral</option>
               <option value="-1">-1</option>
               <option value="-2">-2</option>
+              <option value="-3">-3</option>
+              <option value="-4">-4</option>
+              <option value="-5">-5</option>
             </select>
           </div>
         </div>
@@ -74,7 +80,7 @@ export default {
       this.localdb.get(this.id).then(function(doc) {
         doc.title = dThis.title;
         doc.comment = dThis.comment;
-        doc.rating = dThis.rating;
+        doc.rating = parseInt(dThis.rating);
 
         dThis.localdb.put(doc);
       });

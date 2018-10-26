@@ -19,8 +19,7 @@
       <div id="scouting-select" class="background-box">
         <select v-model="scoutingSelect">
           <option value="none">Select A Scouting Option</option>
-          <option value="test">Pit Scouting - 1</option>
-          <option value="test1">Pit Scouting - 2</option>
+          <option v-for="(scout, idx) in pitScouts" :key="scout" :value="scout">Pit Scouting - {{ idx + 1 }}</option>
           <option value="test2">Match Scouting - Match 1</option>
           <option value="test3">Match Scouting - Match 2</option>
           <option value="create"> --- New Scout --- </option>
@@ -28,8 +27,8 @@
       </div>
       <!-- Insert Scouting Fields Here -->     
       <transition enter-active-class="content-fade-in" leave-active-class="content-fade-out" mode="out-in">      
-        <NewScout v-if="scoutingSelect == 'create' " :localdb="localdb" :teamNumber="teamNumber"></NewScout> 
-        <PitScout v-else-if="scoutingSelect != 'none' "></PitScout>
+        <NewScout v-if="scoutingSelect == 'create' " :localdb="localdb" :teamNumber="teamNumber" :callback="loadScouting"></NewScout> 
+        <PitScout v-else-if="scoutingSelect.startsWith('PITSCOUT_')" :localdb="localdb" :id="scoutingSelect"></PitScout>
       </transition>
     </div>
 
@@ -81,6 +80,9 @@ export default {
       comments: {
         //Change to array of _id's and make CommentField load the comment itself. Maybe?
       },
+      pitScouts: [
+        //List of pit scouts in order
+      ],
       scoutingSelect: "none"
     };
   },
@@ -126,6 +128,19 @@ export default {
     },
     loadScouting: function() {
       //TODO: THIS NEEDS TO BE DONE NEXT
+      var dThis = this;
+      this.localdb
+        .allDocs({
+          include_docs: false,
+          startkey: "PITSCOUT_" + dThis.teamNumber + "_0",
+          endkey: "PITSCOUT_" + dThis.teamNumber + "_\ufff0"
+        })
+        .then(function(docs) {
+          dThis.pitScouts.splice(0, dThis.pitScouts.length);
+          for (var doc of docs["rows"]) {
+            dThis.pitScouts.push(doc.id);
+          }
+        });
     }
   },
   created: function() {

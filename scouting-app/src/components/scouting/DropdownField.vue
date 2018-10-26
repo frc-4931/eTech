@@ -1,12 +1,12 @@
 <template>
   <div class="grid-perminant pit-scout-div">
     <div class="background-box location-left">
-      <p>{{ title }}</p>
+      <p>{{ data.title }}</p>
     </div>
 
     <div class="background-box location-right">
-      <select @change="changed()" v-model="curValue" :value="value" class="pit-scout-input" required>
-          <option v-for="option in options" :key="option" :value="option">{{ option }}</option>
+      <select @change="changed()" v-model="curValue" :value="data.value" class="pit-scout-input" required>
+          <option v-for="option in data.options" :key="option" :value="option">{{ option }}</option>
       </select>
     </div>
   </div>
@@ -16,9 +16,7 @@
 export default {
   name: "DropdownField",
   props: {
-    title: String,
-    value: String,
-    options: Array
+    data: Object
   },
   data: function() {
     return {
@@ -31,7 +29,7 @@ export default {
     }
   },
   created() {
-    this.curValue = this.value;
+    this.curValue = this.data.value;
   }
 };
 </script>
