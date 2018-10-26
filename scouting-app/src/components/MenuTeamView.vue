@@ -28,7 +28,7 @@
       <!-- Insert Scouting Fields Here -->     
       <transition enter-active-class="content-fade-in" leave-active-class="content-fade-out" mode="out-in">      
         <NewScout v-if="scoutingSelect == 'create' " :localdb="localdb" :teamNumber="teamNumber" :callback="loadScouting"></NewScout> 
-        <PitScout v-else-if="scoutingSelect.startsWith('PITSCOUT_')" :localdb="localdb" :id="scoutingSelect"></PitScout>
+        <PitScout :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('PITSCOUT_')" :localdb="localdb" :id="scoutingSelect"></PitScout>
       </transition>
     </div>
 

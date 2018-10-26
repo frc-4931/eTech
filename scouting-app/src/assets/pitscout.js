@@ -50,14 +50,14 @@ export default {
       "type": "NumberField",
       "title": "Blocks In Scale:",
       "field": "auto_scale",
-      "default": 0,
+      "default": 5,
       "points": 5
     },
     {
       "type": "BooleanField",
       "title": "Work Around Us:",
       "field": "auto_aroundus",
-      "default": false,
+      "default": true,
       "points": [
         5,
         0

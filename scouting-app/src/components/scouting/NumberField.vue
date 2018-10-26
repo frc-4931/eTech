@@ -5,7 +5,7 @@
   </div>
 
   <div class="background-box location-right">
-    <input v-model="curValue" @input="changed()" class="pit-scout-input" type="number" pattern="[0-9]*" max="9999" min="-9999" placeholder="Value">
+    <input v-model="data.value" @input="changed()" class="pit-scout-input" type="number" pattern="[0-9]*" max="9999" min="-9999" placeholder="Value">
   </div>
 </div>
 </template>
@@ -14,16 +14,19 @@
 export default {
   name: "NumberField",
   props: {
-    data: Object
+    data: Object,
+    value: Number
   },
   data: function() {
     return {
-      curValue: Number
+      curValue: 0,
+      hasChanged: false
     };
   },
   methods: {
     changed: function() {
-      this.$emit("valuechange", parseInt(this.curValue));
+      this.hasChanged = true;
+      this.$emit("valuechange", parseInt(this.data.value));
     }
   },
   created() {

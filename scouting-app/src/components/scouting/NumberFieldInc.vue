@@ -9,7 +9,7 @@
   </div>
 
   <div class="background-box content-centered">
-    <p>{{ curValue }}</p>
+    <p>{{ data.value }}</p>
   </div>
 
   <div @click="decrement()" class="noselect background-box content-centered background-box-hover">
@@ -27,25 +27,27 @@ export default {
   data: function() {
     return {
       curValue: 0,
+      hasChanged: false,
       useMax: false,
       useMin: false
     };
   },
   methods: {
     increment: function() {
-      if ((this.useMax && this.curValue < this.data.max) || !this.useMax) {
-        this.curValue++;
+      if ((this.useMax && this.data.value < this.data.max) || !this.useMax) {
+        this.data.value++;
         this.emitValue();
       }
     },
     decrement: function() {
-      if ((this.useMin && this.curValue > this.data.min) || !this.useMin) {
-        this.curValue--;
+      if ((this.useMin && this.data.value > this.data.min) || !this.useMin) {
+        this.data.value--;
         this.emitValue();
       }
     },
     emitValue: function() {
-      this.$emit("valuechange", this.curValue);
+      this.hasChanged = true;
+      this.$emit("valuechange", this.data.value);
     }
   },
   created() {

@@ -1,8 +1,8 @@
 <template>
 <div>
-  <component v-for="scField in pitTemplate" :key="scField.field || scField.title" :is="scField.type" :data="objectWithValue(scField)" @valuechange="valueChange(scField.field, $event)"></component>
+  <component v-for="scField in pitTemplate" :key="id+(scField.field || scField.title)" :is="scField.type" :data="scField" @valuechange="valueChange(scField.field, $event)"></component>
 
-  <div class="location-centered-small background-box background-box-hover content-centered">
+  <div @click="putScoutData()" class="location-centered-small background-box background-box-hover content-centered">
     <h3>Save</h3>
   </div>
   <div class="line"></div>
@@ -35,34 +35,44 @@ export default {
     return {
       pitTemplate: Array,
       scoutFields: Object,
-      value: 2,
-      value2: 0,
-      options: ["Option 1", "Option 2"]
+      modifiedFields: {}
     };
   },
   methods: {
     valueChange(field, value) {
       this.$set(this.scoutFields, field, value);
-    },
-    objectWithValue(obj) {
-      if (obj["field"] != undefined) {
-        obj.value = this.scoutFields[obj["field"]];
-      }
-      return obj;
+
+      if (this.modifiedFields[field] == false)
+        this.modifiedFields[field] = true;
     },
     getScoutData() {
       var dThis = this;
       this.localdb.get(this.id).then(function(doc) {
-        for (var field of dThis.pitTemplate) {
+        for (var fieldInx in dThis.pitTemplate) {
+          var field = dThis.pitTemplate[fieldInx];
           if (field["field"] != undefined) {
             var fieldData;
+            var fieldName = field["field"];
 
-            if (doc["field"] != undefined) fieldData = doc["field"];
+            if (doc[fieldName] != undefined) fieldData = doc[fieldName];
             else fieldData = field["default"];
 
-            dThis.$set(dThis.scoutFields, field["field"], fieldData);
+            dThis.$set(dThis.pitTemplate[fieldInx], "value", fieldData);
+            dThis.$set(dThis.scoutFields, fieldName, fieldData);
+            dThis.modifiedFields[fieldName] = false;
           }
         }
+      });
+    },
+    putScoutData() {
+      var dThis = this;
+      this.localdb.get(this.id).then(function(doc) {
+        for (var i in dThis.modifiedFields) {
+          if (dThis.modifiedFields[i] === true) {
+            doc[i] = dThis.scoutFields[i];
+          }
+        }
+        dThis.localdb.put(doc);
       });
     }
   },
@@ -72,12 +82,13 @@ export default {
       .get("TEMPLATE_PITSCOUT")
       .then(function(doc) {
         dThis.pitTemplate = doc.fields;
+        dThis.getScoutData();
       })
       .catch(function() {
         //If can't pull template use local pre generated
         dThis.pitTemplate = PitTemplate.fields;
+        dThis.getScoutData();
       });
-    this.getScoutData();
   }
 };
 </script>

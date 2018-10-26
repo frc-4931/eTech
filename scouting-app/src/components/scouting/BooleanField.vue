@@ -6,12 +6,12 @@
 
   <div class="location-right background-box grid-perminant">
     <label class="location-left">
-      <input class="radio-button" @change="setTrue()" type="radio" name="radio1" v-bind:checked="curValue">
+      <input class="radio-button" @change="changed()" :value="true" type="radio" name="radio1" v-model="data.value">
         True
     </label>
 
     <label class="location-right">
-      <input class="radio-button" @change="setFalse()" type="radio" name="radio1" v-bind:checked="!curValue">
+      <input class="radio-button" @change="changed()" :value="false" type="radio" name="radio1" v-model="data.value">
       False
     </label>
   </div>
@@ -26,19 +26,21 @@ export default {
   },
   data: function() {
     return {
-      curValue: Boolean
+      curValue: false,
+      hasChanged: false
     };
   },
   methods: {
     changed: function() {
-      this.$emit("valuechange", this.curValue);
+      this.hasChanged = true;
+      this.$emit("valuechange", this.data.value);
     },
     setTrue: function() {
-      this.curValue = true;
+      this.data.value = true;
       this.changed();
     },
     setFalse: function() {
-      this.curValue = false;
+      this.data.value = false;
       this.changed();
     }
   },

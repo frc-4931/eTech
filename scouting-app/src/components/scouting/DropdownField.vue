@@ -5,7 +5,7 @@
     </div>
 
     <div class="background-box location-right">
-      <select @change="changed()" v-model="curValue" :value="data.value" class="pit-scout-input" required>
+      <select @change="changed()" v-model="data.value" :value="data.value" class="pit-scout-input" required>
           <option v-for="option in data.options" :key="option" :value="option">{{ option }}</option>
       </select>
     </div>
@@ -20,12 +20,14 @@ export default {
   },
   data: function() {
     return {
-      curValue: String
+      curValue: String,
+      hasChanged: false
     };
   },
   methods: {
     changed: function() {
-      this.$emit("valuechange", this.curValue);
+      this.hasChanged = true;
+      this.$emit("valuechange", this.data.value);
     }
   },
   created() {
