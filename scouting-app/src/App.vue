@@ -15,6 +15,7 @@ import MenuTeamCommentModify from "./components/MenuTeamCommentModify.vue";
 import ConnectionError from "./components/ConnectionError.vue";
 import MenuTeamView from "./components/MenuTeamView.vue";
 import PouchDB from "pouchdb";
+import Authentication from "pouchdb-authentication";
 
 export default {
   name: "app",
@@ -32,6 +33,7 @@ export default {
       isConnectionError: false,
       teamNumber: 4931,
       localdb: new PouchDB("localdb"),
+      remotedb: new PouchDB("REMOTE.DB:URL"),
       callback: Function,
       id: String,
       pages: {}
@@ -66,6 +68,16 @@ export default {
     this.pages.toMenuTeamView = this.toMenuTeamView;
     this.pages.toMenuTeamCommentAdd = this.toMenuTeamCommentAdd;
     this.pages.toMenuTeamCommentModify = this.toMenuTeamCommentModify;
+
+    PouchDB.plugin(Authentication);
+    this.remotedb
+      .getSession()
+      .then(function(respone) {
+        console.log(respone);
+      })
+      .catch(function(err) {
+        if (err.name == "unknown") console.log("You are not logged in!");
+      });
   }
 };
 </script>

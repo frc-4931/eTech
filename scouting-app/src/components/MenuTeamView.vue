@@ -27,7 +27,7 @@
       </div>
       <!-- Insert Scouting Fields Here -->     
       <transition enter-active-class="content-fade-in" leave-active-class="content-fade-out" mode="out-in">      
-        <NewScout v-if="scoutingSelect == 'create' " :localdb="localdb" :teamNumber="teamNumber" :callback="loadScouting"></NewScout> 
+        <NewScout v-if="scoutingSelect == 'create' " :localdb="localdb" :teamNumber="teamNumber" :callback="teamCreated"></NewScout> 
         <PitScout :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('PITSCOUT_')" :localdb="localdb" :id="scoutingSelect"></PitScout>
       </transition>
     </div>
@@ -141,6 +141,10 @@ export default {
             dThis.pitScouts.push(doc.id);
           }
         });
+    },
+    teamCreated(id) {
+      this.scoutingSelect = id || "none";
+      this.loadScouting();
     }
   },
   created: function() {

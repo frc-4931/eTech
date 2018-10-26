@@ -51,13 +51,15 @@ export default {
             var len = docs["rows"].length;
             var pitScoutNumber = 0;
             if (len > 0) {
-              pitScoutNumber =
-                parseInt(
-                  docs["rows"][len - 1].id.replace(
-                    dThis.pitScoutPrefix + dThis.teamNumber + "_",
-                    ""
-                  )
-                ) + 1;
+              var pitScoutString = docs["rows"][len - 1].id.replace(
+                dThis.pitScoutPrefix + dThis.teamNumber + "_",
+                ""
+              );
+              if (pitScoutString.includes("_")) {
+                var inx = pitScoutString.indexOf("_");
+                pitScoutString = pitScoutString.slice(0, inx);
+              }
+              pitScoutNumber = parseInt(pitScoutString) + 1;
             }
             dThis.createPitScout(pitScoutNumber);
           });
@@ -69,8 +71,9 @@ export default {
       }
     },
     createPitScout(number) {
+      //Add user slat "_USERNAME" to end
       var doc = {
-        _id: this.pitScoutPrefix + this.teamNumber + "_" + number
+        _id: this.pitScoutPrefix + this.teamNumber + "_" + number // + "_" + USERNAME
       };
 
       for (var item of this.pitTemplate) {
@@ -79,7 +82,7 @@ export default {
         }
       }
       this.localdb.put(doc);
-      this.callback();
+      this.callback(doc._id);
     }
   },
   created() {
