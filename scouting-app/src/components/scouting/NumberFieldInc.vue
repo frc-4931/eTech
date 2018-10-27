@@ -1,7 +1,7 @@
 <template>
 <div class="grid-perminant pit-scout-div">
   <div class="location-left background-box">
-    <p>{{ title }}</p>
+    <p>{{ data.title }}</p>
   </div>
 
   <div @click="increment()" class="noselect background-box content-centered background-box-hover">

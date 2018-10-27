@@ -20,15 +20,15 @@
         <select v-model="scoutingSelect">
           <option value="none">Select A Scouting Option</option>
           <option v-for="(scout, idx) in pitScouts" :key="scout" :value="scout">Pit Scouting - {{ idx + 1 }}</option>
-          <option value="test2">Match Scouting - Match 1</option>
-          <option value="test3">Match Scouting - Match 2</option>
+          <option v-for="(scout, idx) in matchScouts" :key="scout" :value="scout">Match Scouting - Match {{ idx + 1 }}</option>
           <option value="create"> --- New Scout --- </option>
         </select>
       </div>
       <!-- Insert Scouting Fields Here -->     
       <transition enter-active-class="content-fade-in" leave-active-class="content-fade-out" mode="out-in">      
         <NewScout v-if="scoutingSelect == 'create' " :localdb="localdb" :teamNumber="teamNumber" :callback="teamCreated"></NewScout> 
-        <PitScout :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('PITSCOUT_')" :localdb="localdb" :id="scoutingSelect"></PitScout>
+        <ScoutMenu :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('PITSCOUT_')" :isMatchScout="false" :localdb="localdb" :id="scoutingSelect"></ScoutMenu>
+        <ScoutMenu :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('MATCHSCOUT_')" :isMatchScout="true" :localdb="localdb" :id="scoutingSelect"></ScoutMenu>
       </transition>
     </div>
 
@@ -52,7 +52,7 @@
 <script>
 import MenuTeamCommentAdd from "./MenuTeamCommentAdd.vue";
 import CommentField from "./scouting/CommentField.vue";
-import PitScout from "./scouting/PitScout.vue";
+import ScoutMenu from "./scouting/ScoutMenu.vue";
 import NewScout from "./scouting/NewScout.vue";
 
 export default {
@@ -60,7 +60,7 @@ export default {
   components: {
     MenuTeamCommentAdd,
     CommentField,
-    PitScout,
+    ScoutMenu,
     NewScout
   },
   props: {
@@ -83,6 +83,9 @@ export default {
       },
       pitScouts: [
         //List of pit scouts in order
+      ],
+      matchScouts: [
+        //List of match scouts in order
       ],
       scoutingSelect: "none"
     };
@@ -140,6 +143,19 @@ export default {
           dThis.pitScouts.splice(0, dThis.pitScouts.length);
           for (var doc of docs["rows"]) {
             dThis.pitScouts.push(doc.id);
+          }
+        });
+
+      this.localdb
+        .allDocs({
+          include_docs: false,
+          startkey: "MATCHSCOUT_" + dThis.teamNumber + "_0",
+          endkey: "MATCHSCOUT_" + dThis.teamNumber + "_\ufff0"
+        })
+        .then(function(docs) {
+          dThis.matchScouts.splice(0, dThis.matchScouts.length);
+          for (var doc of docs["rows"]) {
+            dThis.matchScouts.push(doc.id);
           }
         });
     },

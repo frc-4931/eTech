@@ -17,6 +17,7 @@ import DropdownField from "./DropdownField.vue";
 import TitleField from "./TitleField.vue";
 //Pre genereated template incase there is not one in the db
 import PitTemplate from "../../assets/pitscout.js";
+import MatchTemplate from "../../assets/matchscout.js";
 
 export default {
   name: "PitScout",
@@ -29,7 +30,8 @@ export default {
   },
   props: {
     localdb: Object,
-    id: String
+    id: String,
+    isMatchScout: Boolean
   },
   data: function() {
     return {
@@ -146,18 +148,33 @@ export default {
   },
   created() {
     var dThis = this;
-    this.localdb
-      .get("TEMPLATE_PITSCOUT")
-      .then(function(doc) {
-        dThis.template = doc.fields;
-      })
-      .catch(function() {
-        //If can't pull template use local pre generated
-        dThis.template = PitTemplate.fields;
-      })
-      .then(function() {
-        dThis.getInitialScoutData();
-      });
+    if (this.isMatchScout === false) {
+      this.localdb
+        .get("TEMPLATE_PITSCOUT")
+        .then(function(doc) {
+          dThis.template = doc.fields;
+        })
+        .catch(function() {
+          //If can't pull template use local pre generated
+          dThis.template = PitTemplate.fields;
+        })
+        .then(function() {
+          dThis.getInitialScoutData();
+        });
+    } else {
+      this.localdb
+        .get("TEMPLATE_MATCHSCOUT")
+        .then(function(doc) {
+          dThis.template = doc.fields;
+        })
+        .catch(function() {
+          //If can't pull template use local pre generated
+          dThis.template = MatchTemplate.fields;
+        })
+        .then(function() {
+          dThis.getInitialScoutData();
+        });
+    }
   }
 };
 </script>

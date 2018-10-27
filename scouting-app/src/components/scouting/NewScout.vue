@@ -22,6 +22,7 @@
 
 <script>
 import PitTemplate from "../../assets/pitscout.js";
+import MatchTemplate from "../../assets/matchscout.js";
 
 export default {
   name: "NewScout",
@@ -33,7 +34,10 @@ export default {
   data: function() {
     return {
       seleted: "none",
-      pitScoutPrefix: "PITSCOUT_"
+      pitScoutPrefix: "PITSCOUT_",
+      matchScoutPrefix: "MATCHSCOUT_",
+      pitTemplate: Object,
+      matchTemplate: Object
     };
   },
   methods: {
@@ -64,8 +68,28 @@ export default {
             dThis.createPitScout(pitScoutNumber);
           });
       } else if (this.seleted == "MatchScout") {
-        //TODO: add MatchScout creation
-        alert("Match Scout not supported yet");
+        this.localdb
+          .allDocs({
+            include_docs: false,
+            startkey: dThis.matchScoutPrefix + dThis.teamNumber + "_0",
+            endkey: dThis.matchScoutPrefix + dThis.teamNumber + "_\ufff0"
+          })
+          .then(function(docs) {
+            var len = docs["rows"].length;
+            var matchScoutNumber = 0;
+            if (len > 0) {
+              var matchScoutString = docs["rows"][len - 1].id.replace(
+                dThis.matchScoutPrefix + dThis.teamNumber + "_",
+                ""
+              );
+              if (matchScoutString.includes("_")) {
+                var inx = matchScoutString.indexOf("_");
+                matchScoutString = matchScoutString.slice(0, inx);
+              }
+              matchScoutNumber = parseInt(matchScoutString) + 1;
+            }
+            dThis.createMatchScout(matchScoutNumber);
+          });
       } else {
         alert("You must choose a scouting type!");
       }
@@ -78,6 +102,26 @@ export default {
 
       var totalPoints = 0;
       for (var item of this.pitTemplate) {
+        if (item["type"] != "TitleField") {
+          var points = this.getPointValue(item);
+          totalPoints += points;
+
+          doc[item["field"]] = item["default"];
+          doc[item["field"] + "_POINTS"] = points;
+        }
+      }
+      doc["TOTAL-POINTS"] = totalPoints;
+      this.localdb.put(doc);
+      this.callback(doc._id);
+    },
+    createMatchScout(number) {
+      //Add user slat "_USERNAME" to end
+      var doc = {
+        _id: this.matchScoutPrefix + this.teamNumber + "_" + number // + "_" + USERNAME
+      };
+
+      var totalPoints = 0;
+      for (var item of this.matchTemplate) {
         if (item["type"] != "TitleField") {
           var points = this.getPointValue(item);
           totalPoints += points;
@@ -122,6 +166,16 @@ export default {
       .catch(function() {
         //If can't pull template use local pre generated
         dThis.pitTemplate = PitTemplate.fields;
+      });
+
+    this.localdb
+      .get("TEMPLATE_MATCHSCOUT")
+      .then(function(doc) {
+        dThis.matchTemplate = doc.fields;
+      })
+      .catch(function() {
+        //If can't pull template use local pre generated
+        dThis.matchTemplate = MatchTemplate.fields;
       });
   }
 };
