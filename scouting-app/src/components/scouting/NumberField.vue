@@ -26,7 +26,14 @@ export default {
   methods: {
     changed: function() {
       this.hasChanged = true;
-      this.$emit("valuechange", parseInt(this.data.value));
+      this.$emit(
+        "valuechange",
+        parseInt(this.data.value),
+        Math.floor(this.getPoints())
+      );
+    },
+    getPoints() {
+      return this.data.points * this.data.value;
     }
   },
   created() {

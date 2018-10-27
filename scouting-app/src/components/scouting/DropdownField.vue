@@ -27,7 +27,12 @@ export default {
   methods: {
     changed: function() {
       this.hasChanged = true;
-      this.$emit("valuechange", this.data.value);
+      this.$emit("valuechange", this.data.value, this.getPoints());
+    },
+    getPoints() {
+      var inxOfOpt = this.data.options.indexOf(this.data.value);
+      //alert(inxOfOpt + ": " + this.data.points[inxOfOpt]);
+      return this.data.points[inxOfOpt];
     }
   },
   created() {

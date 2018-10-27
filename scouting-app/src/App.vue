@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <transition enter-active-class="content-fade-in" leave-active-class="content-fade-out" mode="out-in">
-      <component v-bind:is="ativeComponent" :localdb="localdb" :pages="pages" :teamNumber="teamNumber" :callback="callback" :id="id"></component>
+      <component v-bind:is="ativeComponent" :localdb="localdb" :remotedb="remotedb" :pages="pages" :teamNumber="teamNumber" :callback="callback" :id="id"></component>
     </transition>
     <ConnectionError v-if="isConnectionError"></ConnectionError>
   </div>
@@ -33,7 +33,8 @@ export default {
       isConnectionError: false,
       teamNumber: 4931,
       localdb: new PouchDB("localdb"),
-      remotedb: new PouchDB("REMOTE.DB:URL"),
+      remotedb: new PouchDB("localhost:5984/scoutingData"),
+      sync: Object,
       callback: Function,
       id: String,
       pages: {}
@@ -70,14 +71,27 @@ export default {
     this.pages.toMenuTeamCommentModify = this.toMenuTeamCommentModify;
 
     PouchDB.plugin(Authentication);
-    this.remotedb
-      .getSession()
-      .then(function(respone) {
-        console.log(respone);
-      })
-      .catch(function(err) {
-        if (err.name == "unknown") console.log("You are not logged in!");
-      });
+    // this.remotedb
+    //   .getSession()
+    //   .then(function(respone) {
+    //     console.log(respone);
+    //   })
+    //   .catch(function(err) {
+    //     if (err.name == "unknown") console.log("You are not logged in!");
+    //   });
+
+    // this.remotedb.info().then(function(info) {
+    //   console.log(info);
+    // });
+
+    // var sync = this.localdb
+    //   .sync(this.remotedb, {
+    //         live: true,
+    //         retry: true
+    //   })
+    //   .on("error", function(err) {
+    //     console.log(err);
+    //   });
   }
 };
 </script>

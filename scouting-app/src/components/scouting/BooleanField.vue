@@ -33,7 +33,7 @@ export default {
   methods: {
     changed: function() {
       this.hasChanged = true;
-      this.$emit("valuechange", this.data.value);
+      this.$emit("valuechange", this.data.value, this.getPoints());
     },
     setTrue: function() {
       this.data.value = true;
@@ -42,6 +42,15 @@ export default {
     setFalse: function() {
       this.data.value = false;
       this.changed();
+    },
+    getPoints() {
+      if (this.data.points) {
+        var tPoints = this.data.points[0];
+        var fPoints = this.data.points[1];
+        return this.data.value ? tPoints : fPoints;
+      } else {
+        return 0;
+      }
     }
   },
   created() {

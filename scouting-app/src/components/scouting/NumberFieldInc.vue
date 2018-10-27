@@ -47,7 +47,10 @@ export default {
     },
     emitValue: function() {
       this.hasChanged = true;
-      this.$emit("valuechange", this.data.value);
+      this.$emit("valuechange", this.data.value, Math.floor(this.getPoints()));
+    },
+    getPoints() {
+      return this.data.points * this.data.value;
     }
   },
   created() {

@@ -1,8 +1,8 @@
 <template>
 <div>
-  <component v-for="scField in pitTemplate" :key="id+(scField.field || scField.title)" :is="scField.type" :data="scField" @valuechange="valueChange(scField.field, $event)"></component>
+  <component v-for="scField in template" :key="id+(scField.field || scField.title)" :is="scField.type" :data="scField" @valuechange="valueChange(scField.field, ...arguments)"></component>
 
-  <div @click="putScoutData()" class="location-centered-small background-box background-box-hover content-centered">
+  <div @click="updateAndPutData()" class="location-centered-small background-box background-box-hover content-centered">
     <h3>Save</h3>
   </div>
   <div class="line"></div>
@@ -33,23 +33,26 @@ export default {
   },
   data: function() {
     return {
-      pitTemplate: Array,
-      scoutFields: Object,
+      template: Array,
+      scoutFields: {},
+      scoutPoints: {},
       modifiedFields: {}
     };
   },
   methods: {
-    valueChange(field, value) {
+    valueChange(field, value, points) {
       this.$set(this.scoutFields, field, value);
+
+      this.$set(this.scoutPoints, field, points);
 
       if (this.modifiedFields[field] == false)
         this.modifiedFields[field] = true;
     },
-    getScoutData() {
+    getInitialScoutData() {
       var dThis = this;
       this.localdb.get(this.id).then(function(doc) {
-        for (var fieldInx in dThis.pitTemplate) {
-          var field = dThis.pitTemplate[fieldInx];
+        for (var fieldInx in dThis.template) {
+          var field = dThis.template[fieldInx];
           if (field["field"] != undefined) {
             var fieldData;
             var fieldName = field["field"];
@@ -57,12 +60,55 @@ export default {
             if (doc[fieldName] != undefined) fieldData = doc[fieldName];
             else fieldData = field["default"];
 
-            dThis.$set(dThis.pitTemplate[fieldInx], "value", fieldData);
+            dThis.$set(dThis.template[fieldInx], "value", fieldData);
             dThis.$set(dThis.scoutFields, fieldName, fieldData);
+            dThis.$set(
+              dThis.scoutPoints,
+              fieldName,
+              doc[fieldName + "_POINTS"]
+            );
             dThis.modifiedFields[fieldName] = false;
           }
         }
       });
+    },
+    updateScoutData() {
+      var dThis = this;
+      this.localdb.get(this.id).then(function(doc) {
+        dThis.updateUI(doc);
+      });
+    },
+    updateAndPutData() {
+      var dThis = this;
+      this.localdb
+        .get(this.id)
+        .then(function(doc) {
+          dThis.updateUI(doc);
+          return doc;
+        })
+        .then(function(doc) {
+          dThis.putDoc(doc);
+        });
+    },
+    updateUI(doc) {
+      for (var fieldInx in this.template) {
+        var field = this.template[fieldInx];
+
+        var fieldName = field["field"];
+        if (
+          fieldName != undefined &&
+          this.modifiedFields[fieldName] === false
+        ) {
+          var fieldData;
+
+          if (doc[fieldName] != undefined) fieldData = doc[fieldName];
+          else fieldData = field["default"];
+
+          this.$set(this.template[fieldInx], "value", fieldData);
+          this.$set(this.scoutFields, fieldName, fieldData);
+          this.$set(this.scoutPoints, fieldName, doc[fieldName + "_POINTS"]);
+        }
+      }
     },
     putScoutData() {
       var dThis = this;
@@ -70,10 +116,32 @@ export default {
         for (var i in dThis.modifiedFields) {
           if (dThis.modifiedFields[i] === true) {
             doc[i] = dThis.scoutFields[i];
+            doc[i + "_POINTS"] = dThis.scoutPoints[i];
           }
         }
+        doc["TOTAL-POINTS"] = dThis.getAllFieldPoints();
         dThis.localdb.put(doc);
       });
+    },
+    putDoc(doc) {
+      for (var i in this.modifiedFields) {
+        if (this.modifiedFields[i] === true) {
+          doc[i] = this.scoutFields[i];
+          doc[i + "_POINTS"] = this.scoutPoints[i];
+        }
+      }
+      doc["TOTAL-POINTS"] = this.getAllFieldPoints();
+      this.localdb.put(doc);
+    },
+    setFieldPoints(field, points) {
+      this.$set(this.scoutPoints, field, points);
+    },
+    getAllFieldPoints() {
+      var totalPoints = 0;
+      for (var field in this.scoutPoints) {
+        totalPoints += this.scoutPoints[field];
+      }
+      return totalPoints;
     }
   },
   created() {
@@ -81,13 +149,14 @@ export default {
     this.localdb
       .get("TEMPLATE_PITSCOUT")
       .then(function(doc) {
-        dThis.pitTemplate = doc.fields;
-        dThis.getScoutData();
+        dThis.template = doc.fields;
       })
       .catch(function() {
         //If can't pull template use local pre generated
-        dThis.pitTemplate = PitTemplate.fields;
-        dThis.getScoutData();
+        dThis.template = PitTemplate.fields;
+      })
+      .then(function() {
+        dThis.getInitialScoutData();
       });
   }
 };

@@ -66,7 +66,8 @@ export default {
   props: {
     pages: Object,
     teamNumber: Number,
-    localdb: Object
+    localdb: Object,
+    remotedb: Object
   },
   data: function() {
     return {

@@ -76,13 +76,38 @@ export default {
         _id: this.pitScoutPrefix + this.teamNumber + "_" + number // + "_" + USERNAME
       };
 
+      var totalPoints = 0;
       for (var item of this.pitTemplate) {
         if (item["type"] != "TitleField") {
+          var points = this.getPointValue(item);
+          totalPoints += points;
+
           doc[item["field"]] = item["default"];
+          doc[item["field"] + "_POINTS"] = points;
         }
       }
+      doc["TOTAL-POINTS"] = totalPoints;
       this.localdb.put(doc);
       this.callback(doc._id);
+    },
+    getPointValue(doc) {
+      var points = 0;
+      switch (doc["type"]) {
+        case "BooleanField":
+          points = doc["default"] ? doc["points"][0] : doc["points"][1];
+          break;
+
+        case "DropdownField":
+          var inxOfOpt = doc["options"].indexOf(doc["default"]);
+          points = doc["points"][inxOfOpt];
+          break;
+
+        case "NumberFieldInc":
+        case "NumberField":
+          points = Math.floor(doc["default"] * doc["points"]);
+          break;
+      }
+      return points;
     }
   },
   created() {
