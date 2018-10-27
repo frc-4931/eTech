@@ -2,7 +2,7 @@
 <div>
   <component v-for="scField in template" :key="id+(scField.field || scField.title)" :is="scField.type" :data="scField" @valuechange="valueChange(scField.field, ...arguments)"></component>
 
-  <div @click="updateAndPutData()" class="location-centered-small background-box background-box-hover content-centered">
+  <div @click="save()" class="location-centered-small background-box background-box-hover content-centered">
     <h3>Save</h3>
   </div>
   <div class="line"></div>
@@ -31,7 +31,8 @@ export default {
   props: {
     localdb: Object,
     id: String,
-    isMatchScout: Boolean
+    isMatchScout: Boolean,
+    callback: Function
   },
   data: function() {
     return {
@@ -126,6 +127,7 @@ export default {
       });
     },
     putDoc(doc) {
+      var dThis = this;
       for (var i in this.modifiedFields) {
         if (this.modifiedFields[i] === true) {
           doc[i] = this.scoutFields[i];
@@ -133,7 +135,9 @@ export default {
         }
       }
       doc["TOTAL-POINTS"] = this.getAllFieldPoints();
-      this.localdb.put(doc);
+      this.localdb.put(doc).then(function() {
+        dThis.callback();
+      });
     },
     setFieldPoints(field, points) {
       this.$set(this.scoutPoints, field, points);
@@ -144,6 +148,9 @@ export default {
         totalPoints += this.scoutPoints[field];
       }
       return totalPoints;
+    },
+    save() {
+      this.updateAndPutData();
     }
   },
   created() {

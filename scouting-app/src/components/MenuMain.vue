@@ -36,7 +36,7 @@
             
 
             <div id="leaderboard-container">
-                <LeaderboardTeam v-for="(teamData, teamkey) in teams" v-bind:key="teamkey" :teamdata="teamData" :pages="pages"></LeaderboardTeam>
+                <LeaderboardTeam v-for="(teamData) in teams" v-bind:key="teamData['_id']" :teamdata="teamData" :pages="pages"></LeaderboardTeam>
             </div>
         </div>
 
@@ -58,6 +58,7 @@
 
 <script>
 import LeaderboardTeam from "./LeaderboardTeam.vue";
+import orderBy from "lodash.orderby";
 
 export default {
   name: "MenuMain",
@@ -70,7 +71,7 @@ export default {
   },
   data: function() {
     return {
-      teams: {}
+      teams: []
     };
   },
   methods: {},
@@ -78,8 +79,7 @@ export default {
     var dThis = this;
     var addToBoard = function(team_doc) {
       var teamID = team_doc["doc"]["_id"];
-      if (teamID !== undefined)
-        dThis.$set(dThis.teams, teamID, team_doc["doc"]);
+      if (teamID !== undefined) dThis.teams.push(team_doc["doc"]);
     };
 
     this.localdb
@@ -92,6 +92,18 @@ export default {
         for (var docID in result["rows"]) {
           addToBoard(result["rows"][docID]);
         }
+        dThis.teams = orderBy(
+          dThis.teams,
+          [
+            function(team) {
+              return team.objectivePoints + team.commentPoints;
+            },
+            function(team) {
+              return team.number;
+            }
+          ],
+          ["desc", "desc"]
+        );
       });
   }
 };

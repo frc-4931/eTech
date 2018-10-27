@@ -27,8 +27,8 @@
       <!-- Insert Scouting Fields Here -->     
       <transition enter-active-class="content-fade-in" leave-active-class="content-fade-out" mode="out-in">      
         <NewScout v-if="scoutingSelect == 'create' " :localdb="localdb" :teamNumber="teamNumber" :callback="teamCreated"></NewScout> 
-        <ScoutMenu :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('PITSCOUT_')" :isMatchScout="false" :localdb="localdb" :id="scoutingSelect"></ScoutMenu>
-        <ScoutMenu :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('MATCHSCOUT_')" :isMatchScout="true" :localdb="localdb" :id="scoutingSelect"></ScoutMenu>
+        <ScoutMenu :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('PITSCOUT_')" :isMatchScout="false" :localdb="localdb" :id="scoutingSelect" :callback="teamModified"></ScoutMenu>
+        <ScoutMenu :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('MATCHSCOUT_')" :isMatchScout="true" :localdb="localdb" :id="scoutingSelect" :callback="teamModified"></ScoutMenu>
       </transition>
     </div>
 
@@ -87,7 +87,8 @@ export default {
       matchScouts: [
         //List of match scouts in order
       ],
-      scoutingSelect: "none"
+      scoutingSelect: "none",
+      scoutingLoaded: 0
     };
   },
   methods: {
@@ -133,6 +134,7 @@ export default {
     loadScouting: function() {
       //TODO: THIS NEEDS TO BE DONE NEXT
       var dThis = this;
+      this.loadScouting = 0;
       this.localdb
         .allDocs({
           include_docs: false,
@@ -143,6 +145,15 @@ export default {
           dThis.pitScouts.splice(0, dThis.pitScouts.length);
           for (var doc of docs["rows"]) {
             dThis.pitScouts.push(doc.id);
+          }
+
+          return;
+        })
+        .then(function() {
+          dThis.loadScouting++;
+          if (dThis.loadScouting === 2) {
+            //If both scouting types have loaded
+            dThis.loadObjectivePoints();
           }
         });
 
@@ -157,11 +168,55 @@ export default {
           for (var doc of docs["rows"]) {
             dThis.matchScouts.push(doc.id);
           }
+
+          return;
+        })
+        .then(function() {
+          dThis.loadScouting++;
+          if (dThis.loadScouting === 2) {
+            //If both scouting types have loaded
+            dThis.loadObjectivePoints();
+          }
         });
     },
     teamCreated(id) {
       this.scoutingSelect = id || "none";
       this.loadScouting();
+    },
+    teamModified() {
+      this.loadObjectivePoints();
+    },
+    loadObjectivePoints() {
+      var dThis = this;
+      var allScoutingIds = this.matchScouts.concat(this.pitScouts);
+
+      this.localdb
+        .allDocs({
+          include_docs: true,
+          keys: allScoutingIds
+        })
+        .then(function(docs) {
+          if (docs["rows"].length === 0) return;
+
+          var totalObjectiveRating = 0;
+
+          for (var doc of docs["rows"]) {
+            totalObjectiveRating += doc["doc"]["TOTAL-POINTS"] || 0; //Maybe make a function to return total objective points. If sperate function make a file that has a function (doc) -> {for (i in field) put(doc.field_points = calc_points); return rating}.
+          }
+
+          var avgerageObjectiveRating =
+            totalObjectiveRating / docs["rows"].length;
+          avgerageObjectiveRating = Math.floor(avgerageObjectiveRating);
+
+          dThis.$set(dThis.team, "objectivePoints", avgerageObjectiveRating);
+
+          dThis.localdb.get("TEAM_" + dThis.teamNumber).then(function(doc) {
+            if (doc.objectivePoints != avgerageObjectiveRating) {
+              doc.objectivePoints = avgerageObjectiveRating;
+              dThis.localdb.put(doc);
+            }
+          });
+        });
     }
   },
   created: function() {
