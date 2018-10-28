@@ -7,11 +7,11 @@ TEMPLATE_MATCHSCOUT
 
 types:
 
-"DropdownField"
-"BooleanField"
-"NumberField"
-"NumberFieldInc"
-"TitleField"
+"DropdownField" - type, title, field, options, default, points
+"BooleanField" - type, title, field, default, pointsTrue, pointsFalse
+"NumberField" - type, title, field, default, points
+"NumberFieldInc" - type, title, field, default, points, min, max
+"TitleField" - type, title, field, default, points, min, max
 
 {
 	fields: [
@@ -40,7 +40,9 @@ types:
 			title: "Blocks In Switch:",
 			field: "auto_switch",
 			default: 0,
-			points: 2
+			points: 2,
+			min: 0
+			max: 10
 		},
 		{
 			type: "NumberFieldInc",

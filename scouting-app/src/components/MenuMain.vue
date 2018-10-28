@@ -43,9 +43,10 @@
         <div class="location-right-small">
             <div class="background-box">
                 <h2 class="content-centered">Tools</h2>
-                <a id="tools-add-team" v-on:click="pages.toMenuAddTeam()">Add team</a>
+                <a @click="pages.toMenuAddTeam()">Add team</a>
                 <p>Remove team</p>
                 <p>Edit member permissions</p>
+                <a @click="localdb.destroy()">Destroy All Data</a>
             </div>
 
             <div class="background-box">
@@ -74,37 +75,40 @@ export default {
       teams: []
     };
   },
-  methods: {},
-  created: function() {
-    var dThis = this;
-    var addToBoard = function(team_doc) {
+  methods: {
+    addToBoard(team_doc) {
       var teamID = team_doc["doc"]["_id"];
-      if (teamID !== undefined) dThis.teams.push(team_doc["doc"]);
-    };
-
-    this.localdb
-      .allDocs({
-        include_docs: true,
-        startkey: "TEAM_0",
-        endkey: "TEAM_\ufff0"
-      })
-      .then(function(result) {
-        for (var docID in result["rows"]) {
-          addToBoard(result["rows"][docID]);
-        }
-        dThis.teams = orderBy(
-          dThis.teams,
-          [
-            function(team) {
-              return team.objectivePoints + team.commentPoints;
-            },
-            function(team) {
-              return team.number;
-            }
-          ],
-          ["desc", "desc"]
-        );
-      });
+      if (teamID !== undefined) this.teams.push(team_doc["doc"]);
+    },
+    loadTeams() {
+      var dThis = this;
+      this.localdb
+        .allDocs({
+          include_docs: true,
+          startkey: "TEAM_0",
+          endkey: "TEAM_\ufff0"
+        })
+        .then(function(result) {
+          for (var docID in result["rows"]) {
+            dThis.addToBoard(result["rows"][docID]);
+          }
+          dThis.teams = orderBy(
+            dThis.teams,
+            [
+              function(team) {
+                return team.objectivePoints + team.commentPoints;
+              },
+              function(team) {
+                return team.number;
+              }
+            ],
+            ["desc", "desc"]
+          );
+        });
+    }
+  },
+  created: function() {
+    this.loadTeams();
   }
 };
 </script>

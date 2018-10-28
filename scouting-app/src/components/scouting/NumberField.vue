@@ -5,7 +5,7 @@
   </div>
 
   <div class="background-box location-right">
-    <input v-model="data.value" @input="changed()" class="pit-scout-input" type="number" pattern="[0-9]*" max="9999" min="-9999" placeholder="Value">
+    <input v-model="data.value" @input="changed()" class="pit-scout-input" type="number" pattern="[0-9]*" :max="max" :min="min" placeholder="Value">
   </div>
 </div>
 </template>
@@ -20,17 +20,18 @@ export default {
   data: function() {
     return {
       curValue: 0,
-      hasChanged: false
+      hasChanged: false,
+      max: 9999,
+      min: -9999
     };
   },
   methods: {
     changed: function() {
       this.hasChanged = true;
-      this.$emit(
-        "valuechange",
-        parseInt(this.data.value),
-        Math.floor(this.getPoints())
-      );
+      this.$emit("valuechange", this.getValue(), Math.floor(this.getPoints()));
+    },
+    getValue() {
+      return parseInt(this.data.value);
     },
     getPoints() {
       return this.data.points * this.data.value;
@@ -38,6 +39,12 @@ export default {
   },
   created() {
     this.curValue = this.data.value;
+    if (Number.isInteger(this.data.max)) {
+      this.max = this.data.max;
+    }
+    if (Number.isInteger(this.data.min)) {
+      this.min = this.data.min;
+    }
   }
 };
 </script>

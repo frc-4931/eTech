@@ -17,10 +17,10 @@ export default {
         "Shopping Cart"
       ],
       "points": [
-        0,
-        0,
         2,
-        0,
+        3,
+        5,
+        2,
         0
       ],
       "default": "Tank"
@@ -44,14 +44,16 @@ export default {
       "title": "Blocks In Switch:",
       "field": "auto_switch",
       "default": 0,
-      "points": 3
+      "points": 3,
+      "min": 0
     },
     {
       "type": "NumberField",
       "title": "Blocks In Scale:",
       "field": "auto_scale",
-      "default": 5,
-      "points": 5
+      "default": 0,
+      "points": 5,
+      "min": 0
     },
     {
       "type": "BooleanField",

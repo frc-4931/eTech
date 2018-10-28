@@ -17,14 +17,16 @@ export default {
       "title": "Blocks (Allience Switch):",
       "field": "auto_alli_switch",
       "default": 0,
-      "points": 2
+      "points": 2,
+      "min": 0
     },
     {
       "type": "NumberFieldInc",
       "title": "Blocks (Allience Scale):",
       "field": "auto_alli_scale",
       "default": 0,
-      "points": 3
+      "points": 3,
+      "min": 0
     },
     {
       "type": "TitleField",
@@ -35,21 +37,24 @@ export default {
       "title": "Blocks (Allience Switch):",
       "field": "teleop_alli_switch",
       "default": 0,
-      "points": 1
+      "points": 1,
+      "min": 0
     },
     {
       "type": "NumberFieldInc",
       "title": "Blocks (Allience Scale):",
       "field": "teleop_alli_scale",
       "default": 0,
-      "points": 1
+      "points": 1,
+      "min": 0
     },
     {
       "type": "NumberFieldInc",
       "title": "Blocks (Opponent Switch):",
       "field": "teleop_opp_switch",
       "default": 0,
-      "points": 1
+      "points": 1,
+      "min": 0
     },
     {
       "type": "TitleField",
