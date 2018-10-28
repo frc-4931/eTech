@@ -80,15 +80,19 @@ export default {
   methods: {
     submitComment: function() {
       var dThis = this;
-      this.localdb.get(this.docId).then(function(doc) {
-        doc.title = dThis.title;
-        doc.comment = dThis.comment;
-        doc.rating = parseInt(dThis.rating);
+      if (this.title != "" && this.comment != "") {
+        this.localdb.get(this.docId).then(function(doc) {
+          doc.title = dThis.title;
+          doc.comment = dThis.comment;
+          doc.rating = parseInt(dThis.rating);
 
-        dThis.localdb.put(doc);
-      });
-
-      this.callback();
+          dThis.localdb.put(doc).then(function() {
+            dThis.callback();
+          });
+        });
+      } else {
+        this.error = true;
+      }
     },
     deleteComment: function() {
       var dThis = this;
@@ -97,9 +101,10 @@ export default {
       );
       if (should_delete) {
         this.localdb.get(this.docId).then(function(doc) {
-          dThis.localdb.remove(doc);
+          dThis.localdb.remove(doc).then(function() {
+            dThis.callback();
+          });
         });
-        this.callback();
       }
     }
   },

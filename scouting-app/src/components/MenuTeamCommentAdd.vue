@@ -60,6 +60,7 @@ export default {
   props: {
     callback: Function,
     localdb: Object,
+    username: String,
     teamNumber: Number
   },
   data: function() {
@@ -67,22 +68,29 @@ export default {
       title: "",
       comment: "",
       rating: "Invalid",
-      name: String,
       commentNumber: 0,
       error: false
     };
   },
   methods: {
     submitComment: function() {
+      var dThis = this;
       if (this.title != "" && this.comment != "" && this.rating != "Invalid") {
         var comment = {
           comment: this.comment,
           rating: parseInt(this.rating),
           title: this.title,
-          _id: "COMMENT_" + this.teamNumber + "_" + this.commentNumber
+          _id:
+            "COMMENT_" +
+            this.teamNumber +
+            "_" +
+            this.commentNumber +
+            "_" +
+            this.username
         };
-        this.localdb.put(comment);
-        this.callback();
+        this.localdb.put(comment).then(function() {
+          dThis.callback();
+        });
       } else {
         this.error = true;
       }
@@ -90,9 +98,6 @@ export default {
   },
   created() {
     var dThis = this;
-    this.localdb.get("TEAM_" + dThis.teamNumber).then(function(doc) {
-      dThis.name = doc.name;
-    });
 
     this.localdb
       .allDocs({

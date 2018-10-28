@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <transition enter-active-class="content-fade-in" leave-active-class="content-fade-out" mode="out-in">
-      <component v-bind:is="ativeComponent" :localdb="localdb" :remotedb="remotedb" :pages="pages" :teamNumber="teamNumber"></component>
+      <component v-bind:is="ativeComponent" :localdb="localdb" :remotedb="remotedb" :username="username" :pages="pages" :teamNumber="teamNumber"></component>
     </transition>
     <ConnectionError v-if="isConnectionError"></ConnectionError>
   </div>
@@ -31,6 +31,7 @@ export default {
       localdb: new PouchDB("localdb"),
       remotedb: new PouchDB("localhost:5984/scoutingData"),
       sync: Object,
+      username: "user",
       pages: {}
     };
   },

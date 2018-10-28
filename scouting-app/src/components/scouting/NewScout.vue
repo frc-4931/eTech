@@ -29,6 +29,7 @@ export default {
   props: {
     teamNumber: Number,
     localdb: Object,
+    username: String,
     callback: Function
   },
   data: function() {
@@ -95,9 +96,15 @@ export default {
       }
     },
     createPitScout(number) {
-      //Add user slat "_USERNAME" to end
+      var dThis = this;
       var doc = {
-        _id: this.pitScoutPrefix + this.teamNumber + "_" + number // + "_" + USERNAME
+        _id:
+          this.pitScoutPrefix +
+          this.teamNumber +
+          "_" +
+          number +
+          "_" +
+          this.username
       };
 
       var totalPoints = 0;
@@ -116,10 +123,15 @@ export default {
       });
     },
     createMatchScout(number) {
-      //Add user slat "_USERNAME" to end
       var dThis = this;
       var doc = {
-        _id: this.matchScoutPrefix + this.teamNumber + "_" + number // + "_" + USERNAME
+        _id:
+          this.matchScoutPrefix +
+          this.teamNumber +
+          "_" +
+          number +
+          "_" +
+          this.username
       };
 
       var totalPoints = 0;
@@ -137,21 +149,22 @@ export default {
         dThis.callback(doc._id);
       });
     },
-    getPointValue(doc) {
+    getPointValue(field) {
+      //Calculates the default point values for a field. Field must follow template pattern.
       var points = 0;
-      switch (doc["type"]) {
+      switch (field["type"]) {
         case "BooleanField":
-          points = doc["default"] ? doc["points"][0] : doc["points"][1];
+          points = field["default"] ? field["points"][0] : field["points"][1];
           break;
 
         case "DropdownField":
-          var inxOfOpt = doc["options"].indexOf(doc["default"]);
-          points = doc["points"][inxOfOpt];
+          var inxOfOpt = field["options"].indexOf(field["default"]);
+          points = field["points"][inxOfOpt];
           break;
 
         case "NumberFieldInc":
         case "NumberField":
-          points = Math.floor(doc["default"] * doc["points"]);
+          points = Math.floor(field["default"] * field["points"]);
           break;
       }
       return points;
@@ -159,8 +172,6 @@ export default {
   },
   created() {
     var dThis = this;
-    //FINSIH ME. Loads all scouting files and puts ID's into array.
-    //TODO: Add match scout loading
     this.localdb
       .get("TEMPLATE_PITSCOUT")
       .then(function(doc) {

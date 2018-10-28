@@ -26,7 +26,7 @@
       </div>
       <!-- Insert Scouting Fields Here -->     
       <transition enter-active-class="content-long-fade-in" leave-active-class="content-long-fade-out" mode="out-in">      
-        <NewScout v-if="scoutingSelect == 'create' " :localdb="localdb" :teamNumber="teamNumber" :callback="teamCreated"></NewScout> 
+        <NewScout v-if="scoutingSelect == 'create' " :localdb="localdb" :username="username" :teamNumber="teamNumber" :callback="teamCreated"></NewScout> 
         <ScoutMenu :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('PITSCOUT_')" :isMatchScout="false" :localdb="localdb" :docId="scoutingSelect" :callback="teamModified"></ScoutMenu>
         <ScoutMenu :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('MATCHSCOUT_')" :isMatchScout="true" :localdb="localdb" :docId="scoutingSelect" :callback="teamModified"></ScoutMenu>
       </transition>
@@ -46,7 +46,7 @@
       <div v-if="commentAddMenu == false" v-on:click="openCommentAddMenu()" class="background-box background-box-hover">
         <h3 class="content-centered">Add comment</h3>
       </div>
-      <MenuTeamCommentAdd id="comment-add-menu" v-else :localdb="localdb" :teamNumber="teamNumber" :callback="commentCreated"></MenuTeamCommentAdd>
+      <MenuTeamCommentAdd id="comment-add-menu" v-else :localdb="localdb" :username="username" :teamNumber="teamNumber" :callback="commentCreated"></MenuTeamCommentAdd>
     </div>
   </div>
 </div>
@@ -73,7 +73,8 @@ export default {
     pages: Object,
     teamNumber: Number,
     localdb: Object,
-    remotedb: Object
+    remotedb: Object,
+    username: String
   },
   data: function() {
     return {
@@ -109,6 +110,7 @@ export default {
       //Then check if sum of comment values == team.commentPoints
       //If not then db.get file modify commentPoints then db.put
       var dThis = this;
+      this.comments = {};
       this.localdb
         .allDocs({
           include_docs: true,
