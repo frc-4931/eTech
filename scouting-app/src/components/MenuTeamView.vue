@@ -17,7 +17,7 @@
       </div>
 
       <div id="scouting-select" class="background-box">
-        <select v-model="scoutingSelect">
+        <select v-model="scoutingSelect" @change="openScoutingMenu()">
           <option value="none">Select A Scouting Option</option>
           <option v-for="(scout, idx) in pitScouts" :key="scout" :value="scout">Pit Scouting - {{ idx + 1 }}</option>
           <option v-for="(scout, idx) in matchScouts" :key="scout" :value="scout">Match Scouting - Match {{ idx + 1 }}</option>
