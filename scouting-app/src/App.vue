@@ -14,6 +14,7 @@ import ConnectionError from "./components/ConnectionError.vue";
 import MenuTeamView from "./components/MenuTeamView.vue";
 import PouchDB from "pouchdb";
 import Authentication from "pouchdb-authentication";
+import MenuAdmin from "./components/MenuAdmin.vue";
 
 export default {
   name: "app",
@@ -21,7 +22,8 @@ export default {
     MenuMain,
     MenuTeamAdd,
     ConnectionError,
-    MenuTeamView
+    MenuTeamView,
+    MenuAdmin
   },
   data: function() {
     return {
@@ -45,6 +47,9 @@ export default {
     toMenuTeamView: function(team) {
       this.teamNumber = team;
       this.ativeComponent = "MenuTeamView";
+    },
+    toMenuAdmin: function() {
+      this.ativeComponent = "MenuAdmin";
     }
   },
   created: function() {
@@ -52,6 +57,7 @@ export default {
     this.pages.toMenuMain = this.toMenuMain;
     this.pages.toMenuAddTeam = this.toMenuAddTeam;
     this.pages.toMenuTeamView = this.toMenuTeamView;
+    this.pages.toMenuAdmin = this.toMenuAdmin;
     this.pages.toMenuTeamCommentAdd = this.toMenuTeamCommentAdd;
     this.pages.toMenuTeamCommentModify = this.toMenuTeamCommentModify;
 
