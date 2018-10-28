@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <transition enter-active-class="content-fade-in" leave-active-class="content-fade-out" mode="out-in">
-      <component v-bind:is="ativeComponent" :localdb="localdb" :remotedb="remotedb" :pages="pages" :teamNumber="teamNumber" :callback="callback" :id="id"></component>
+      <component v-bind:is="ativeComponent" :localdb="localdb" :remotedb="remotedb" :pages="pages" :teamNumber="teamNumber"></component>
     </transition>
     <ConnectionError v-if="isConnectionError"></ConnectionError>
   </div>
@@ -10,8 +10,6 @@
 <script>
 import MenuMain from "./components/MenuMain.vue";
 import MenuTeamAdd from "./components/MenuTeamAdd.vue";
-import MenuTeamCommentAdd from "./components/MenuTeamCommentAdd.vue";
-import MenuTeamCommentModify from "./components/MenuTeamCommentModify.vue";
 import ConnectionError from "./components/ConnectionError.vue";
 import MenuTeamView from "./components/MenuTeamView.vue";
 import PouchDB from "pouchdb";
@@ -23,9 +21,7 @@ export default {
     MenuMain,
     MenuTeamAdd,
     ConnectionError,
-    MenuTeamView,
-    MenuTeamCommentAdd,
-    MenuTeamCommentModify
+    MenuTeamView
   },
   data: function() {
     return {
@@ -35,8 +31,6 @@ export default {
       localdb: new PouchDB("localdb"),
       remotedb: new PouchDB("localhost:5984/scoutingData"),
       sync: Object,
-      callback: Function,
-      id: String,
       pages: {}
     };
   },
@@ -50,16 +44,6 @@ export default {
     toMenuTeamView: function(team) {
       this.teamNumber = team;
       this.ativeComponent = "MenuTeamView";
-    },
-    toMenuTeamCommentAdd: function(team, callback) {
-      this.teamNumber = team;
-      this.callback = callback;
-      this.ativeComponent = "MenuTeamCommentAdd";
-    },
-    toMenuTeamCommentModify: function(id, callback) {
-      this.id = id;
-      this.callback = callback;
-      this.ativeComponent = "MenuTeamCommentModify";
     }
   },
   created: function() {
@@ -109,6 +93,7 @@ body {
   font-family: "Open Sans", sans-serif;
   background-color: #455a64;
   color: #eceff1;
+  overflow: auto;
 }
 .content-centered {
   text-align: center;

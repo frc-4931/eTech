@@ -25,10 +25,10 @@
         </select>
       </div>
       <!-- Insert Scouting Fields Here -->     
-      <transition enter-active-class="content-fade-in" leave-active-class="content-fade-out" mode="out-in">      
+      <transition enter-active-class="content-long-fade-in" leave-active-class="content-long-fade-out" mode="out-in">      
         <NewScout v-if="scoutingSelect == 'create' " :localdb="localdb" :teamNumber="teamNumber" :callback="teamCreated"></NewScout> 
-        <ScoutMenu :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('PITSCOUT_')" :isMatchScout="false" :localdb="localdb" :id="scoutingSelect" :callback="teamModified"></ScoutMenu>
-        <ScoutMenu :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('MATCHSCOUT_')" :isMatchScout="true" :localdb="localdb" :id="scoutingSelect" :callback="teamModified"></ScoutMenu>
+        <ScoutMenu :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('PITSCOUT_')" :isMatchScout="false" :localdb="localdb" :docId="scoutingSelect" :callback="teamModified"></ScoutMenu>
+        <ScoutMenu :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('MATCHSCOUT_')" :isMatchScout="true" :localdb="localdb" :docId="scoutingSelect" :callback="teamModified"></ScoutMenu>
       </transition>
     </div>
 
@@ -39,11 +39,14 @@
         <h3 class="content-centered">Total Comment Points: <span> {{team.commentPoints}} </span></h3>
       </div>
 
-      <CommentField v-for="(comment, id) in comments" :modify="function() {pages.toMenuTeamCommentModify(id, closeCommentMenu)}" v-bind:key="id" :rating="comment.rating" :comment="comment.comment" :title="comment.title"></CommentField>
+      <transition-group name="comment-menu">
+        <component v-for="(comment, id) in comments" :is="commentIs(id)" :modify="function() {openCommentModifyMenu(id)}" :key="id" :docId="id" :rating="comment.rating" :comment="comment.comment" :title="comment.title" :localdb="localdb" :callback="commentModified"></component>
+      </transition-group>
 
-      <div v-on:click="pages.toMenuTeamCommentAdd(teamNumber, closeCommentMenu)" class="background-box background-box-hover">
+      <div v-if="commentAddMenu == false" v-on:click="openCommentAddMenu()" class="background-box background-box-hover">
         <h3 class="content-centered">Add comment</h3>
       </div>
+      <MenuTeamCommentAdd id="comment-add-menu" v-else :localdb="localdb" :teamNumber="teamNumber" :callback="commentCreated"></MenuTeamCommentAdd>
     </div>
   </div>
 </div>
@@ -51,14 +54,17 @@
 
 <script>
 import MenuTeamCommentAdd from "./MenuTeamCommentAdd.vue";
+import MenuTeamCommentModify from "./MenuTeamCommentModify.vue";
 import CommentField from "./scouting/CommentField.vue";
 import ScoutMenu from "./scouting/ScoutMenu.vue";
 import NewScout from "./scouting/NewScout.vue";
+import { scroller } from "vue-scrollto/src/scrollTo";
 
 export default {
   name: "MenuTeamView",
   components: {
     MenuTeamCommentAdd,
+    MenuTeamCommentModify,
     CommentField,
     ScoutMenu,
     NewScout
@@ -88,7 +94,10 @@ export default {
         //List of match scouts in order
       ],
       scoutingSelect: "none",
-      scoutingLoaded: 0
+      scoutingLoaded: 0,
+      commentAddMenu: false,
+      commentModifyMenu: "none",
+      scrollTo: scroller()
     };
   },
   methods: {
@@ -132,9 +141,8 @@ export default {
         });
     },
     loadScouting: function() {
-      //TODO: THIS NEEDS TO BE DONE NEXT
       var dThis = this;
-      this.loadScouting = 0;
+      this.scoutingLoaded = 0;
       this.localdb
         .allDocs({
           include_docs: false,
@@ -150,8 +158,8 @@ export default {
           return;
         })
         .then(function() {
-          dThis.loadScouting++;
-          if (dThis.loadScouting === 2) {
+          dThis.scoutingLoaded++;
+          if (dThis.scoutingLoaded === 2) {
             //If both scouting types have loaded
             dThis.loadObjectivePoints();
           }
@@ -172,12 +180,45 @@ export default {
           return;
         })
         .then(function() {
-          dThis.loadScouting++;
-          if (dThis.loadScouting === 2) {
+          dThis.scoutingLoaded++;
+          if (dThis.scoutingLoaded === 2) {
             //If both scouting types have loaded
             dThis.loadObjectivePoints();
           }
         });
+    },
+    openCommentAddMenu() {
+      var dThis = this;
+      this.commentAddMenu = true;
+      this.$nextTick().then(function() {
+        dThis.scrollTo("#comment-add-menu");
+      });
+    },
+    openCommentModifyMenu(id) {
+      var dThis = this;
+      this.commentModifyMenu = id;
+      this.$nextTick().then(function() {
+        dThis.scrollTo("#menu-team-comment-modify");
+      });
+    },
+    openScoutingMenu() {
+      var dThis = this;
+      this.$nextTick().then(function() {
+        dThis.scrollTo("#scouting-select");
+      });
+    },
+    commentCreated() {
+      this.commentAddMenu = false;
+      this.loadComments();
+    },
+    commentModified() {
+      this.commentModifyMenu = "none";
+      this.loadComments();
+    },
+    commentIs(id) {
+      return this.commentModifyMenu == id
+        ? "MenuTeamCommentModify"
+        : "CommentField";
     },
     teamCreated(id) {
       this.scoutingSelect = id || "none";
@@ -260,6 +301,20 @@ export default {
     margin-left: 25px;
     margin-right: 25px;
   }
+}
+.content-long-fade-in {
+  animation: fade-in 0.1s ease;
+}
+.content-long-fade-out {
+  animation: fade-out 0.1s ease;
+}
+.comment-menu-enter {
+  transition: 0.5s;
+  opacity: 0;
+}
+.comment-menu-leave-to {
+  transition: 0s;
+  opacity: 0;
 }
 </style>
 

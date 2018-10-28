@@ -1,6 +1,6 @@
 <template>
-<div>
-  <component v-for="scField in template" :key="id+(scField.field || scField.title)" :is="scField.type" :data="scField" @valuechange="valueChange(scField.field, ...arguments)"></component>
+<div id="scouting-menu">
+  <component v-for="scField in template" :key="docId+(scField.field || scField.title)" :is="scField.type" :data="scField" @valuechange="valueChange(scField.field, ...arguments)"></component>
 
   <div @click="save()" class="location-centered-small background-box background-box-hover content-centered">
     <h3>Save</h3>
@@ -30,7 +30,7 @@ export default {
   },
   props: {
     localdb: Object,
-    id: String,
+    docId: String,
     isMatchScout: Boolean,
     callback: Function
   },
@@ -53,7 +53,7 @@ export default {
     },
     getInitialScoutData() {
       var dThis = this;
-      this.localdb.get(this.id).then(function(doc) {
+      this.localdb.get(this.docId).then(function(doc) {
         for (var fieldInx in dThis.template) {
           var field = dThis.template[fieldInx];
           if (field["field"] != undefined) {
@@ -77,14 +77,14 @@ export default {
     },
     updateScoutData() {
       var dThis = this;
-      this.localdb.get(this.id).then(function(doc) {
+      this.localdb.get(this.docId).then(function(doc) {
         dThis.updateUI(doc);
       });
     },
     updateAndPutData() {
       var dThis = this;
       this.localdb
-        .get(this.id)
+        .get(this.docId)
         .then(function(doc) {
           dThis.updateUI(doc);
           return doc;
@@ -115,7 +115,7 @@ export default {
     },
     putScoutData() {
       var dThis = this;
-      this.localdb.get(this.id).then(function(doc) {
+      this.localdb.get(this.docId).then(function(doc) {
         for (var i in dThis.modifiedFields) {
           if (dThis.modifiedFields[i] === true) {
             doc[i] = dThis.scoutFields[i];

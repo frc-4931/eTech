@@ -111,11 +111,13 @@ export default {
         }
       }
       doc["TOTAL-POINTS"] = totalPoints;
-      this.localdb.put(doc);
-      this.callback(doc._id);
+      this.localdb.put(doc).then(function() {
+        dThis.callback(doc._id);
+      });
     },
     createMatchScout(number) {
       //Add user slat "_USERNAME" to end
+      var dThis = this;
       var doc = {
         _id: this.matchScoutPrefix + this.teamNumber + "_" + number // + "_" + USERNAME
       };
@@ -131,8 +133,9 @@ export default {
         }
       }
       doc["TOTAL-POINTS"] = totalPoints;
-      this.localdb.put(doc);
-      this.callback(doc._id);
+      this.localdb.put(doc).then(function() {
+        dThis.callback(doc._id);
+      });
     },
     getPointValue(doc) {
       var points = 0;
