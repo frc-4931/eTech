@@ -45,7 +45,7 @@
                 <h2 class="content-centered">Tools</h2>
                 <a @click="pages.toMenuAddTeam()">Add team</a>
                 <p>Remove team</p>
-                <p>Edit member permissions</p>
+                <a @click="pages.toMenuAdmin()">Admin Page</a><br>
                 <a @click="localdb.destroy()">Destroy All Data</a>
             </div>
 
