@@ -1,0 +1,57 @@
+TEAM_####
+COMMENT_####_# +_USERNAME
+PITSCOUT_####_# +_USERNAME
+MATCHSCOUT_####_# +_USERNAME
+TEMPLATE_PITSCOUT
+TEMPLATE_MATCHSCOUT
+
+types:
+
+"DropdownField" - type, title, field, options, default, points
+"BooleanField" - type, title, field, default, pointsTrue, pointsFalse
+"NumberField" - type, title, field, default, points
+"NumberFieldInc" - type, title, field, default, points, min, max
+"TitleField" - type, title, field, default, points, min, max
+
+{
+	fields: [
+		{
+			type: "TitleField",
+			title: "Autonomous"
+		},
+		{
+			type: "DropdownField",
+			title: "Drivetrain:",
+			field: "drivetrain",
+			options: ["Option 1", "Option 2"],
+			default: "",
+			points: [0, 5]
+		},
+		{
+			type: "BooleanField",
+			title: "Cross Center Line:",
+			field: "auto_centerline",
+			default: false,
+			pointsTrue: 5,
+			pointsFalse: 0
+		},
+		{
+			type: "NumberField",
+			title: "Blocks In Switch:",
+			field: "auto_switch",
+			default: 0,
+			points: 2,
+			min: 0
+			max: 10
+		},
+		{
+			type: "NumberFieldInc",
+			title: "Blocks In Switch:",
+			field: "teleop_switch",
+			default: 0,
+			points: 1,
+			min: 0,
+			max: 10
+		}
+	]
+}

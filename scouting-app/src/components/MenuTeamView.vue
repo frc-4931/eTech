@@ -1,95 +1,80 @@
 <template>
 <div id="menu-team-view">
-    <div class="grid">
-        <div v-on:click="pages.toMenuMain()" class="location-centered-small background-box background-box-hover content-centered">
-            <h3>Done</h3>
-        </div>
-
-        <div class="location-centered background-box">
-            <h2 class="content-centered"><span>{{ team.name }}</span> - <span>{{ team.number }}</span></h2>
-        </div>
-
-        <div class="location-left-padded">
-            <div class="background-box background-box-hover content-expand-toggle">
-                <h3 class="content-centered">Total Objective Points: <span>{{ team.objectivePoints }}</span></h3>
-            </div>
-
-            <form class="grid-perminant pit-scout-div">
-                <div class="background-box location-left">
-                    <p>Blocks scored etc?</p>
-                </div>
-
-
-                <div class="background-box location-right">
-                    <input class="pit-scout-input" type="number" pattern="[0-9]*" max="9999" min="-9999" placeholder="Value" name="changethisplz">
-                </div>
-            </form>
-
-            <form class="grid-perminant pit-scout-div">
-                <div class="background-box location-left">
-                    <p>Drivetrain?</p>
-                </div>
-
-
-                <div class="background-box location-right">
-                    <select class="pit-scout-input" required>
-                        <option value="invalid" selected disabled>Please Select</option>
-                        <option value="normal">Normal</option>
-                        <option value="weird">Weird</option>
-                        <option value="otherweird">Other Weird</option>
-                    </select>
-                </div>
-            </form>
-
-            <form class="grid-perminant pit-scout-div">
-                <div class="background-box location-left">
-                    <p>Are they good?</p>
-                </div>
-
-                <div class="location-right background-box grid-perminant">
-                    <label class="location-left">
-                        <input class="radio-button" type="radio" name="radio1">
-                        True
-                    </label>
-
-                    <label class="location-right">
-                        <input class="radio-button" type="radio" name="radio1">
-                        False
-                    </label>
-                </div>
-            </form>
-
-        </div>
-
-        <div class="location-right-padded">
-            <div class="background-box background-box-hover content-expand-toggle">
-                <h3 class="content-centered">Total Comment Points: <span> {{team.commentPoints}} </span></h3>
-            </div>
-
-            <CommentField v-for="(comment, id) in comments" v-bind:key="id" :rating="comment.rating" :comment="comment.comment" :title="comment.title"></CommentField>
-
-            <div v-on:click="pages.toMenuTeamCommentAdd(teamNumber, closeCommentMenu)" class="background-box background-box-hover">
-                <h3 class="content-centered">Add comment</h3>
-            </div>
-        </div>
+  <div class="grid">
+    <div v-on:click="pages.toMenuMain()" id="done-button" class="location-centered-small background-box background-box-hover content-centered">
+      <h3>Done</h3>
     </div>
+
+    <div id="team-title" class="location-centered background-box">
+        <h2 class="content-centered"><span>{{ team.name }}</span> - <span>{{ team.number }}</span></h2>
+    </div>
+
+    <div class="location-left-padded">
+      <!--<div class="line"></div>-->
+
+      <div class="background-box">
+        <h3 class="content-centered">Total Objective Points: <span>{{ team.objectivePoints }}</span></h3>
+      </div>
+
+      <div id="scouting-select" class="background-box">
+        <select v-model="scoutingSelect" @change="openScoutingMenu()">
+          <option value="none">Select A Scouting Option</option>
+          <option v-for="(scout, idx) in pitScouts" :key="scout" :value="scout">Pit Scouting - {{ idx + 1 }}</option>
+          <option v-for="(scout, idx) in matchScouts" :key="scout" :value="scout">Match Scouting - Match {{ idx + 1 }}</option>
+          <option value="create"> --- New Scout --- </option>
+        </select>
+      </div>
+      <!-- Insert Scouting Fields Here -->     
+      <transition enter-active-class="content-long-fade-in" leave-active-class="content-long-fade-out" mode="out-in">      
+        <NewScout v-if="scoutingSelect == 'create' " :localdb="localdb" :username="username" :teamNumber="teamNumber" :callback="teamCreated"></NewScout> 
+        <ScoutMenu :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('PITSCOUT_')" :isMatchScout="false" :localdb="localdb" :docId="scoutingSelect" :callback="teamModified"></ScoutMenu>
+        <ScoutMenu :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('MATCHSCOUT_')" :isMatchScout="true" :localdb="localdb" :docId="scoutingSelect" :callback="teamModified"></ScoutMenu>
+      </transition>
+    </div>
+
+    <div class="location-right-padded">
+      <!--<div class="line"></div>-->
+
+      <div class="background-box">
+        <h3 class="content-centered">Total Comment Points: <span> {{team.commentPoints}} </span></h3>
+      </div>
+
+      <transition-group name="comment-menu">
+        <component v-for="(comment, id) in comments" :is="commentIs(id)" :modify="function() {openCommentModifyMenu(id)}" :key="id" :docId="id" :rating="comment.rating" :comment="comment.comment" :title="comment.title" :localdb="localdb" :callback="commentModified"></component>
+      </transition-group>
+
+      <div v-if="commentAddMenu == false" v-on:click="openCommentAddMenu()" class="background-box background-box-hover">
+        <h3 class="content-centered">Add comment</h3>
+      </div>
+      <MenuTeamCommentAdd id="comment-add-menu" v-else :localdb="localdb" :username="username" :teamNumber="teamNumber" :callback="commentCreated"></MenuTeamCommentAdd>
+    </div>
+  </div>
 </div>
 </template>
 
 <script>
 import MenuTeamCommentAdd from "./MenuTeamCommentAdd.vue";
+import MenuTeamCommentModify from "./MenuTeamCommentModify.vue";
 import CommentField from "./scouting/CommentField.vue";
+import ScoutMenu from "./scouting/ScoutMenu.vue";
+import NewScout from "./scouting/NewScout.vue";
+import { scroller } from "vue-scrollto/src/scrollTo";
 
 export default {
   name: "MenuTeamView",
   components: {
     MenuTeamCommentAdd,
-    CommentField
+    MenuTeamCommentModify,
+    CommentField,
+    ScoutMenu,
+    NewScout
   },
   props: {
     pages: Object,
     teamNumber: Number,
-    localdb: Object
+    localdb: Object,
+    remotedb: Object,
+    username: String
   },
   data: function() {
     return {
@@ -101,8 +86,19 @@ export default {
       },
       openAddCommentMenu: false,
       comments: {
-        //Change to array of _id's and make CommentField load the comment itself.
-      }
+        //Change to array of _id's and make CommentField load the comment itself. Maybe?
+      },
+      pitScouts: [
+        //List of pit scouts in order
+      ],
+      matchScouts: [
+        //List of match scouts in order
+      ],
+      scoutingSelect: "none",
+      scoutingLoaded: 0,
+      commentAddMenu: false,
+      commentModifyMenu: "none",
+      scrollTo: scroller()
     };
   },
   methods: {
@@ -110,10 +106,11 @@ export default {
       this.pages.toMenuTeamView(this.teamNumber);
     },
     loadComments: function() {
-      //Load all comments from db then shove them into comments (make array)
+      //Load all comments from db then shove them into comments
       //Then check if sum of comment values == team.commentPoints
       //If not then db.get file modify commentPoints then db.put
       var dThis = this;
+      this.comments = {};
       this.localdb
         .allDocs({
           include_docs: true,
@@ -138,8 +135,129 @@ export default {
           dThis.$set(dThis.team, "commentPoints", totalCommentRating);
 
           dThis.localdb.get("TEAM_" + dThis.teamNumber).then(function(doc) {
-            doc.commentPoints = totalCommentRating;
-            dThis.localdb.put(doc);
+            if (doc.commentPoints != totalCommentRating) {
+              doc.commentPoints = totalCommentRating;
+              dThis.localdb.put(doc);
+            }
+          });
+        });
+    },
+    loadScouting: function() {
+      var dThis = this;
+      this.scoutingLoaded = 0;
+      this.localdb
+        .allDocs({
+          include_docs: false,
+          startkey: "PITSCOUT_" + dThis.teamNumber + "_0",
+          endkey: "PITSCOUT_" + dThis.teamNumber + "_\ufff0"
+        })
+        .then(function(docs) {
+          dThis.pitScouts.splice(0, dThis.pitScouts.length);
+          for (var doc of docs["rows"]) {
+            dThis.pitScouts.push(doc.id);
+          }
+
+          return;
+        })
+        .then(function() {
+          dThis.scoutingLoaded++;
+          if (dThis.scoutingLoaded === 2) {
+            //If both scouting types have loaded
+            dThis.loadObjectivePoints();
+          }
+        });
+
+      this.localdb
+        .allDocs({
+          include_docs: false,
+          startkey: "MATCHSCOUT_" + dThis.teamNumber + "_0",
+          endkey: "MATCHSCOUT_" + dThis.teamNumber + "_\ufff0"
+        })
+        .then(function(docs) {
+          dThis.matchScouts.splice(0, dThis.matchScouts.length);
+          for (var doc of docs["rows"]) {
+            dThis.matchScouts.push(doc.id);
+          }
+
+          return;
+        })
+        .then(function() {
+          dThis.scoutingLoaded++;
+          if (dThis.scoutingLoaded === 2) {
+            //If both scouting types have loaded
+            dThis.loadObjectivePoints();
+          }
+        });
+    },
+    openCommentAddMenu() {
+      var dThis = this;
+      this.commentAddMenu = true;
+      this.$nextTick().then(function() {
+        dThis.scrollTo("#comment-add-menu");
+      });
+    },
+    openCommentModifyMenu(id) {
+      var dThis = this;
+      this.commentModifyMenu = id;
+      this.$nextTick().then(function() {
+        dThis.scrollTo("#menu-team-comment-modify");
+      });
+    },
+    openScoutingMenu() {
+      var dThis = this;
+      this.$nextTick().then(function() {
+        dThis.scrollTo("#scouting-select");
+      });
+    },
+    commentCreated() {
+      this.commentAddMenu = false;
+      this.loadComments();
+    },
+    commentModified() {
+      this.commentModifyMenu = "none";
+      this.loadComments();
+    },
+    commentIs(id) {
+      return this.commentModifyMenu == id
+        ? "MenuTeamCommentModify"
+        : "CommentField";
+    },
+    teamCreated(id) {
+      this.scoutingSelect = id || "none";
+      this.loadScouting();
+    },
+    teamModified() {
+      this.loadObjectivePoints();
+    },
+    loadObjectivePoints() {
+      var dThis = this;
+      var allScoutingIds = this.matchScouts.concat(this.pitScouts);
+
+      this.localdb
+        .allDocs({
+          include_docs: true,
+          keys: allScoutingIds
+        })
+        .then(function(docs) {
+          if (docs["rows"].length === 0) return;
+
+          var totalObjectiveRating = 0;
+
+          for (var doc of docs["rows"]) {
+            totalObjectiveRating += doc["doc"]["TOTAL-POINTS"] || 0; //Maybe make a function to return total objective points. If sperate function make a file that has a function (doc) -> {for (i in field) put(doc.field_points = calc_points); return rating}.
+          }
+
+          var avgerageObjectiveRating =
+            totalObjectiveRating / docs["rows"].length;
+          avgerageObjectiveRating = Math.floor(avgerageObjectiveRating);
+
+          dThis.$set(dThis.team, "objectivePoints", avgerageObjectiveRating);
+
+          dThis.localdb.get("TEAM_" + dThis.teamNumber).then(function(doc) {
+            if (doc.objectivePoints != avgerageObjectiveRating) {
+              doc.objectivePoints = avgerageObjectiveRating;
+              dThis.localdb.put(doc);
+            }
           });
         });
     }
@@ -154,6 +272,7 @@ export default {
     });
 
     this.loadComments();
+    this.loadScouting();
   },
   computed: {
     totalPoints: function() {
@@ -174,31 +293,30 @@ export default {
   padding: 5px;
   margin: 10px;
 }
-.pit-scout-input {
-  padding: 0px;
+#scouting-select {
+  margin-bottom: 20px;
+  text-align-last: center;
+  font-size: 20px;
 }
-.pit-scout-div div {
-  margin-top: 0px;
+@media (max-width: 700px) {
+  #done-button {
+    margin-left: 25px;
+    margin-right: 25px;
+  }
 }
-.pit-scout-div:nth-child(1) div {
-  margin-top: 10px;
+.content-long-fade-in {
+  animation: fade-in 0.1s ease;
 }
-.radio-button {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  border-radius: 50%;
-  width: 16px;
-  height: 16px;
-  border: 2px solid #eceff1;
-  transition: 0.2s all ease-in-out;
-  outline: none;
-  margin-right: 5px;
-  position: relative;
-  top: 4px;
+.content-long-fade-out {
+  animation: fade-out 0.1s ease;
 }
-.radio-button:checked {
-  border: 6px solid #607d8b;
+.comment-menu-enter {
+  transition: 0.5s;
+  opacity: 0;
+}
+.comment-menu-leave-to {
+  transition: 0s;
+  opacity: 0;
 }
 </style>
 

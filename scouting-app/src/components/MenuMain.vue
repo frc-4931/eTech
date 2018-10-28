@@ -36,16 +36,17 @@
             
 
             <div id="leaderboard-container">
-                <LeaderboardTeam v-for="(teamData, teamkey) in teams" v-bind:key="teamkey" :teamdata="teamData" :pages="pages"></LeaderboardTeam>
+                <LeaderboardTeam v-for="(teamData) in teams" v-bind:key="teamData['_id']" :teamdata="teamData" :pages="pages"></LeaderboardTeam>
             </div>
         </div>
 
         <div class="location-right-small">
             <div class="background-box">
                 <h2 class="content-centered">Tools</h2>
-                <a id="tools-add-team" v-on:click="pages.toMenuAddTeam()">Add team</a>
+                <a @click="pages.toMenuAddTeam()">Add team</a>
                 <p>Remove team</p>
                 <p>Edit member permissions</p>
+                <a @click="localdb.destroy()">Destroy All Data</a>
             </div>
 
             <div class="background-box">
@@ -58,6 +59,7 @@
 
 <script>
 import LeaderboardTeam from "./LeaderboardTeam.vue";
+import orderBy from "lodash.orderby";
 
 export default {
   name: "MenuMain",
@@ -70,29 +72,43 @@ export default {
   },
   data: function() {
     return {
-      teams: {}
+      teams: []
     };
   },
-  methods: {},
-  created: function() {
-    var dThis = this;
-    var addToBoard = function(team_doc) {
+  methods: {
+    addToBoard(team_doc) {
       var teamID = team_doc["doc"]["_id"];
-      if (teamID !== undefined)
-        dThis.$set(dThis.teams, teamID, team_doc["doc"]);
-    };
-
-    this.localdb
-      .allDocs({
-        include_docs: true,
-        startkey: "TEAM_0",
-        endkey: "TEAM_\ufff0"
-      })
-      .then(function(result) {
-        for (var docID in result["rows"]) {
-          addToBoard(result["rows"][docID]);
-        }
-      });
+      if (teamID !== undefined) this.teams.push(team_doc["doc"]);
+    },
+    loadTeams() {
+      var dThis = this;
+      this.localdb
+        .allDocs({
+          include_docs: true,
+          startkey: "TEAM_0",
+          endkey: "TEAM_\ufff0"
+        })
+        .then(function(result) {
+          for (var docID in result["rows"]) {
+            dThis.addToBoard(result["rows"][docID]);
+          }
+          dThis.teams = orderBy(
+            dThis.teams,
+            [
+              function(team) {
+                return team.objectivePoints + team.commentPoints;
+              },
+              function(team) {
+                return team.number;
+              }
+            ],
+            ["desc", "desc"]
+          );
+        });
+    }
+  },
+  created: function() {
+    this.loadTeams();
   }
 };
 </script>
