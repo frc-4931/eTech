@@ -284,16 +284,6 @@ export default {
 </script>
 
 <style>
-.line {
-  background: linear-gradient(
-    180deg,
-    rgba(0, 0, 0, 0) calc(50% - 1px),
-    #cfd8dc calc(50%),
-    rgba(0, 0, 0, 0) calc(50% + 1px)
-  );
-  padding: 5px;
-  margin: 10px;
-}
 #scouting-select {
   margin-bottom: 20px;
   text-align-last: center;

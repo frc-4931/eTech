@@ -141,7 +141,16 @@ body {
 .comment-title {
   margin-bottom: 10px;
 }
-
+.line {
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) calc(50% - 1px),
+    #cfd8dc calc(50%),
+    rgba(0, 0, 0, 0) calc(50% + 1px)
+  );
+  padding: 5px;
+  margin: 10px;
+}
 h1,
 h2,
 h3,
