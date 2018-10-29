@@ -6,23 +6,33 @@
     </div>
 
     <div class="field-edit">
-      <p>Title</p>
-      <input type="text" placeholder="Title" v-model="title">
+      <p class="background-box">Title</p>
+      <div class="background-box-input">
+        <input type="text" placeholder="Title" v-model="title">
+      </div>
 
-      <p>JSON Field Name</p>
-      <input type="text" placeholder="Field Name" v-model="field">
+      <p class="background-box">JSON Field Name</p>
+      <div class="background-box-input">
+        <input type="text" placeholder="Field Name" v-model="field">
+      </div>
 
-      <p>Default value</p>
-      <select>
-        <option value="true">True</option>
-        <option value="false">False</option>
-      </select>
+      <p class="background-box">Default value</p>
+      <div class="background-box-input">
+        <select>
+          <option value="true">True</option>
+          <option value="false">False</option>
+        </select>
+      </div>
 
-      <p>Points awarded if true</p>
-      <input type="number" placeholder="True Points" v-model-number="tPoints">
+      <p class="background-box">Points awarded if true</p>
+      <div class="background-box-input">
+        <input type="number" placeholder="True Points" v-model-number="tPoints">
+      </div>
 
-      <p>Points awarded if false</p>
-      <input type="number" placeholder="False Points" v-model-number="fPoints">
+      <p class="background-box">Points awarded if false</p>
+      <div class="background-box-input">
+        <input type="number" placeholder="False Points" v-model-number="fPoints">
+      </div>
     </div>
 
     <div class="grid-perminant content-centered">

@@ -97,6 +97,11 @@ export default {
 @import url("https://fonts.googleapis.com/css?family=Open+Sans");
 @import url("./css/normalize.css");
 
+.background-box-input {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.6);
+  margin: 10px;
+}
+
 *:focus {
   outline: none;
 }
@@ -175,6 +180,7 @@ select {
   background-color: #37474f;
   border: #455a64 solid 1px;
   color: #eceff1;
+  border: none;
 }
 .grid-perminant {
   display: grid;

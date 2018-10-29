@@ -14,7 +14,7 @@
           <h3>Select Template to Edit:</h3>
         </div>
 
-        <div class="background-box">
+        <div class="background-box-input">
           <select id="select-template">
             <option value="pit">Pitscout</option>
             <option value="match">Match Scout</option>
@@ -88,12 +88,8 @@ export default {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
 }
-
-.field-edit > * {
-  background-color: #37474f;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.6);
-  padding: 10px;
-  margin: 5px 10px;
-  width: auto;
+.field-edit .background-box,
+.field-edit .background-box-input {
+  margin-top: 0px;
 }
 </style>

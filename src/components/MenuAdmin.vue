@@ -2,8 +2,12 @@
   <div id="menu-admin">
 
     <div class="grid">
-      <div class="location-span background-box content-centered">
-        <h1>Admin Tools</h1>
+      <div @click="pages.toMenuMain()" class="background-box background-box-hover content-centered">
+        <h3>Back</h3>
+      </div>
+
+      <div class="location-centered background-box content-centered">
+        <h2>Admin Tools</h2>
       </div>
 
       <div class="location-left-small">
@@ -33,11 +37,7 @@
           <h2 class="content-centered">Tools</h2>
           <a @click="pages.toMenuAddTeam()">Add team</a><br>
           <a @click="pages.toMenuTemplateEditor()">Edit Scouting Templates</a><br>
-          <a @click="localdb.destroy()">Destroy All Data</a>
-        </div>
-
-        <div @click="pages.toMenuMain()" class="background-box background-box-hover content-centered">
-          <h3>Back</h3>
+          <a @click="localdb.destroy();">Destroy All Data</a>
         </div>
       </div>
     </div>

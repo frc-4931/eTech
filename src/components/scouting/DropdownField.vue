@@ -4,8 +4,8 @@
       <p>{{ data.title }}</p>
     </div>
 
-    <div class="background-box location-right">
-      <select @change="changed()" v-model="data.value" :value="data.value" class="pit-scout-input" required>
+    <div class="background-box-input location-right">
+      <select @change="changed()" v-model="data.value" :value="data.value" required>
         <option v-for="option in data.options" :key="option" :value="option">{{ option }}</option>
       </select>
     </div>
@@ -40,6 +40,3 @@ export default {
   }
 };
 </script>
-
-<style>
-</style>

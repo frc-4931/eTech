@@ -187,9 +187,6 @@ export default {
 </script>
 
 <style>
-.pit-scout-input {
-  padding: 0px;
-}
 .pit-scout-div div {
   margin-top: 0px;
 }

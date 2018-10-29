@@ -4,8 +4,8 @@
       <p>{{ data.title }}</p>
     </div>
 
-    <div class="background-box location-right">
-      <input v-model="data.value" @input="changed()" class="pit-scout-input" type="number" pattern="[0-9]*" :max="max" :min="min" placeholder="Value">
+    <div class="background-box-input location-right">
+      <input v-model="data.value" @input="changed()" type="number" pattern="[0-9]*" :max="max" :min="min" placeholder="Value">
     </div>
   </div>
 </template>
@@ -48,6 +48,3 @@ export default {
   }
 };
 </script>
-
-<style>
-</style>

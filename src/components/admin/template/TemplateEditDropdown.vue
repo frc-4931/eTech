@@ -6,20 +6,26 @@
     </div>
 
     <div class="field-edit">
-      <p>Title</p>
-      <input type="text" placeholder="Title" v-model="title">
-
-      <p>JSON Field Name</p>
-      <input type="text" placeholder="Field Name" v-model="field">
+      <p class="background-box">Title</p>
+      <div class="background-box-input">
+        <input type="text" placeholder="Title" v-model="title">
+      </div>
+      <p class="background-box">JSON Field Name</p>
+      <div class="background-box-input">
+        <input type="text" placeholder="Field Name" v-model="field">
+      </div>
     </div>
-
     <div class="background-box content-centered">
       <p>Add New Dropdown</p>
     </div>
 
     <div class="field-edit">
-      <input type="text" placeholder="Downdown Name">
-      <input type="number" placeholder="Downdown Points">
+      <div class="background-box-input">
+        <input type="text" placeholder="Downdown Name">
+      </div>
+      <div class="background-box-input">
+        <input type="number" placeholder="Downdown Points">
+      </div>
     </div>
 
     <div class="background-box background-box-hover content-centered">
