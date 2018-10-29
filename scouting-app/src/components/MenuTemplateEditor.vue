@@ -1,9 +1,8 @@
 <template>
   <div id="menu-template-editor">
     <div class="grid">
-      <div class="location-centered">
-        <TemplateBooleanField></TemplateBooleanField>
-        <TemplateTitleField></TemplateTitleField>
+      <div v-for="(field, idx) in fields" :key="field" class="location-centered">
+        <component v-bind:is="field" :key="field + idx"></component>
       </div>
     </div>
   </div>
@@ -21,6 +20,16 @@ export default {
   components: {
     TemplateBooleanField,
     TemplateTitleField
+  },
+  data: function() {
+    return {
+      fields: []
+    };
+  },
+  created: function() {
+    this.fields.push("TemplateBooleanField");
+    this.fields.push("TemplateTitleField");
+    this.fields.push("TemplateBooleanField");
   }
 };
 </script>
@@ -28,5 +37,10 @@ export default {
 <style>
 .template-item div input {
   padding: 0px 5px;
+}
+.template-title,
+.template-options {
+  margin-bottom: 0px !important;
+  grid-column: 6/7;
 }
 </style>
