@@ -32,7 +32,7 @@
         <div class="background-box">
           <h2 class="content-centered">Tools</h2>
           <a @click="pages.toMenuAddTeam()">Add team</a><br>
-          <a @click="scoutingTemplates()">Edit Scouting Templates</a><br>
+          <a @click="pages.toMenuTemplateEditor()">Edit Scouting Templates</a><br>
           <a @click="localdb.destroy()">Destroy All Data</a>
         </div>
 
@@ -90,9 +90,6 @@ export default {
             ["asc"]
           );
         });
-    },
-    scoutingTemplates() {
-      alert("Need this next");
     }
   },
   created: function() {

@@ -15,6 +15,7 @@ import MenuTeamView from "./components/MenuTeamView.vue";
 import PouchDB from "pouchdb";
 import Authentication from "pouchdb-authentication";
 import MenuAdmin from "./components/MenuAdmin.vue";
+import MenuTemplateEditor from "./components/MenuTemplateEditor.vue";
 
 export default {
   name: "app",
@@ -23,7 +24,8 @@ export default {
     MenuTeamAdd,
     ConnectionError,
     MenuTeamView,
-    MenuAdmin
+    MenuAdmin,
+    MenuTemplateEditor
   },
   data: function() {
     return {
@@ -50,6 +52,9 @@ export default {
     },
     toMenuAdmin: function() {
       this.activeComponent = "MenuAdmin";
+    },
+    toMenuTemplateEditor: function() {
+      this.activeComponent = "MenuTemplateEditor";
     }
   },
   created: function() {
@@ -58,6 +63,7 @@ export default {
     this.pages.toMenuAddTeam = this.toMenuAddTeam;
     this.pages.toMenuTeamView = this.toMenuTeamView;
     this.pages.toMenuAdmin = this.toMenuAdmin;
+    this.pages.toMenuTemplateEditor = this.toMenuTemplateEditor;
     this.pages.toMenuTeamCommentAdd = this.toMenuTeamCommentAdd;
     this.pages.toMenuTeamCommentModify = this.toMenuTeamCommentModify;
 
@@ -91,6 +97,9 @@ export default {
 @import url("https://fonts.googleapis.com/css?family=Open+Sans");
 @import url("./css/normalize.css");
 
+*:focus {
+  outline: none;
+}
 body {
   font-family: "Open Sans", sans-serif;
   background-color: #455a64;

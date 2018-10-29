@@ -5,7 +5,7 @@
     </div>
 
     <div>
-      <a @click="alert(removeTeam())">Remove Team</a>
+      <a @click="removeTeam()">Remove Team</a>
     </div>
   </div>
 </template>
@@ -17,8 +17,8 @@ export default {
     teamdata: Object
   },
   methods: {
-    removeTeam: function() {
-      alert("TODO: remove team " + this.team.number);
+    removeTeam() {
+      alert("Need this next");
     }
   },
   data: function() {
