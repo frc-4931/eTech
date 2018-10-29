@@ -8,7 +8,7 @@ TEMPLATE_MATCHSCOUT
 types:
 
 "DropdownField" - type, title, field, options, default, points
-"BooleanField" - type, title, field, default, pointsTrue, pointsFalse
+"BooleanField" - type, title, field, default, points [true, false]
 "NumberField" - type, title, field, default, points
 "NumberFieldInc" - type, title, field, default, points, min, max
 "TitleField" - type, title, field, default, points, min, max
