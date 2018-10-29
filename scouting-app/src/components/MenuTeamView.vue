@@ -1,7 +1,7 @@
 <template>
 <div id="menu-team-view">
   <div class="grid">
-    <div v-on:click="pages.toMenuMain()" id="done-button" class="location-centered-small background-box background-box-hover content-centered">
+    <div @click="pages.toMenuMain()" id="done-button" class="location-centered-small background-box background-box-hover content-centered">
       <h3>Done</h3>
     </div>
 
@@ -43,7 +43,7 @@
         <component v-for="(comment, id) in comments" :is="commentIs(id)" :modify="function() {openCommentModifyMenu(id)}" :key="id" :docId="id" :rating="comment.rating" :comment="comment.comment" :title="comment.title" :localdb="localdb" :callback="commentModified"></component>
       </transition-group>
 
-      <div v-if="commentAddMenu == false" v-on:click="openCommentAddMenu()" class="background-box background-box-hover">
+      <div v-if="commentAddMenu == false" @click="openCommentAddMenu()" class="background-box background-box-hover">
         <h3 class="content-centered">Add comment</h3>
       </div>
       <MenuTeamCommentAdd id="comment-add-menu" v-else :localdb="localdb" :username="username" :teamNumber="teamNumber" :callback="commentCreated"></MenuTeamCommentAdd>
