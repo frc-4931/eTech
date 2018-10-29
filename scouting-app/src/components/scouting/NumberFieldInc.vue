@@ -1,21 +1,21 @@
 <template>
-<div class="grid-perminant pit-scout-div">
-  <div class="location-left background-box">
-    <p>{{ data.title }}</p>
-  </div>
+  <div class="grid-perminant pit-scout-div">
+    <div class="location-left background-box">
+      <p>{{ data.title }}</p>
+    </div>
 
-  <div @click="increment()" class="noselect background-box content-centered background-box-hover">
-    <p>+</p>
-  </div>
+    <div @click="increment()" class="noselect background-box content-centered background-box-hover">
+      <p>+</p>
+    </div>
 
-  <div class="background-box content-centered">
-    <p>{{ data.value }}</p>
-  </div>
+    <div class="background-box content-centered">
+      <p>{{ data.value }}</p>
+    </div>
 
-  <div @click="decrement()" class="noselect background-box content-centered background-box-hover">
-    <p>-</p>
+    <div @click="decrement()" class="noselect background-box content-centered background-box-hover">
+      <p>-</p>
+    </div>
   </div>
-</div>  
 </template>
 
 <script>

@@ -1,52 +1,52 @@
 <template>
-<div id="menu-team-comment-add">
+  <div id="menu-team-comment-add">
 
-  <div class="line" />
+    <div class="line" />
 
-  <FieldError v-if="error"></FieldError>
+    <FieldError v-if="error"></FieldError>
 
-  <div v-else class="background-box">
-    <h2 class="content-centered">Add comment</h2>
+    <div v-else class="background-box">
+      <h2 class="content-centered">Add comment</h2>
+    </div>
+
+    <div>
+      <div class="background-box">
+        <input v-model="title" type="text" name="comment-title" placeholder="Comment Title" required>
+      </div>
+
+      <div class="background-box">
+        <textarea v-model="comment" rows="10" type="text" name="comment-content" placeholder="Comment" required></textarea>
+      </div>
+
+      <div class="background-box">
+        <select v-model="rating" name="comment-points" required>
+          <option value="Invalid" selected="selected" disabled>Select Point Value for Comment</option>
+          <option value="5">+5</option>
+          <option value="4">+4</option>
+          <option value="3">+3</option>
+          <option value="2">+2</option>
+          <option value="1">+1</option>
+          <option value="0">Neutral</option>
+          <option value="-1">-1</option>
+          <option value="-2">-2</option>
+          <option value="-3">-3</option>
+          <option value="-4">-4</option>
+          <option value="-5">-5</option>
+        </select>
+      </div>
+    </div>
+
+    <div>
+      <div @click="submitComment()" class="location-centered-small background-box background-box-hover content-centered">
+        <h3>Add</h3>
+      </div>
+      <div @click="callback" class="location-centered-small background-box background-box-hover content-centered">
+        <h3>Cancel</h3>
+      </div>
+    </div>
+
+    <div class="line" />
   </div>
-
-  <div>
-    <div class="background-box">
-      <input v-model="title" type="text" name="comment-title" placeholder="Comment Title" required>
-    </div>
-
-    <div class="background-box">
-      <textarea v-model="comment" rows="10" type="text" name="comment-content" placeholder="Comment" required></textarea>
-    </div>
-
-    <div class="background-box">
-      <select v-model="rating" name="comment-points" required>
-        <option value="Invalid" selected="selected" disabled>Select Point Value for Comment</option>
-        <option value="5">+5</option>
-        <option value="4">+4</option>
-        <option value="3">+3</option>
-        <option value="2">+2</option>
-        <option value="1">+1</option>
-        <option value="0">Neutral</option>
-        <option value="-1">-1</option>
-        <option value="-2">-2</option>
-        <option value="-3">-3</option>
-        <option value="-4">-4</option>
-        <option value="-5">-5</option>
-      </select>
-    </div>
-  </div>
-
-  <div>
-    <div @click="submitComment()" class="location-centered-small background-box background-box-hover content-centered">
-      <h3>Add</h3>
-    </div>
-    <div @click="callback" class="location-centered-small background-box background-box-hover content-centered">
-      <h3>Cancel</h3>
-    </div>
-  </div>
-
-  <div class="line" />
-</div>
 </template>
 
 <script>

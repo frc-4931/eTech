@@ -1,5 +1,5 @@
 <template>
-<div class="background-box admin-team">
+  <div class="background-box admin-team">
     <div v-for="(teamEl, teamTitle) in team" v-bind:key="teamTitle">
       <p>{{ teamEl }}</p>
     </div>
@@ -7,7 +7,7 @@
     <div>
       <a @click="alert(removeTeam())">Remove Team</a>
     </div>
-</div>
+  </div>
 </template>
 
 <script>

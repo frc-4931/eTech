@@ -1,13 +1,13 @@
 <template>
-<div @click="teamView()" class="background-box background-box-hover leaderboard-team">
+  <div @click="teamView()" class="background-box background-box-hover leaderboard-team">
     <div v-for="(teamEl, teamTitle) in team" v-bind:key="teamTitle">
-        <p>{{ teamEl }}</p>
+      <p>{{ teamEl }}</p>
     </div>
 
     <div>
-        <p>{{ totalPoints }}</p>
+      <p>{{ totalPoints }}</p>
     </div>
-</div>
+  </div>
 </template>
 
 <script>

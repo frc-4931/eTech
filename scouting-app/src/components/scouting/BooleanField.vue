@@ -1,21 +1,21 @@
 <template>
-<form onsubmit="return false;" class="grid-perminant pit-scout-div">
-  <div class="background-box location-left">
-    <p>{{ data.title }}</p>
-  </div>
+  <form onsubmit="return false;" class="grid-perminant pit-scout-div">
+    <div class="background-box location-left">
+      <p>{{ data.title }}</p>
+    </div>
 
-  <div class="location-right background-box grid-perminant">
-    <label class="location-left">
-      <input class="radio-button" @change="changed()" :value="true" type="radio" name="radio1" v-model="data.value">
+    <div class="location-right background-box grid-perminant">
+      <label class="location-left">
+        <input class="radio-button" @change="changed()" :value="true" type="radio" name="radio1" v-model="data.value">
         True
-    </label>
+      </label>
 
-    <label class="location-right">
-      <input class="radio-button" @change="changed()" :value="false" type="radio" name="radio1" v-model="data.value">
-      False
-    </label>
-  </div>
-</form>
+      <label class="location-right">
+        <input class="radio-button" @change="changed()" :value="false" type="radio" name="radio1" v-model="data.value">
+        False
+      </label>
+    </div>
+  </form>
 </template>
 
 <script>

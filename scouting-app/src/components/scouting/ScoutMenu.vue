@@ -1,12 +1,12 @@
 <template>
-<div id="scouting-menu">
-  <component v-for="scField in template" :key="docId+(scField.field || scField.title)" :is="scField.type" :data="scField" @valuechange="valueChange(scField.field, ...arguments)"></component>
+  <div id="scouting-menu">
+    <component v-for="scField in template" :key="docId+(scField.field || scField.title)" :is="scField.type" :data="scField" @valuechange="valueChange(scField.field, ...arguments)"></component>
 
-  <div @click="save()" class="location-centered-small background-box background-box-hover content-centered">
-    <h3>Save</h3>
+    <div @click="save()" class="location-centered-small background-box background-box-hover content-centered">
+      <h3>Save</h3>
+    </div>
+    <div class="line"></div>
   </div>
-  <div class="line"></div>
-</div>
 </template>
 
 <script>

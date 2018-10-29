@@ -1,55 +1,56 @@
 <template>
-<div id="menu-team-view">
-  <div class="grid">
-    <div @click="pages.toMenuMain()" id="done-button" class="location-centered-small background-box background-box-hover content-centered">
-      <h3>Done</h3>
-    </div>
-
-    <div id="team-title" class="location-centered background-box">
-        <h2 class="content-centered"><span>{{ team.name }}</span> - <span>{{ team.number }}</span></h2>
-    </div>
-
-    <div class="location-left-padded">
-      <!--<div class="line"></div>-->
-
-      <div class="background-box">
-        <h3 class="content-centered">Total Objective Points: <span>{{ team.objectivePoints }}</span></h3>
+  <div id="menu-team-view">
+    <div class="grid">
+      <div @click="pages.toMenuMain()" id="done-button" class="location-centered-small background-box background-box-hover content-centered">
+        <h3>Done</h3>
       </div>
-
-      <div id="scouting-select" class="background-box">
-        <select v-model="scoutingSelect" @change="openScoutingMenu()">
-          <option value="none">Select A Scouting Option</option>
-          <option v-for="(scout, idx) in pitScouts" :key="scout" :value="scout">Pit Scouting - {{ idx + 1 }}</option>
-          <option v-for="(scout, idx) in matchScouts" :key="scout" :value="scout">Match Scouting - Match {{ idx + 1 }}</option>
-          <option value="create"> --- New Scout --- </option>
-        </select>
+      <div id="team-title" class="location-centered background-box">
+        <h2 class="content-centered">
+          <span>{{ team.name }}</span>-
+          <span>{{ team.number }}</span>
+        </h2>
       </div>
-      <!-- Insert Scouting Fields Here -->     
-      <transition enter-active-class="content-long-fade-in" leave-active-class="content-long-fade-out" mode="out-in">      
-        <NewScout v-if="scoutingSelect == 'create' " :localdb="localdb" :username="username" :teamNumber="teamNumber" :callback="teamCreated"></NewScout> 
-        <ScoutMenu :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('PITSCOUT_')" :isMatchScout="false" :localdb="localdb" :docId="scoutingSelect" :callback="teamModified"></ScoutMenu>
-        <ScoutMenu :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('MATCHSCOUT_')" :isMatchScout="true" :localdb="localdb" :docId="scoutingSelect" :callback="teamModified"></ScoutMenu>
-      </transition>
-    </div>
-
-    <div class="location-right-padded">
-      <!--<div class="line"></div>-->
-
-      <div class="background-box">
-        <h3 class="content-centered">Total Comment Points: <span> {{team.commentPoints}} </span></h3>
+      <div class="location-left-padded">
+        <!--<div class="line"></div>-->
+        <div class="background-box">
+          <h3 class="content-centered">
+            Total Objective Points:
+            <span>{{ team.objectivePoints }}</span>
+          </h3>
+        </div>
+        <div id="scouting-select" class="background-box">
+          <select v-model="scoutingSelect" @change="openScoutingMenu()">
+            <option value="none">Select A Scouting Option</option>
+            <option v-for="(scout, idx) in pitScouts" :key="scout" :value="scout">Pit Scouting - {{ idx + 1 }}</option>
+            <option v-for="(scout, idx) in matchScouts" :key="scout" :value="scout">Match Scouting - Match {{ idx + 1 }}</option>
+            <option value="create">--- New Scout ---</option>
+          </select>
+        </div>
+        <!-- Insert Scouting Fields Here -->
+        <transition enter-active-class="content-long-fade-in" leave-active-class="content-long-fade-out" mode="out-in">
+          <NewScout v-if="scoutingSelect == 'create' " :localdb="localdb" :username="username" :teamNumber="teamNumber" :callback="teamCreated"></NewScout>
+          <ScoutMenu :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('PITSCOUT_')" :isMatchScout="false" :localdb="localdb" :docId="scoutingSelect" :callback="teamModified"></ScoutMenu>
+          <ScoutMenu :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('MATCHSCOUT_')" :isMatchScout="true" :localdb="localdb" :docId="scoutingSelect" :callback="teamModified"></ScoutMenu>
+        </transition>
       </div>
-
-      <transition-group name="comment-menu">
-        <component v-for="(comment, id) in comments" :is="commentIs(id)" :modify="function() {openCommentModifyMenu(id)}" :key="id" :docId="id" :rating="comment.rating" :comment="comment.comment" :title="comment.title" :localdb="localdb" :callback="commentModified"></component>
-      </transition-group>
-
-      <div v-if="commentAddMenu == false" @click="openCommentAddMenu()" class="background-box background-box-hover">
-        <h3 class="content-centered">Add comment</h3>
+      <div class="location-right-padded">
+        <!--<div class="line"></div>-->
+        <div class="background-box">
+          <h3 class="content-centered">
+            Total Comment Points:
+            <span>{{team.commentPoints}}</span>
+          </h3>
+        </div>
+        <transition-group name="comment-menu">
+          <component v-for="(comment, id) in comments" :is="commentIs(id)" :modify="function() {openCommentModifyMenu(id)}" :key="id" :docId="id" :rating="comment.rating" :comment="comment.comment" :title="comment.title" :localdb="localdb" :callback="commentModified"></component>
+        </transition-group>
+        <div v-if="commentAddMenu == false" @click="openCommentAddMenu()" class="background-box background-box-hover">
+          <h3 class="content-centered">Add comment</h3>
+        </div>
+        <MenuTeamCommentAdd id="comment-add-menu" v-else :localdb="localdb" :username="username" :teamNumber="teamNumber" :callback="commentCreated"></MenuTeamCommentAdd>
       </div>
-      <MenuTeamCommentAdd id="comment-add-menu" v-else :localdb="localdb" :username="username" :teamNumber="teamNumber" :callback="commentCreated"></MenuTeamCommentAdd>
     </div>
   </div>
-</div>
 </template>
 
 <script>
