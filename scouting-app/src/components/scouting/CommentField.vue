@@ -1,9 +1,9 @@
 <template>
-	<div @click="modify()" class="background-box background-box-hover grid-perminant">
-		<h2 class="location-span comment-title content-centered"> {{title}} </h2>
-		<p class="location-span comment-contents"> {{comment}} </p>
-		<p :style="color" class="location-right-tiny content-right"> {{getRating}} </p>
-	</div>
+  <div @click="modify()" class="background-box background-box-hover grid-perminant">
+    <h2 class="location-span comment-title content-centered"> {{title}} </h2>
+    <p class="location-span comment-contents"> {{comment}} </p>
+    <p :style="color" class="location-right-tiny content-right"> {{getRating}} </p>
+  </div>
 </template>
 
 <script>

@@ -1,13 +1,13 @@
 <template>
-<div class="grid-perminant pit-scout-div">
-  <div class="background-box location-left">
-    <p>{{ data.title }}</p>
-  </div>
+  <div class="grid-perminant pit-scout-div">
+    <div class="background-box location-left">
+      <p>{{ data.title }}</p>
+    </div>
 
-  <div class="background-box location-right">
-    <input v-model="data.value" @input="changed()" class="pit-scout-input" type="number" pattern="[0-9]*" :max="max" :min="min" placeholder="Value">
+    <div class="background-box location-right">
+      <input v-model="data.value" @input="changed()" class="pit-scout-input" type="number" pattern="[0-9]*" :max="max" :min="min" placeholder="Value">
+    </div>
   </div>
-</div>
 </template>
 
 <script>

@@ -1,58 +1,50 @@
 <template>
-<div id="menu-main">
+  <div id="menu-main">
     <div class="grid">
-        <div class="location-span background-box">
-            <h1 class="content-centered">FRC 4931 Scouting App</h1>
+      <div class="location-span background-box">
+        <h1 class="content-centered">FRC 4931 Scouting App</h1>
+      </div>
+      <div class="location-left-large">
+        <div class="background-box">
+          <h2 class="content-centered">Team Leaderboard</h2>
+          <p>
+            Teams are given a rating by combining various different pieces of information collected by team
+            members
+          </p>
         </div>
-
-        <div class="location-left-large">
-            <div class="background-box">
-                <h2 class="content-centered">Team Leaderboard</h2>
-                <p>Teams are given a rating by combining various different pieces of information collected by team
-                    members</p>
-            </div>
-
-            <div class="background-box leaderboard-team">
-                <div>
-                    <p>Team Name</p>
-                </div>
-                <div>
-                    <p>Team Number</p>
-                </div>
-
-                <div>
-                    <p>Objective Points</p>
-                </div>
-
-                <div>
-                    <p>Comment Points</p>
-                </div>
-
-                <div>
-                    <p>Total Points</p>
-                </div>
-            </div>
-            
-
-            <div id="leaderboard-container">
-                <LeaderboardTeam v-for="(teamData) in teams" v-bind:key="teamData['_id']" :teamdata="teamData" :pages="pages"></LeaderboardTeam>
-            </div>
+        <div class="background-box leaderboard-team">
+          <div>
+            <p>Team Name</p>
+          </div>
+          <div>
+            <p>Team Number</p>
+          </div>
+          <div>
+            <p>Objective Points</p>
+          </div>
+          <div>
+            <p>Comment Points</p>
+          </div>
+          <div>
+            <p>Total Points</p>
+          </div>
         </div>
-
-        <div class="location-right-small">
-            <div class="background-box">
-				<h2 class="content-centered">Account</h2>
-            	<a @click="pages.toMenuAdmin()">Admin Page</a>
-
-				<p>For this section I'm thinking it should be for info about the users account and if they have permision show options like the admin page</p>
-            </div>
-
-            <div class="background-box">
-                <h2 class="content-centered">Member Leaderboard</h2>
-            </div>
+        <div id="leaderboard-container">
+          <LeaderboardTeam v-for="(teamData) in teams" v-bind:key="teamData['_id']" :teamdata="teamData" :pages="pages"></LeaderboardTeam>
         </div>
+      </div>
+      <div class="location-right-small">
+        <div class="background-box">
+          <h2 class="content-centered">Account</h2>
+          <a @click="pages.toMenuAdmin()">Admin Page</a>
+          <p>For this section I'm thinking it should be for info about the users account and if they have permision show options like the admin page</p>
+        </div>
+        <div class="background-box">
+          <h2 class="content-centered">Member Leaderboard</h2>
+        </div>
+      </div>
     </div>
-</div>
+  </div>
 </template>
 
 <script>

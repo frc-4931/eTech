@@ -1,29 +1,29 @@
 <template>
-<div id="menu-team-add">
-  <div class="grid">
-    <FieldError v-if="error"></FieldError>
+  <div id="menu-team-add">
+    <div class="grid">
+      <FieldError v-if="error"></FieldError>
 
-    <div v-else class="location-centered background-box">
-      <h2 class="content-centered">Add team</h2>
-    </div>
+      <div v-else class="location-centered background-box">
+        <h2 class="content-centered">Add team</h2>
+      </div>
 
-    <div class="location-left-padded background-box">
-      <input v-model="name" type="text" name="team-name" placeholder="Team Name">
-    </div>
+      <div class="location-left-padded background-box">
+        <input v-model="name" type="text" name="team-name" placeholder="Team Name">
+      </div>
 
-    <div class="location-right-padded background-box">
-      <input v-model="number" type="number" pattern="[0-9]*" max="9999" min="1" name="team-number" placeholder="Team Number">
-    </div>
+      <div class="location-right-padded background-box">
+        <input v-model="number" type="number" pattern="[0-9]*" max="9999" min="1" name="team-number" placeholder="Team Number">
+      </div>
 
-    <div @click="submitTeam()" class="location-left-padded background-box background-box-hover content-centered">
-      <h3>Add</h3>
-    </div>
-    <div @click="pages.toMenuMain()" class="location-right-padded background-box background-box-hover content-centered">
-      <h3>Cancel</h3>
-    </div>
+      <div @click="submitTeam()" class="location-left-padded background-box background-box-hover content-centered">
+        <h3>Add</h3>
+      </div>
+      <div @click="pages.toMenuAdmin()" class="location-right-padded background-box background-box-hover content-centered">
+        <h3>Cancel</h3>
+      </div>
 
+    </div>
   </div>
-</div>
 </template>
 
 <script>
