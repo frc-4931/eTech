@@ -40,16 +40,16 @@
         </div>
 
         <div class="location-right-small">
-            <div class="background-box">
-				<h2 class="content-centered">Account</h2>
-            	<a @click="pages.toMenuAdmin()">Admin Page</a>
+          <div class="background-box">
+            <h2 class="content-centered">Account</h2>
+            <a @click="pages.toMenuAdmin()">Admin Page</a>
 
-				<p>For this section I'm thinking it should be for info about the users account and if they have permision show options like the admin page</p>
-            </div>
+            <p>For this section I'm thinking it should be for info about the users account and if they have permision show options like the admin page</p>
+          </div>
 
-            <div class="background-box">
-                <h2 class="content-centered">Member Leaderboard</h2>
-            </div>
+          <div class="background-box">
+            <h2 class="content-centered">Member Leaderboard</h2>
+          </div>
         </div>
     </div>
 </div>

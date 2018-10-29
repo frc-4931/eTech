@@ -18,7 +18,7 @@
     <div @click="submitTeam()" class="location-left-padded background-box background-box-hover content-centered">
       <h3>Add</h3>
     </div>
-    <div @click="pages.toMenuMain()" class="location-right-padded background-box background-box-hover content-centered">
+    <div @click="pages.toMenuAdmin()" class="location-right-padded background-box background-box-hover content-centered">
       <h3>Cancel</h3>
     </div>
 

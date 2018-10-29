@@ -18,8 +18,8 @@
 			</div>
 
 			<div id="leaderboard-container">
-                <AdminTeam v-for="(teamData) in teams" v-bind:key="teamData['_id']" :teamdata="teamData"></AdminTeam>
-            </div>
+        <AdminTeam v-for="(teamData) in teams" v-bind:key="teamData['_id']" :teamdata="teamData"></AdminTeam>
+      </div>    
 		</div>
 
 		<div class="location-centered-small">
@@ -31,14 +31,14 @@
 		<div class="location-right-small">
 			<div class="background-box">
 				<h2 class="content-centered">Tools</h2>
-				<a @click="pages.toMenuAddTeam()">Add team</a>
-				<p>Remove team</p>
+				<a @click="pages.toMenuAddTeam()">Add team</a><br>
+        <a @click="scoutingTemplates()">Edit Scouting Templates</a><br>
 				<a @click="localdb.destroy()">Destroy All Data</a>
 			</div>
 
-			<div class="background-box">
-				<a @click="pages.toMenuMain()">Back</a>
-			</div>
+      <div @click="pages.toMenuMain()" class="background-box background-box-hover content-centered">
+        <h3>Back</h3>
+      </div>
 		</div>
 	</div>
 
@@ -84,12 +84,15 @@ export default {
             dThis.teams,
             [
               function(team) {
-                return -team.number;
+                return team.number;
               }
             ],
-            ["desc", "desc"]
+            ["asc"]
           );
         });
+    },
+    scoutingTemplates() {
+      alert("Need this next");
     }
   },
   created: function() {
@@ -100,9 +103,8 @@ export default {
 
 <style>
 .admin-team {
-	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	text-align: center;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  text-align: center;
 }
-
 </style>
