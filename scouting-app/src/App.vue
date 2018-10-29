@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <transition enter-active-class="content-fade-in" leave-active-class="content-fade-out" mode="out-in">
-      <component v-bind:is="ativeComponent" :localdb="localdb" :remotedb="remotedb" :username="username" :pages="pages" :teamNumber="teamNumber"></component>
+      <component v-bind:is="activeComponent" :localdb="localdb" :remotedb="remotedb" :username="username" :pages="pages" :teamNumber="teamNumber"></component>
     </transition>
     <ConnectionError v-if="isConnectionError"></ConnectionError>
   </div>
@@ -27,7 +27,7 @@ export default {
   },
   data: function() {
     return {
-      ativeComponent: "MenuMain",
+      activeComponent: "MenuMain",
       isConnectionError: false,
       teamNumber: 4931,
       localdb: new PouchDB("localdb"),
@@ -39,17 +39,17 @@ export default {
   },
   methods: {
     toMenuMain: function() {
-      this.ativeComponent = "MenuMain";
+      this.activeComponent = "MenuMain";
     },
     toMenuAddTeam: function() {
-      this.ativeComponent = "MenuTeamAdd";
+      this.activeComponent = "MenuTeamAdd";
     },
     toMenuTeamView: function(team) {
       this.teamNumber = team;
-      this.ativeComponent = "MenuTeamView";
+      this.activeComponent = "MenuTeamView";
     },
     toMenuAdmin: function() {
-      this.ativeComponent = "MenuAdmin";
+      this.activeComponent = "MenuAdmin";
     }
   },
   created: function() {
@@ -91,11 +91,6 @@ export default {
 @import url("https://fonts.googleapis.com/css?family=Open+Sans");
 @import url("./css/normalize.css");
 
-.leaderboard-team {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  text-align: center;
-}
 body {
   font-family: "Open Sans", sans-serif;
   background-color: #455a64;

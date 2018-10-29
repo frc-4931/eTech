@@ -2,13 +2,12 @@
 <div id="menu-main">
     <div class="grid">
         <div class="location-span background-box">
-            <h1 class="content-centered">FRC 4931 Scouting app</h1>
-            <p>This is my (Damian) scouting application for FRC 4931. It's only a proof of concept at this state</p>
+            <h1 class="content-centered">FRC 4931 Scouting App</h1>
         </div>
 
         <div class="location-left-large">
             <div class="background-box">
-                <h2 class="content-centered">Leaderboard</h2>
+                <h2 class="content-centered">Team Leaderboard</h2>
                 <p>Teams are given a rating by combining various different pieces of information collected by team
                     members</p>
             </div>
@@ -42,11 +41,10 @@
 
         <div class="location-right-small">
             <div class="background-box">
-                <h2 class="content-centered">Tools</h2>
-                <a @click="pages.toMenuAddTeam()">Add team</a>
-                <p>Remove team</p>
-                <a @click="pages.toMenuAdmin()">Admin Page</a><br>
-                <a @click="localdb.destroy()">Destroy All Data</a>
+				<h2 class="content-centered">Account</h2>
+            	<a @click="pages.toMenuAdmin()">Admin Page</a>
+
+				<p>For this section I'm thinking it should be for info about the users account and if they have permision show options like the admin page</p>
             </div>
 
             <div class="background-box">
@@ -114,4 +112,9 @@ export default {
 </script>
 
 <style>
+.leaderboard-team {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  text-align: center;
+}
 </style>

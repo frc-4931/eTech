@@ -1,5 +1,5 @@
 <template>
-<div v-on:click="teamView()" class="background-box background-box-hover leaderboard-team">
+<div @click="teamView()" class="background-box background-box-hover leaderboard-team">
     <div v-for="(teamEl, teamTitle) in team" v-bind:key="teamTitle">
         <p>{{ teamEl }}</p>
     </div>

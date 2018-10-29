@@ -37,10 +37,10 @@
   </div>
 
   <div>
-    <div v-on:click="submitComment()" class="location-centered-small background-box background-box-hover content-centered">
+    <div @click="submitComment()" class="location-centered-small background-box background-box-hover content-centered">
       <h3>Add</h3>
     </div>
-    <div v-on:click="callback" class="location-centered-small background-box background-box-hover content-centered">
+    <div @click="callback" class="location-centered-small background-box background-box-hover content-centered">
       <h3>Cancel</h3>
     </div>
   </div>
