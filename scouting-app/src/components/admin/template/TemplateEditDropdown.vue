@@ -14,7 +14,7 @@
     </div>
 
     <div class="background-box content-centered">
-      <p>Add new dropdown</p>
+      <p>Add New Dropdown</p>
     </div>
 
     <div class="field-edit">
@@ -27,6 +27,22 @@
     </div>
 
     <p>TODO: Add list of dropdown items using field-edit to have the 2 side grid with remove option</p>
+
+    <div class="grid-perminant content-centered">
+      <div class="location-span background-box background-box-hover">
+        <p>Save</p>
+      </div>
+      <div class="location-left-small background-box background-box-hover">
+        <p>Delete</p>
+      </div>
+      <div class="location-centered-small background-box background-box-hover">
+        <p>Move Up</p>
+      </div>
+      <div class="location-right-small background-box background-box-hover">
+        <p>Move Down</p>
+      </div>
+    </div>
+
     <div class="line"></div>
   </div>
 </template>

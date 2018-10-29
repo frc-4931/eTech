@@ -16,10 +16,25 @@
       <input type="number" placeholder="Default Number" v-model-number="dNumber">
 
       <p>Points awarded per 1 entered</p>
-      <input type="number" placeholder="Points per 1 entered" v-model-number="scaler">
+      <input type="number" placeholder="Points Per 1 Entered" v-model-number="scaler">
 
       <p>Minimum</p>
       <input type="number" placeholder="Minimum" v-model-number="minimum">
+    </div>
+
+    <div class="grid-perminant content-centered">
+      <div class="location-span background-box background-box-hover">
+        <p>Save</p>
+      </div>
+      <div class="location-left-small background-box background-box-hover">
+        <p>Delete</p>
+      </div>
+      <div class="location-centered-small background-box background-box-hover">
+        <p>Move Up</p>
+      </div>
+      <div class="location-right-small background-box background-box-hover">
+        <p>Move Down</p>
+      </div>
     </div>
     <div class="line"></div>
   </div>
