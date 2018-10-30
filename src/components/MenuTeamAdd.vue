@@ -15,9 +15,6 @@
         <input v-model="number" type="number" pattern="[0-9]*" max="9999" min="1" name="team-number" placeholder="Team Number" class="content-centered">
       </div>
 
-      <div @click="submitTeam()" class="location-left-padded background-box background-box-hover content-centered">
-        <h3>Add</h3>
-      </div>
       <div @click="goBack()" class="location-right-padded background-box background-box-hover content-centered">
 
         <h3>Cancel</h3>
