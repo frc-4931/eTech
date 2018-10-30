@@ -72,7 +72,7 @@ export default {
 @import url("./css/normalize.css");
 
 .background-box-input {
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.6);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5);
   margin: 10px;
   background-color: #37474f;
 }
@@ -103,7 +103,7 @@ body {
 }
 .background-box {
   background-color: #37474f;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.6);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5);
   padding: 10px;
   margin: 10px;
 }
