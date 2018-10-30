@@ -14,8 +14,8 @@
       </div>
 
     </div>
-    <div class="grid-perminant content-centered">
 
+    <div class="grid-perminant content-centered">
       <div @click="deleteField()" class="location-left-small background-box background-box-hover">
         <p>Delete</p>
       </div>

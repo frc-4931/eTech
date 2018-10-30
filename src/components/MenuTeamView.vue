@@ -1,8 +1,10 @@
 <template>
   <div id="menu-team-view">
     <div class="grid">
-      <div @click="goBack()" id="done-button" class="location-centered-small background-box background-box-hover content-centered">
-        <h3>Back</h3>
+      <div class="location-centered-small done-button-container">
+        <div @click="goBack()" class="background-box background-box-hover content-centered">
+          <h3>Back</h3>
+        </div>
       </div>
       <div id="team-title" class="location-centered background-box">
         <h2 class="content-centered">
@@ -19,11 +21,11 @@
           </h3>
         </div>
         <div class="background-box-input" id="scouting-select">
-          <select v-model="scoutingSelect" @change="openScoutingMenu()">
+          <select v-model="scoutingSelect" @change="openScoutingMenu()" class="content-input-large">
             <option value="none">Select A Scouting Option</option>
-            <option v-for="(scout, idx) in pitScouts" :key="scout" :value="scout">Pit Scouting - {{ idx + 1 }}</option>
-            <option v-for="(scout, idx) in matchScouts" :key="scout" :value="scout">Match Scouting - Match {{ idx + 1 }}</option>
             <option value="create">--- New Scout ---</option>
+            <option v-for="(scout, idx) in pitScouts" :key="scout" :value="scout">Pit Scouting: {{ idx + 1 }}</option>
+            <option v-for="(scout, idx) in matchScouts" :key="scout" :value="scout">Match Scouting: Match {{ idx + 1 }}</option>
           </select>
         </div>
         <!-- Insert Scouting Fields Here -->
@@ -304,14 +306,6 @@ export default {
 <style>
 #scouting-select {
   margin-bottom: 20px;
-  text-align-last: center;
-  font-size: 20px;
-}
-@media (max-width: 700px) {
-  #done-button {
-    margin-left: 25px;
-    margin-right: 25px;
-  }
 }
 .content-long-fade-in {
   animation: fade-in 0.1s ease;

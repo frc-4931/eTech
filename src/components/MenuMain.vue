@@ -32,6 +32,15 @@
         <div id="leaderboard-container">
           <LeaderboardTeam v-for="(teamData) in teams" v-bind:key="teamData['_id']" :teamdata="teamData"></LeaderboardTeam>
         </div>
+
+        <div v-if="this.teams.length == 0" class="grid">
+          <div class="location-centered background-box content-centered">
+            <h3>
+              There aren't any teams to display<br>
+              Click
+              <router-link :to="{name: 'team-add'}">here</router-link> to add a team</h3>
+          </div>
+        </div>
       </div>
       <div class="location-right-small">
         <div class="background-box">

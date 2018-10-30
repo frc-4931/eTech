@@ -72,6 +72,16 @@ export default {
 @import url("https://fonts.googleapis.com/css?family=Open+Sans");
 @import url("./css/normalize.css");
 
+@media (max-width: 700px) {
+  .done-button-container {
+    margin-left: 25px;
+    margin-right: 25px;
+  }
+}
+.content-input-large {
+  text-align-last: center;
+  font-size: 18px;
+}
 .background-box-input {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5);
   margin: 10px;
@@ -108,13 +118,6 @@ body {
   padding: 10px;
   margin: 10px;
 }
-.background-box-hover {
-  transition: all 0.2s ease-in-out;
-}
-.background-box-hover:active {
-  background-color: #b0bec5;
-}
-
 .comment-contents {
   padding-left: 20px;
   padding-right: 20px;
@@ -226,11 +229,11 @@ textarea {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
   }
+  .background-box-hover {
+    transition: all 0.2s ease-in-out;
+  }
   .background-box-hover:hover {
     background-color: #546e7a;
-  }
-  .background-box-hover:active {
-    background-color: #b0bec5;
   }
   a:hover {
     color: #0069c0;

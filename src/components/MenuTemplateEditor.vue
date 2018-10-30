@@ -2,16 +2,14 @@
   <div id="menu-template-editor">
     <div class="grid">
 
-      <div class="mobile-view field-buttons">
-
-        <div @click="goBack()" class="mobile-view field-button-left background-box background-box-hover content-centered">
+      <div class="mobile-view field-buttons done-button-container">
+        <div @click="goBack()" class="mobile-view background-box background-box-hover content-centered">
           <h3>Back</h3>
         </div>
 
-        <div @click="saveTemplate(curTemplate)" class="mobile-view field-button-right background-box background-box-hover content-centered">
+        <div @click="saveTemplate(curTemplate)" class="mobile-view field-button background-box background-box-hover content-centered">
           <h3>Save</h3>
         </div>
-
       </div>
 
       <div @click="goBack()" class="desktop-view location-left-tiny background-box background-box-hover content-centered">
@@ -34,8 +32,8 @@
         </div>
 
         <div class="background-box-input">
-          <select v-model="curTemplate" @change="loadTemplate(curTemplate)" id="select-template">
-            <option value="none">Select a scouting template</option>
+          <select v-model="curTemplate" @change="loadTemplate(curTemplate)" id="select-template" class="content-input-large">
+            <option value="none" disabled>Select a Scouting Template</option>
             <option value="TEMPLATE_PITSCOUT">Pit Scout</option>
             <option value="TEMPLATE_MATCHSCOUT">Match Scout</option>
           </select>
@@ -43,16 +41,6 @@
       </div>
 
       <div class="location-centered-small">
-
-        <!-- <div class="grid-perminant background-box">
-          <div class="location-left">
-            <h3>Type:</h3>
-          </div>
-          <div class="location-right">
-            <h3>Name:</h3>
-          </div>
-        </div> -->
-
         <!-- beautify ignore:start -->
         <component v-for="(field, index) in fields"
           :key="field.field || field.title"
@@ -100,7 +88,7 @@
           </div>
         </div>
 
-        <div v-else @click="openFieldAdd()" style="margin-top: 30px;" class="location-centered-small background-box background-box-hover content-centered">
+        <div v-else-if="curTemplate != 'none'" @click="openFieldAdd()" style="margin-top: 30px;" class="location-centered-small background-box background-box-hover content-centered">
           <h3>Create new field</h3>
         </div>
 
@@ -372,9 +360,6 @@ export default {
 </script>
 
 <style>
-#select-template {
-  text-align-last: center;
-}
 .field-edit {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -387,11 +372,5 @@ export default {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   margin-bottom: 0px;
-}
-.field-button-left {
-  margin-left: 25px;
-}
-.field-button-right {
-  margin-right: 25px;
 }
 </style>

@@ -2,8 +2,10 @@
   <div id="menu-admin">
 
     <div class="grid">
-      <div @click="goBack()" class="background-box background-box-hover content-centered">
-        <h3>Back</h3>
+      <div class="done-button-container location-left-tiny">
+        <div @click="goBack()" class="background-box background-box-hover content-centered">
+          <h3>Back</h3>
+        </div>
       </div>
 
       <div class="location-centered background-box content-centered">

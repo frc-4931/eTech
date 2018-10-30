@@ -9,7 +9,7 @@
     <div class="location-left">
       <p>{{data.title}}</p>
     </div>
-    <div class="location-right ">
+    <div class="location-right content-right">
       <p>{{data.type.replace("Field", (""))}}</p>
     </div>
   </div>
@@ -20,11 +20,6 @@ export default {
   name: "TemplateField",
   props: {
     data: Object
-  },
-  data: function() {
-    return {
-      //data: [{ type: "BooleanField", title: "Blocks (Allience Scale):" }]
-    };
   },
   methods: {
     clicked() {
