@@ -187,11 +187,13 @@ export default {
 </script>
 
 <style>
-.pit-scout-div div {
-  margin-top: 0px;
+.pit-scout-div div,
+.pit-scout-div div .location-left,
+.pit-scout-div div .location-right {
+  margin-bottom: 0px !important;
 }
 .pit-scout-div:nth-child(1) div {
-  margin-top: 10px;
+  margin-top: 10px !important;
 }
 .radio-button {
   -webkit-appearance: none;
