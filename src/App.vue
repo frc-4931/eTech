@@ -1,8 +1,9 @@
 <template>
   <div id="app">
     <transition enter-active-class="content-fade-in" leave-active-class="content-fade-out" mode="out-in">
-      <component v-bind:is="activeComponent" :localdb="localdb" :remotedb="remotedb" :username="username" :pages="pages" :teamNumber="teamNumber"></component>
+      <router-view :localdb="localdb" :username="username"></router-view>
     </transition>
+
     <ConnectionError v-if="isConnectionError"></ConnectionError>
   </div>
 </template>
@@ -35,38 +36,11 @@ export default {
       localdb: new PouchDB("localdb"),
       remotedb: new PouchDB("localhost:5984/scoutingData"),
       sync: Object,
-      username: "user",
-      pages: {}
+      username: "user"
     };
   },
-  methods: {
-    toMenuMain: function() {
-      this.activeComponent = "MenuMain";
-    },
-    toMenuAddTeam: function() {
-      this.activeComponent = "MenuTeamAdd";
-    },
-    toMenuTeamView: function(team) {
-      this.teamNumber = team;
-      this.activeComponent = "MenuTeamView";
-    },
-    toMenuAdmin: function() {
-      this.activeComponent = "MenuAdmin";
-    },
-    toMenuTemplateEditor: function() {
-      this.activeComponent = "MenuTemplateEditor";
-    }
-  },
+  methods: {},
   created: function() {
-    //Register app pages
-    this.pages.toMenuMain = this.toMenuMain;
-    this.pages.toMenuAddTeam = this.toMenuAddTeam;
-    this.pages.toMenuTeamView = this.toMenuTeamView;
-    this.pages.toMenuAdmin = this.toMenuAdmin;
-    this.pages.toMenuTemplateEditor = this.toMenuTemplateEditor;
-    this.pages.toMenuTeamCommentAdd = this.toMenuTeamCommentAdd;
-    this.pages.toMenuTeamCommentModify = this.toMenuTeamCommentModify;
-
     PouchDB.plugin(Authentication);
     // this.remotedb
     //   .getSession()
@@ -167,6 +141,7 @@ p {
 a {
   transition: all 0.2s ease-in-out;
   color: #2196f3;
+  text-decoration: none;
 }
 a:active {
   color: #0069c0;

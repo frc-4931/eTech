@@ -15,7 +15,11 @@
         <input v-model="number" type="number" pattern="[0-9]*" max="9999" min="1" name="team-number" placeholder="Team Number" class="content-centered">
       </div>
 
-      <div @click="pages.toMenuAdmin()" class="location-left-padded background-box background-box-hover content-centered">
+      <div @click="submitTeam()" class="location-left-padded background-box background-box-hover content-centered">
+        <h3>Add</h3>
+      </div>
+      <div @click="goBack()" class="location-right-padded background-box background-box-hover content-centered">
+
         <h3>Cancel</h3>
       </div>
       <div @click="submitTeam()" class="location-right-padded background-box background-box-hover content-centered">
@@ -34,7 +38,6 @@ export default {
     FieldError
   },
   props: {
-    pages: Object,
     localdb: Object
   },
   data: function() {
@@ -57,11 +60,14 @@ export default {
         };
 
         this.localdb.put(team).then(function() {
-          dThis.pages.toMenuAdmin();
+          dThis.goBack();
         });
       } else {
         this.error = true;
       }
+    },
+    goBack() {
+      this.$router.go(-1);
     }
   }
 };

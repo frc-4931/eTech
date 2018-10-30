@@ -35,9 +35,13 @@
       <div class="location-right-small">
         <div class="background-box">
           <h2 class="content-centered">Tools</h2>
-          <a @click="pages.toMenuAddTeam()">Add team</a><br>
-          <a @click="pages.toMenuTemplateEditor()">Edit Scouting Templates</a><br>
-          <a @click="localdb.destroy();">Destroy All Data</a>
+          <router-link :to="{name: 'team-add'}">Add team</router-link><br>
+          <router-link :to="{name: 'admin-template'}">Edit Scouting Templates</router-link><br>
+          <a @click="localdb.destroy()">Destroy All Data</a>
+        </div>
+
+        <div @click="goBack()" class="background-box background-box-hover content-centered">
+          <h3>Back</h3>
         </div>
       </div>
     </div>
@@ -55,7 +59,6 @@ export default {
     AdminTeam
   },
   props: {
-    pages: Object,
     localdb: Object
   },
   data: function() {
@@ -90,6 +93,9 @@ export default {
             ["asc"]
           );
         });
+    },
+    goBack() {
+      this.$router.go(-1);
     }
   },
   created: function() {

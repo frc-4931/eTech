@@ -1,7 +1,7 @@
 <template>
   <div id="menu-template-editor">
     <div class="grid">
-      <div class="location-left-tiny background-box background-box-hover content-centered" @click="pages.toMenuAdmin()">
+      <div class="location-left-tiny background-box background-box-hover content-centered" @click="goBack()">
         <h3>Back</h3>
       </div>
 
@@ -57,9 +57,7 @@ import TemplateEditNumberInc from "./admin/template/TemplateEditNumberInc.vue";
 
 export default {
   name: "MenuTemplateEditor",
-  props: {
-    pages: Object
-  },
+  props: {},
   components: {
     TemplateField,
     TemplateEditBoolean,
@@ -79,6 +77,11 @@ export default {
         }
       ]
     };
+  },
+  methods: {
+    goBack() {
+      this.$router.go(-1);
+    }
   }
 };
 </script>
