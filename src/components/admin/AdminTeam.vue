@@ -5,7 +5,7 @@
     </div>
 
     <div>
-      <a @click="removeTeam()">Remove Team</a>
+      <a @click="removeteam(team.number)">Remove Team</a>
     </div>
   </div>
 </template>
@@ -14,21 +14,18 @@
 export default {
   name: "AdminTeam",
   props: {
-    teamdata: Object
-  },
-  methods: {
-    removeTeam() {
-      alert("Need this next");
-    }
+    teamdata: Object,
+    removeteam: Function
   },
   data: function() {
     return {
       team: {
-        number: 1337,
-        name: "Test Team"
+        number: -404,
+        name: "Error: Failed To Load"
       }
     };
   },
+  methods: {},
   created() {
     this.$set(this.team, "number", this.teamdata["number"]);
     this.$set(this.team, "name", this.teamdata["name"]);
