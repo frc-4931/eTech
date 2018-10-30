@@ -30,13 +30,13 @@
           </div>
         </div>
         <div id="leaderboard-container">
-          <LeaderboardTeam v-for="(teamData) in teams" v-bind:key="teamData['_id']" :teamdata="teamData" :pages="pages"></LeaderboardTeam>
+          <LeaderboardTeam v-for="(teamData) in teams" v-bind:key="teamData['_id']" :teamdata="teamData"></LeaderboardTeam>
         </div>
       </div>
       <div class="location-right-small">
         <div class="background-box">
           <h2 class="content-centered">Account</h2>
-          <a @click="pages.toMenuAdmin()">Admin Page</a>
+          <router-link :to="{name: 'admin'}">Admin Page</router-link>
           <p>For this section I'm thinking it should be for info about the users account and if they have permision show options like the admin page</p>
         </div>
         <div class="background-box">
@@ -57,7 +57,6 @@ export default {
     LeaderboardTeam
   },
   props: {
-    pages: Object,
     localdb: Object
   },
   data: function() {

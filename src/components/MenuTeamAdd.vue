@@ -18,7 +18,7 @@
       <div @click="submitTeam()" class="location-left-padded background-box background-box-hover content-centered">
         <h3>Add</h3>
       </div>
-      <div @click="pages.toMenuAdmin()" class="location-right-padded background-box background-box-hover content-centered">
+      <div @click="goBack()" class="location-right-padded background-box background-box-hover content-centered">
         <h3>Cancel</h3>
       </div>
 
@@ -35,7 +35,6 @@ export default {
     FieldError
   },
   props: {
-    pages: Object,
     localdb: Object
   },
   data: function() {
@@ -58,11 +57,14 @@ export default {
         };
 
         this.localdb.put(team).then(function() {
-          dThis.pages.toMenuAdmin();
+          dThis.goBack();
         });
       } else {
         this.error = true;
       }
+    },
+    goBack() {
+      this.$router.go(-1);
     }
   }
 };

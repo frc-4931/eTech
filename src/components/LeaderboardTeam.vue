@@ -14,7 +14,6 @@
 export default {
   name: "LeaderboardTeam",
   props: {
-    pages: Object,
     teamdata: Object
   },
   data: function() {
@@ -29,7 +28,10 @@ export default {
   },
   methods: {
     teamView: function() {
-      this.pages.toMenuTeamView(this.team.number);
+      this.$router.push({
+        name: "team",
+        params: { number: this.team.number }
+      });
     }
   },
   computed: {

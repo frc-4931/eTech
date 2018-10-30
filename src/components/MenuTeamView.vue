@@ -1,8 +1,8 @@
 <template>
   <div id="menu-team-view">
     <div class="grid">
-      <div @click="pages.toMenuMain()" id="done-button" class="location-centered-small background-box background-box-hover content-centered">
-        <h3>Done</h3>
+      <div @click="goBack()" id="done-button" class="location-centered-small background-box background-box-hover content-centered">
+        <h3>Back</h3>
       </div>
       <div id="team-title" class="location-centered background-box">
         <h2 class="content-centered">
@@ -71,8 +71,7 @@ export default {
     NewScout
   },
   props: {
-    pages: Object,
-    teamNumber: Number,
+    number: { type: [String, Number], required: true },
     localdb: Object,
     remotedb: Object,
     username: String
@@ -103,9 +102,6 @@ export default {
     };
   },
   methods: {
-    closeCommentMenu: function() {
-      this.pages.toMenuTeamView(this.teamNumber);
-    },
     loadComments: function() {
       //Load all comments from db then shove them into comments
       //Then check if sum of comment values == team.commentPoints
@@ -261,6 +257,9 @@ export default {
             }
           });
         });
+    },
+    goBack() {
+      this.$router.go(-1);
     }
   },
   created: function() {
@@ -278,6 +277,9 @@ export default {
   computed: {
     totalPoints: function() {
       return this.team.objectivePoints + this.team.commentPoints;
+    },
+    teamNumber() {
+      return parseInt(this.number);
     }
   }
 };
