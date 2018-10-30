@@ -6,22 +6,32 @@
     </div>
 
     <div class="field-edit">
-      <p>Title</p>
-      <input type="text" placeholder="Title" v-model="title">
+      <p class="background-box">Title</p>
+      <div class="background-box-input">
+        <input type="text" placeholder="Title" v-model="title">
+      </div>
 
-      <p>JSON Field Name</p>
-      <input type="text" placeholder="Field Name" v-model="field">
+      <p class="background-box">JSON Field Name</p>
+      <div class="background-box-input">
+        <input type="text" placeholder="Field Name" v-model="field">
+      </div>
 
-      <p>Default value</p>
-      <input type="number" placeholder="Default Number" v-model-number="dNumber">
+      <p class="background-box">Default value</p>
+      <div class="background-box-input">
+        <input type="number" placeholder="Default Number" v-model-number="dNumber">
+      </div>
 
-      <p>Points awarded per 1 entered</p>
-      <input type="number" placeholder="Points Per 1 Entered" v-model-number="scaler">
+      <p class="background-box">Points awarded per 1 entered</p>
+      <div class="background-box-input">
+        <input type="number" placeholder="Points Per 1 Entered" v-model-number="scaler">
+      </div>
 
-      <p>Minimum</p>
-      <input type="number" placeholder="Minimum" v-model-number="minimum">
+      <p class="background-box">Minimum</p>
+      <div class="background-box-input">
+        <input type="number" placeholder="Minimum" v-model-number="minimum">
+      </div>
+
     </div>
-
     <div class="grid-perminant content-centered">
       <div class="location-span background-box background-box-hover">
         <p>Save</p>

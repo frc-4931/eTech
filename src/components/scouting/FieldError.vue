@@ -10,6 +10,3 @@ export default {
   name: "FieldError"
 };
 </script>
-
-<style>
-</style>

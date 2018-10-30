@@ -18,9 +18,9 @@
             <span>{{ team.objectivePoints }}</span>
           </h3>
         </div>
-        <div id="scouting-select" class="background-box">
+        <div class="background-box-input" id="scouting-select">
           <select v-model="scoutingSelect" @change="openScoutingMenu()">
-            <option value="none">Select A Scouting Option</option>
+            <option value="none" disabled>Select A Scouting Option</option>
             <option v-for="(scout, idx) in pitScouts" :key="scout" :value="scout">Pit Scouting - {{ idx + 1 }}</option>
             <option v-for="(scout, idx) in matchScouts" :key="scout" :value="scout">Match Scouting - Match {{ idx + 1 }}</option>
             <option value="create">--- New Scout ---</option>
@@ -312,4 +312,3 @@ export default {
   opacity: 0;
 }
 </style>
-

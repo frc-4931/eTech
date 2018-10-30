@@ -7,21 +7,24 @@
         <h2 class="content-centered">Add team</h2>
       </div>
 
-      <div class="location-left-padded background-box">
-        <input v-model="name" type="text" name="team-name" placeholder="Team Name">
+      <div class="location-left-padded background-box-input">
+        <input v-model="name" type="text" name="team-name" placeholder="Team Name" class="content-centered">
       </div>
 
-      <div class="location-right-padded background-box">
-        <input v-model="number" type="number" pattern="[0-9]*" max="9999" min="1" name="team-number" placeholder="Team Number">
+      <div class="location-right-padded background-box-input">
+        <input v-model="number" type="number" pattern="[0-9]*" max="9999" min="1" name="team-number" placeholder="Team Number" class="content-centered">
       </div>
 
       <div @click="submitTeam()" class="location-left-padded background-box background-box-hover content-centered">
         <h3>Add</h3>
       </div>
       <div @click="goBack()" class="location-right-padded background-box background-box-hover content-centered">
+
         <h3>Cancel</h3>
       </div>
-
+      <div @click="submitTeam()" class="location-right-padded background-box background-box-hover content-centered">
+        <h3>Add</h3>
+      </div>
     </div>
   </div>
 </template>
@@ -69,6 +72,3 @@ export default {
   }
 };
 </script>
-
-<style>
-</style>
