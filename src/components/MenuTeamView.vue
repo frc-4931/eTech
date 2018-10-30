@@ -20,7 +20,7 @@
         </div>
         <div class="background-box-input" id="scouting-select">
           <select v-model="scoutingSelect" @change="openScoutingMenu()">
-            <option value="none" disabled>Select A Scouting Option</option>
+            <option value="none">Select A Scouting Option</option>
             <option v-for="(scout, idx) in pitScouts" :key="scout" :value="scout">Pit Scouting - {{ idx + 1 }}</option>
             <option v-for="(scout, idx) in matchScouts" :key="scout" :value="scout">Match Scouting - Match {{ idx + 1 }}</option>
             <option value="create">--- New Scout ---</option>
@@ -29,8 +29,8 @@
         <!-- Insert Scouting Fields Here -->
         <transition enter-active-class="content-long-fade-in" leave-active-class="content-long-fade-out" mode="out-in">
           <NewScout v-if="scoutingSelect == 'create' " :localdb="localdb" :username="username" :teamNumber="teamNumber" :callback="teamCreated"></NewScout>
-          <ScoutMenu :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('PITSCOUT_')" :isMatchScout="false" :localdb="localdb" :docId="scoutingSelect" :callback="teamModified"></ScoutMenu>
-          <ScoutMenu :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('MATCHSCOUT_')" :isMatchScout="true" :localdb="localdb" :docId="scoutingSelect" :callback="teamModified"></ScoutMenu>
+          <ScoutMenu :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('PITSCOUT_')" :isMatchScout="false" :localdb="localdb" :docId="scoutingSelect" :callback="teamModified" :closeteam="teamClose"></ScoutMenu>
+          <ScoutMenu :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('MATCHSCOUT_')" :isMatchScout="true" :localdb="localdb" :docId="scoutingSelect" :callback="teamModified" :closeteam="teamClose"></ScoutMenu>
         </transition>
       </div>
       <div class="location-right-padded">
@@ -42,7 +42,19 @@
           </h3>
         </div>
         <transition-group name="comment-menu">
-          <component v-for="(comment, id) in comments" :is="commentIs(id)" :modify="function() {openCommentModifyMenu(id)}" :key="id" :docId="id" :rating="comment.rating" :comment="comment.comment" :title="comment.title" :localdb="localdb" :callback="commentModified"></component>
+          <!-- beautify ignore:start -->
+          <component v-for="(comment, id) in comments"
+            :is="commentIs(id)"
+            :modify="function() {openCommentModifyMenu(id)}"
+            :key="id"
+            :docId="id"
+            :rating="comment.rating"
+            :comment="comment.comment"
+            :title="comment.title"
+            :localdb="localdb"
+            :callback="commentModified">
+          </component>
+          <!-- beautify ignore:end -->
         </transition-group>
         <div v-if="commentAddMenu == false" @click="openCommentAddMenu()" class="background-box background-box-hover">
           <h3 class="content-centered">Add comment</h3>
@@ -225,6 +237,10 @@ export default {
     },
     teamModified() {
       this.loadObjectivePoints();
+    },
+    teamClose() {
+      this.scoutingSelect = "none";
+      this.loadScouting();
     },
     loadObjectivePoints() {
       var dThis = this;

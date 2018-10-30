@@ -1,17 +1,30 @@
 <template>
   <div id="menu-template-editor">
     <div class="grid">
-      <div @click="goBack()" class="location-left-tiny background-box background-box-hover content-centered">
+
+      <div class="mobile-view field-buttons">
+
+        <div @click="goBack()" class="mobile-view field-button-left background-box background-box-hover content-centered">
+          <h3>Back</h3>
+        </div>
+
+        <div @click="saveTemplate(curTemplate)" class="mobile-view field-button-right background-box background-box-hover content-centered">
+          <h3>Save</h3>
+        </div>
+
+      </div>
+
+      <div @click="goBack()" class="desktop-view location-left-tiny background-box background-box-hover content-centered">
         <h3>Back</h3>
       </div>
 
-      <Error v-if="isError" class="location-centered background-box content-centered">{{errorMessage}}</Error>
-      <Message v-else-if="isMessage" class="location-centered background-box content-centered">{{generalMessage}}</Message>
-      <div v-else class="location-centered background-box content-centered">
+      <Error v-if="isError" class="mobile-none-margin-top location-centered background-box content-centered">{{errorMessage}}</Error>
+      <Message v-else-if="isMessage" class="mobile-none-margin-top location-centered background-box content-centered">{{generalMessage}}</Message>
+      <div v-else class="mobile-none-margin-top location-centered background-box content-centered">
         <h2>Template Editor</h2>
       </div>
 
-      <div @click="saveTemplate(curTemplate)" class="location-right-tiny background-box background-box-hover content-centered">
+      <div @click="saveTemplate(curTemplate)" class="desktop-view location-right-tiny background-box background-box-hover content-centered">
         <h3>Save</h3>
       </div>
 
@@ -22,7 +35,7 @@
 
         <div class="background-box-input">
           <select v-model="curTemplate" @change="loadTemplate(curTemplate)" id="select-template">
-            <option value="none" disabled>Select a scouting template</option>
+            <option value="none">Select a scouting template</option>
             <option value="TEMPLATE_PITSCOUT">Pit Scout</option>
             <option value="TEMPLATE_MATCHSCOUT">Match Scout</option>
           </select>
@@ -43,6 +56,7 @@
         <!-- beautify ignore:start -->
         <component v-for="(field, index) in fields"
           :key="field.field || field.title"
+          :id="field.field || field.title.replace(/[^a-zA-Z]/g, '')"
           :is="fieldIs(field)"
           :indata="field"
           :data="field"
@@ -55,7 +69,7 @@
         </component>
         <!-- beautify ignore:end -->
 
-        <div v-if="curOpen == 'field_add'">
+        <div v-if="curOpen == 'field_add'" id="template-field-add">
           <div class="line" />
 
           <div class="background-box content-centered">
@@ -107,6 +121,8 @@ import TemplateEditNumberInc from "./admin/template/TemplateEditNumberInc.vue";
 import Error from "@/components/Error.vue";
 import Message from "@/components/Message.vue";
 
+import { scroller } from "vue-scrollto/src/scrollTo";
+
 export default {
   name: "MenuTemplateEditor",
   props: {
@@ -132,7 +148,8 @@ export default {
       isMessage: false,
       errorMessage: "An error has occurred!",
       generalMessage: "",
-      curTemplate: "none"
+      curTemplate: "none",
+      scrollTo: scroller()
     };
   },
   methods: {
@@ -234,12 +251,22 @@ export default {
       }
     },
     openFieldAdd() {
+      var dThis = this;
       this.newFieldTitle = "";
       this.newFieldType = "TitleField";
       this.curOpen = "field_add";
+
+      this.$nextTick().then(function() {
+        dThis.scrollTo("#template-field-add", 500, { offset: -10 });
+      });
     },
     openField(field) {
+      var dThis = this;
       this.curOpen = field.field || field.title;
+      var scrollEl = field.field || field.title.replace(/[^a-zA-Z]/g, "");
+      this.$nextTick().then(function() {
+        dThis.scrollTo("#" + scrollEl, 500, { offset: -10 });
+      });
     },
     saveField(index, fieldData) {
       this.$set(this.fields, index, Object.assign({}, fieldData));
@@ -248,7 +275,10 @@ export default {
       this.curOpen = "none";
     },
     deleteField(index) {
-      this.fields.splice(index, 1);
+      var confirmDelete = confirm(
+        "You are about to delete '" + this.fields[index].title + "'"
+      );
+      if (confirmDelete) this.fields.splice(index, 1);
     },
     moveUp(index) {
       if (index > 0) this.arrayMove(this.fields, index, index - 1);
@@ -262,6 +292,7 @@ export default {
       this.isError = false;
       this.isMessage = false;
       this.fields = [];
+      if (template == "none") return;
       this.localdb
         .get(template)
         .then(function(doc) {
@@ -342,6 +373,9 @@ export default {
 </script>
 
 <style>
+#select-template {
+  text-align-last: center;
+}
 .field-edit {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -349,5 +383,16 @@ export default {
 .field-edit .background-box,
 .field-edit .background-box-input {
   margin-top: 0px;
+}
+.field-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  margin-bottom: 0px;
+}
+.field-button-left {
+  margin-left: 25px;
+}
+.field-button-right {
+  margin-right: 25px;
 }
 </style>

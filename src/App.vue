@@ -235,10 +235,19 @@ textarea {
   a:hover {
     color: #0069c0;
   }
+  .mobile-view {
+    display: none;
+  }
 }
 @media (max-width: 700px) {
   .grid > * {
     margin-bottom: 20px;
+  }
+  .desktop-view {
+    display: none;
+  }
+  .mobile-none-margin-top {
+    margin-top: 0px;
   }
 }
 @keyframes fade-in {

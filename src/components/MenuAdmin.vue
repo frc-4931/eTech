@@ -40,9 +40,9 @@
           <a @click="localdb.destroy()">Destroy All Data</a>
         </div>
 
-        <div @click="goBack()" class="background-box background-box-hover content-centered">
+        <!-- <div @click="goBack()" class="background-box background-box-hover content-centered">
           <h3>Back</h3>
-        </div>
+        </div> -->
       </div>
     </div>
 

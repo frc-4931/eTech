@@ -5,6 +5,9 @@
     <div @click="save()" class="location-centered-small background-box background-box-hover content-centered">
       <h3>Save</h3>
     </div>
+    <div @click="deleteScout()" class="location-centered-small background-box background-box-hover content-centered">
+      <h3>Delete</h3>
+    </div>
     <div class="line"></div>
   </div>
 </template>
@@ -32,7 +35,8 @@ export default {
     localdb: Object,
     docId: String,
     isMatchScout: Boolean,
-    callback: Function
+    callback: Function,
+    closeteam: Function
   },
   data: function() {
     return {
@@ -151,6 +155,19 @@ export default {
     },
     save() {
       this.updateAndPutData();
+    },
+    deleteScout() {
+      var confirmDelete = confirm(
+        "Deleting a scout is very risky!\nThis action cannot be undone!"
+      );
+      if (confirmDelete) {
+        var dThis = this;
+        this.localdb.get(this.docId).then(function(doc) {
+          dThis.localdb.remove(doc).then(function() {
+            dThis.closeteam();
+          });
+        });
+      }
     }
   },
   created() {
