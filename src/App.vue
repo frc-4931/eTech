@@ -9,28 +9,18 @@
 </template>
 
 <script>
-import MenuMain from "./components/MenuMain.vue";
-import MenuTeamAdd from "./components/MenuTeamAdd.vue";
 import ConnectionError from "./components/ConnectionError.vue";
-import MenuTeamView from "./components/MenuTeamView.vue";
 import PouchDB from "pouchdb";
 import Authentication from "pouchdb-authentication";
-import MenuAdmin from "./components/MenuAdmin.vue";
-import MenuTemplateEditor from "./components/MenuTemplateEditor.vue";
+import PitTemplate from "./assets/pitscout.js";
 
 export default {
   name: "app",
   components: {
-    MenuMain,
-    MenuTeamAdd,
-    ConnectionError,
-    MenuTeamView,
-    MenuAdmin,
-    MenuTemplateEditor
+    ConnectionError
   },
   data: function() {
     return {
-      activeComponent: "MenuMain",
       isConnectionError: false,
       teamNumber: 4931,
       localdb: new PouchDB("localdb"),
@@ -41,6 +31,11 @@ export default {
   },
   methods: {},
   created: function() {
+    var doc = {};
+    doc.fields = PitTemplate.fields;
+    doc._id = "TEMPLATE_PITSCOUT";
+    this.localdb.put(doc);
+
     PouchDB.plugin(Authentication);
     // this.remotedb
     //   .getSession()

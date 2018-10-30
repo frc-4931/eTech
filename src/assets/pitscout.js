@@ -59,6 +59,16 @@ export default {
       "type": "BooleanField",
       "title": "Work Around Us:",
       "field": "auto_aroundus",
+      "default": false,
+      "points": [
+        5,
+        0
+      ]
+    },
+    {
+      "type": "BooleanField",
+      "title": "test:",
+      "field": "test",
       "default": true,
       "points": [
         5,

@@ -36,12 +36,14 @@
           </div>
         </div>
 
-        <p>TODO: List of TemplateFields</p>
+        <component v-for="field in fields" :key="field.field || field.title" :is="'TemplateField'" :data="{type: 'BooleanField', title: 'test'}"></component>
+
+        <!-- <p>TODO: List of TemplateFields</p>
 
         <TemplateEditBoolean></TemplateEditBoolean>
         <TemplateEditNumber></TemplateEditNumber>
         <TemplateEditNumberInc></TemplateEditNumberInc>
-        <TemplateEditDropdown></TemplateEditDropdown>
+        <TemplateEditDropdown></TemplateEditDropdown> -->
       </div>
     </div>
   </div>
@@ -57,7 +59,9 @@ import TemplateEditNumberInc from "./admin/template/TemplateEditNumberInc.vue";
 
 export default {
   name: "MenuTemplateEditor",
-  props: {},
+  props: {
+    localdb: Object
+  },
   components: {
     TemplateField,
     TemplateEditBoolean,
@@ -67,21 +71,23 @@ export default {
   },
   data: function() {
     return {
-      fields: [
-        {
-          type: "BooleanField",
-          title: "Cross Center Line:",
-          field: "auto_centerline",
-          default: false,
-          points: [3, 0]
-        }
-      ]
+      fields: []
     };
   },
   methods: {
+    fieldIs() {},
+    loadTemplate(template) {
+      var dThis = this;
+      this.localdb.get(template).then(function(doc) {
+        dThis.fields = doc.fields;
+      });
+    },
     goBack() {
       this.$router.go(-1);
     }
+  },
+  created() {
+    this.loadTemplate("TEMPLATE_PITSCOUT");
   }
 };
 </script>
