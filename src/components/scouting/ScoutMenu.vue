@@ -36,7 +36,17 @@ export default {
     docId: String,
     isMatchScout: Boolean,
     callback: Function,
-    closeteam: Function
+    closeteam: Function,
+    shouldUpdate: false,
+    callUpdated: Function
+  },
+  watch: {
+    shouldUpdate(newValue, oldValue) {
+      if (newValue === true) {
+        this.updateScoutData();
+        this.callUpdated();
+      }
+    }
   },
   data: function() {
     return {

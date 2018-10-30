@@ -61,7 +61,8 @@ export default {
     AdminTeam
   },
   props: {
-    localdb: Object
+    localdb: Object,
+    sync: Object
   },
   data: function() {
     return {
@@ -74,7 +75,6 @@ export default {
       if (teamID !== undefined) this.teams.push(team_doc["doc"]);
     },
     loadTeams() {
-      this.teams = [];
       var dThis = this;
       this.localdb
         .allDocs({
@@ -83,6 +83,7 @@ export default {
           endkey: "TEAM_\ufff0"
         })
         .then(function(result) {
+          dThis.teams = [];
           for (var docID in result["rows"]) {
             dThis.addToBoard(result["rows"][docID]);
           }
@@ -118,7 +119,22 @@ export default {
     }
   },
   created: function() {
+    var dThis = this;
     this.loadTeams();
+
+    this.sync.on("change", function(change) {
+      if (change["direction"] == "pull") {
+        var shouldLoadTeams = false;
+
+        for (var doc of change.change.docs) {
+          if (doc["_id"].startsWith("TEAM_")) {
+            shouldLoadTeams = true;
+          }
+        }
+
+        if (shouldLoadTeams) dThis.loadTeams();
+      }
+    });
   }
 };
 </script>

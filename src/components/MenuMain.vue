@@ -43,11 +43,7 @@
         </div>
       </div>
       <div class="location-right-small">
-        <div class="background-box">
-          <h2 class="content-centered">Account</h2>
-          <router-link :to="{name: 'admin'}">Admin Page</router-link>
-          <p>For this section I'm thinking it should be for info about the users account and if they have permision show options like the admin page</p>
-        </div>
+        <AccountPanel :remotedb="remotedb"></AccountPanel>
         <div class="background-box">
           <h2 class="content-centered">Member Leaderboard</h2>
         </div>
@@ -59,14 +55,18 @@
 <script>
 import LeaderboardTeam from "./LeaderboardTeam.vue";
 import orderBy from "lodash.orderby";
+import AccountPanel from "./user/AccountPanel.vue";
 
 export default {
   name: "MenuMain",
   components: {
-    LeaderboardTeam
+    LeaderboardTeam,
+    AccountPanel
   },
   props: {
-    localdb: Object
+    localdb: Object,
+    remotedb: Object,
+    sync: Object
   },
   data: function() {
     return {
@@ -87,6 +87,7 @@ export default {
           endkey: "TEAM_\ufff0"
         })
         .then(function(result) {
+          dThis.teams = [];
           for (var docID in result["rows"]) {
             dThis.addToBoard(result["rows"][docID]);
           }
@@ -106,7 +107,22 @@ export default {
     }
   },
   created: function() {
+    var dThis = this;
     this.loadTeams();
+
+    this.sync.on("change", function(change) {
+      if (change["direction"] == "pull") {
+        var shouldLoadTeams = false;
+
+        for (var doc of change.change.docs) {
+          if (doc["_id"].startsWith("TEAM_")) {
+            shouldLoadTeams = true;
+          }
+        }
+
+        if (shouldLoadTeams) dThis.loadTeams();
+      }
+    });
   }
 };
 </script>

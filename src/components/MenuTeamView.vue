@@ -31,8 +31,8 @@
         <!-- Insert Scouting Fields Here -->
         <transition enter-active-class="content-long-fade-in" leave-active-class="content-long-fade-out" mode="out-in">
           <NewScout v-if="scoutingSelect == 'create' " :localdb="localdb" :username="username" :teamNumber="teamNumber" :callback="teamCreated"></NewScout>
-          <ScoutMenu :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('PITSCOUT_')" :isMatchScout="false" :localdb="localdb" :docId="scoutingSelect" :callback="teamModified" :closeteam="teamClose"></ScoutMenu>
-          <ScoutMenu :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('MATCHSCOUT_')" :isMatchScout="true" :localdb="localdb" :docId="scoutingSelect" :callback="teamModified" :closeteam="teamClose"></ScoutMenu>
+          <ScoutMenu :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('PITSCOUT_')" :isMatchScout="false" :localdb="localdb" :docId="scoutingSelect" :callback="teamModified" :closeteam="teamClose" :shouldUpdate="shouldUpdateScoutMenu" :callUpdated="updatedScoutMenu"></ScoutMenu>
+          <ScoutMenu :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('MATCHSCOUT_')" :isMatchScout="true" :localdb="localdb" :docId="scoutingSelect" :callback="teamModified" :closeteam="teamClose" :shouldUpdate="shouldUpdateScoutMenu" :callUpdated="updatedScoutMenu"></ScoutMenu>
         </transition>
       </div>
       <div class="location-right-padded">
@@ -43,8 +43,8 @@
             <span>{{team.commentPoints}}</span>
           </h3>
         </div>
-        <transition-group name="comment-menu">
-          <!-- beautify ignore:start -->
+        <!-- <transition-group name="comment-menu"> -->
+        <!-- beautify ignore:start -->
           <component v-for="(comment, id) in comments"
             :is="commentIs(id)"
             :modify="function() {openCommentModifyMenu(id)}"
@@ -57,7 +57,7 @@
             :callback="commentModified">
           </component>
           <!-- beautify ignore:end -->
-        </transition-group>
+        <!-- </transition-group> -->
         <div v-if="commentAddMenu == false" @click="openCommentAddMenu()" class="background-box background-box-hover">
           <h3 class="content-centered">Add comment</h3>
         </div>
@@ -88,6 +88,7 @@ export default {
     number: { type: [String, Number], required: true },
     localdb: Object,
     remotedb: Object,
+    sync: Object,
     username: String
   },
   data: function() {
@@ -112,7 +113,8 @@ export default {
       scoutingLoaded: 0,
       commentAddMenu: false,
       commentModifyMenu: "none",
-      scrollTo: scroller()
+      scrollTo: scroller(),
+      shouldUpdateScoutMenu: false
     };
   },
   methods: {
@@ -121,7 +123,6 @@ export default {
       //Then check if sum of comment values == team.commentPoints
       //If not then db.get file modify commentPoints then db.put
       var dThis = this;
-      this.comments = {};
       this.localdb
         .allDocs({
           include_docs: true,
@@ -129,6 +130,7 @@ export default {
           endkey: "COMMENT_" + dThis.teamNumber + "_\ufff0"
         })
         .then(function(docs) {
+          dThis.comments = {};
           var totalCommentRating = 0;
 
           for (var docID in docs["rows"]) {
@@ -244,6 +246,12 @@ export default {
       this.scoutingSelect = "none";
       this.loadScouting();
     },
+    updateScoutMenu() {
+      if (this.scoutingSelect !== "none") this.shouldUpdateScoutMenu = true;
+    },
+    updatedScoutMenu() {
+      this.shouldUpdateScoutMenu = false;
+    },
     loadObjectivePoints() {
       var dThis = this;
       var allScoutingIds = this.matchScouts.concat(this.pitScouts);
@@ -291,6 +299,33 @@ export default {
 
     this.loadComments();
     this.loadScouting();
+
+    this.sync.on("change", function(change) {
+      if (change["direction"] == "pull") {
+        var shouldLoadScouting = false;
+        var shouldLoadComments = false;
+
+        for (var doc of change.change.docs) {
+          if (doc["_id"].startsWith("PITSCOUT_" + dThis.number + "_")) {
+            shouldLoadScouting = true;
+          } else if (
+            doc["_id"].startsWith("MATCHSCOUT_" + dThis.number + "_")
+          ) {
+            shouldLoadScouting = true;
+          } else if (doc["_id"].startsWith("COMMENT_" + dThis.number + "_")) {
+            shouldLoadComments = true;
+          }
+        }
+
+        if (shouldLoadScouting) {
+          dThis.updateScoutMenu();
+          dThis.loadScouting();
+        }
+        if (shouldLoadComments) {
+          dThis.loadComments();
+        }
+      }
+    });
   },
   computed: {
     totalPoints: function() {

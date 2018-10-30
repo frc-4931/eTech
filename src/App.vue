@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <transition enter-active-class="content-fade-in" leave-active-class="content-fade-out" mode="out-in">
-      <router-view :localdb="localdb" :username="username"></router-view>
+      <router-view :localdb="localdb" :remotedb="remotedb" :sync="sync" :username="username"></router-view>
     </transition>
 
     <ConnectionError v-if="isConnectionError"></ConnectionError>
@@ -25,7 +25,9 @@ export default {
       isConnectionError: false,
       teamNumber: 4931,
       localdb: new PouchDB("localdb"),
-      remotedb: new PouchDB("localhost:5984/scoutingData"),
+      remotedb: new PouchDB("http://192.168.0.15:5984/scouting", {
+        skip_setup: true
+      }),
       sync: Object,
       username: "user"
     };
@@ -43,27 +45,25 @@ export default {
     this.localdb.put(doc_match).catch(function() {});
 
     PouchDB.plugin(Authentication);
-    // this.remotedb
-    //   .getSession()
-    //   .then(function(respone) {
-    //     console.log(respone);
-    //   })
-    //   .catch(function(err) {
-    //     if (err.name == "unknown") console.log("You are not logged in!");
-    //   });
 
-    // this.remotedb.info().then(function(info) {
-    //   console.log(info);
-    // });
+    this.remotedb.logIn("userone", "pass").catch(function(err) {
+      if (err) {
+        if (err.name === "unauthorized" || err.name === "forbidden") {
+          // name or password incorrect
+        } else {
+          // cosmic rays, a meteor, etc.
+        }
+      }
+    });
 
-    // var sync = this.localdb
-    //   .sync(this.remotedb, {
-    //         live: true,
-    //         retry: true
-    //   })
-    //   .on("error", function(err) {
-    //     console.log(err);
-    //   });
+    this.sync = this.localdb
+      .sync(this.remotedb, {
+        live: true,
+        retry: true
+      })
+      .on("error", function(err) {
+        console.log(err);
+      });
   }
 };
 </script>
