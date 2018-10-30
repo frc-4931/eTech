@@ -8,7 +8,7 @@
       </div>
 
       <div class="location-left-padded background-box-input">
-        <input v-model="name" type="text" name="team-name" placeholder="Team Name" class="content-centered">
+        <input v-model.trim="name" type="text" name="team-name" placeholder="Team Name" class="content-centered">
       </div>
 
       <div class="location-right-padded background-box-input">

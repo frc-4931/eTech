@@ -7,7 +7,7 @@ export default {
     },
     {
       "type": "DropdownField",
-      "title": "Drivetrain:",
+      "title": "Drivetrain",
       "field": "drivetrain",
       "options": [
         "Tank",
@@ -31,7 +31,7 @@ export default {
     },
     {
       "type": "BooleanField",
-      "title": "Cross Center Line:",
+      "title": "Cross Center Line",
       "field": "auto_centerline",
       "default": false,
       "points": [
@@ -41,7 +41,7 @@ export default {
     },
     {
       "type": "NumberField",
-      "title": "Blocks In Switch:",
+      "title": "Blocks In Switch",
       "field": "auto_switch",
       "default": 0,
       "points": 3,
@@ -49,7 +49,7 @@ export default {
     },
     {
       "type": "NumberField",
-      "title": "Blocks In Scale:",
+      "title": "Blocks In Scale",
       "field": "auto_scale",
       "default": 0,
       "points": 5,
@@ -57,9 +57,9 @@ export default {
     },
     {
       "type": "BooleanField",
-      "title": "Work Around Us:",
+      "title": "Work Around Us",
       "field": "auto_aroundus",
-      "default": true,
+      "default": false,
       "points": [
         5,
         0

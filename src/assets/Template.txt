@@ -11,7 +11,7 @@ types:
 "BooleanField" - type, title, field, default, points [true, false]
 "NumberField" - type, title, field, default, points
 "NumberFieldInc" - type, title, field, default, points, min, max
-"TitleField" - type, title, field, default, points, min, max
+"TitleField" - type, title
 
 {
 	fields: [

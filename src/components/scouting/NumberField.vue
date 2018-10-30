@@ -5,7 +5,7 @@
     </div>
 
     <div class="background-box-input location-right">
-      <input v-model="data.value" @input="changed()" type="number" pattern="[0-9]*" :max="max" :min="min" placeholder="Value">
+      <input v-model.number="data.value" @input="changed()" type="number" pattern="[0-9]*" :max="max" :min="min" placeholder="Value">
     </div>
   </div>
 </template>
@@ -14,8 +14,7 @@
 export default {
   name: "NumberField",
   props: {
-    data: Object,
-    value: Number
+    data: Object
   },
   data: function() {
     return {
@@ -28,10 +27,9 @@ export default {
   methods: {
     changed: function() {
       this.hasChanged = true;
-      this.$emit("valuechange", this.getValue(), Math.floor(this.getPoints()));
-    },
-    getValue() {
-      return parseInt(this.data.value);
+      if (this.data.value > this.max) this.data.value = this.max;
+      else if (this.data.value < this.min) this.data.value = this.min;
+      this.$emit("valuechange", this.data.value, Math.floor(this.getPoints()));
     },
     getPoints() {
       return this.data.points * this.data.value;

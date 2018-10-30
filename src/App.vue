@@ -9,28 +9,19 @@
 </template>
 
 <script>
-import MenuMain from "./components/MenuMain.vue";
-import MenuTeamAdd from "./components/MenuTeamAdd.vue";
 import ConnectionError from "./components/ConnectionError.vue";
-import MenuTeamView from "./components/MenuTeamView.vue";
 import PouchDB from "pouchdb";
 import Authentication from "pouchdb-authentication";
-import MenuAdmin from "./components/MenuAdmin.vue";
-import MenuTemplateEditor from "./components/MenuTemplateEditor.vue";
+import PitTemplate from "./assets/pitscout.js";
+import MatchTemplate from "./assets/matchscout.js";
 
 export default {
   name: "app",
   components: {
-    MenuMain,
-    MenuTeamAdd,
-    ConnectionError,
-    MenuTeamView,
-    MenuAdmin,
-    MenuTemplateEditor
+    ConnectionError
   },
   data: function() {
     return {
-      activeComponent: "MenuMain",
       isConnectionError: false,
       teamNumber: 4931,
       localdb: new PouchDB("localdb"),
@@ -41,6 +32,16 @@ export default {
   },
   methods: {},
   created: function() {
+    var doc_pit = {};
+    doc_pit.fields = PitTemplate.fields;
+    doc_pit._id = "TEMPLATE_PITSCOUT";
+    this.localdb.put(doc_pit).catch(function() {});
+
+    var doc_match = {};
+    doc_match.fields = MatchTemplate.fields;
+    doc_match._id = "TEMPLATE_MATCHSCOUT";
+    this.localdb.put(doc_match).catch(function() {});
+
     PouchDB.plugin(Authentication);
     // this.remotedb
     //   .getSession()
@@ -234,10 +235,19 @@ textarea {
   a:hover {
     color: #0069c0;
   }
+  .mobile-view {
+    display: none;
+  }
 }
 @media (max-width: 700px) {
   .grid > * {
     margin-bottom: 20px;
+  }
+  .desktop-view {
+    display: none;
+  }
+  .mobile-none-margin-top {
+    margin-top: 0px;
   }
 }
 @keyframes fade-in {
