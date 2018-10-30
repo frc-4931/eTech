@@ -7,14 +7,14 @@ export default {
     },
     {
       "type": "BooleanField",
-      "title": "Cross Center Line:",
+      "title": "Cross Center Line",
       "field": "auto_centerline",
       "default": false,
       "points": [3, 0]
     },
     {
       "type": "NumberFieldInc",
-      "title": "Blocks (Allience Switch):",
+      "title": "Blocks (Allience Switch)",
       "field": "auto_alli_switch",
       "default": 0,
       "points": 2,
@@ -22,7 +22,7 @@ export default {
     },
     {
       "type": "NumberFieldInc",
-      "title": "Blocks (Allience Scale):",
+      "title": "Blocks (Allience Scale)",
       "field": "auto_alli_scale",
       "default": 0,
       "points": 3,
@@ -34,7 +34,7 @@ export default {
     },
     {
       "type": "NumberFieldInc",
-      "title": "Blocks (Allience Switch):",
+      "title": "Blocks (Allience Switch)",
       "field": "teleop_alli_switch",
       "default": 0,
       "points": 1,
@@ -42,7 +42,7 @@ export default {
     },
     {
       "type": "NumberFieldInc",
-      "title": "Blocks (Allience Scale):",
+      "title": "Blocks (Allience Scale)",
       "field": "teleop_alli_scale",
       "default": 0,
       "points": 1,
@@ -50,7 +50,7 @@ export default {
     },
     {
       "type": "NumberFieldInc",
-      "title": "Blocks (Opponent Switch):",
+      "title": "Blocks (Opponent Switch)",
       "field": "teleop_opp_switch",
       "default": 0,
       "points": 1,
@@ -62,7 +62,7 @@ export default {
     },
     {
       "type": "DropdownField",
-      "title": "End:",
+      "title": "End",
       "field": "end_position",
       "default": "None",
       "options": ["None", "Park", "Hang", "Double Hang", "Supported A Double Hang", "Triple Hang", "Supported A Tripple Hang"],
@@ -70,7 +70,7 @@ export default {
     },
     {
       "type": "DropdownField",
-      "title": "Power Up Usage:",
+      "title": "Power Up Usage",
       "field": "other_powerupUsage",
       "default": "None Used",
       "options": ["None Used", "Poor", "Average", "Exelent"],

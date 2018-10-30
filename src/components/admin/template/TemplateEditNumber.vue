@@ -1,60 +1,112 @@
 <template>
   <div>
     <div class="line"></div>
-    <div class="background-box content-centered">
+
+    <Error v-if="isError">All Fields Are Required!</Error>
+    <div v-else class="background-box content-centered">
       <h3>Edit Number Field</h3>
     </div>
 
     <div class="field-edit">
       <p class="background-box">Title</p>
       <div class="background-box-input">
-        <input type="text" placeholder="Title" v-model="title">
-      </div>
-
-      <p class="background-box">JSON Field Name</p>
-      <div class="background-box-input">
-        <input type="text" placeholder="Field Name" v-model="field">
+        <input type="text" placeholder="Title" v-model.trim="data.title">
       </div>
 
       <p class="background-box">Default value</p>
       <div class="background-box-input">
-        <input type="number" placeholder="Default Number" v-model-number="dNumber">
+        <input type="number" placeholder="Default Number" v-model.number="data.default">
       </div>
 
-      <p class="background-box">Points awarded per 1 entered</p>
+      <p class="background-box">Points per Value</p>
       <div class="background-box-input">
-        <input type="number" placeholder="Points Per 1 Entered" v-model-number="scaler">
+        <input type="number" placeholder="Points Per 1 Entered" v-model.number="data.points">
       </div>
 
       <p class="background-box">Minimum</p>
       <div class="background-box-input">
-        <input type="number" placeholder="Minimum" v-model-number="minimum">
+        <input type="number" placeholder="Minimum" v-model.number="data.min">
       </div>
     </div>
     <div class="grid-perminant content-centered">
-      <div class="location-span background-box background-box-hover">
-        <p>Save</p>
-      </div>
-      <div class="location-left-small background-box background-box-hover">
+
+      <div @click="deleteField()" class="location-left-small background-box background-box-hover">
         <p>Delete</p>
       </div>
-      <div class="location-centered-small background-box background-box-hover">
+      <div @click="moveUp()" class="location-centered-small background-box background-box-hover">
         <p>Move Up</p>
       </div>
-      <div class="location-right-small background-box background-box-hover">
+      <div @click="moveDown()" class="location-right-small background-box background-box-hover">
         <p>Move Down</p>
       </div>
+
+      <div class="location-span">
+        <div @click="save()" class="background-box background-box-hover">
+          <p>Save</p>
+        </div>
+        <div @click="close()" class="background-box background-box-hover">
+          <p>Close</p>
+        </div>
+      </div>
+
     </div>
+
     <div class="line"></div>
   </div>
 </template>
 
 <script>
+import Error from "@/components/Error.vue";
+
 export default {
   name: "TemplateEditNumber",
+  components: { Error },
   props: {
-    type: String,
-    title: String
+    indata: Object
+  },
+  data: function() {
+    return {
+      data: {},
+      isError: false
+    };
+  },
+  methods: {
+    close() {
+      this.$emit("close");
+    },
+    save() {
+      if (this.allOptionsValid()) {
+        this.isError = false;
+        this.$emit("save", this.data);
+      } else {
+        this.isError = true;
+      }
+    },
+    moveUp() {
+      this.$emit("move-up");
+    },
+    moveDown() {
+      this.$emit("move-down");
+    },
+    deleteField() {
+      this.$emit("delete");
+    },
+    allOptionsValid() {
+      if (
+        this.data.default === "" ||
+        this.data.points === "" ||
+        this.data.min === "" ||
+        this.data.title == "" ||
+        this.data.field == ""
+      ) {
+        return false;
+      } else {
+        return true;
+      }
+    }
+  },
+  created() {
+    Object.assign(this.data, this.indata);
   }
 };
 </script>

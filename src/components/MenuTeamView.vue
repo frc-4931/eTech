@@ -6,7 +6,7 @@
       </div>
       <div id="team-title" class="location-centered background-box">
         <h2 class="content-centered">
-          <span>{{ team.name }}</span>-
+          <span>{{ team.name }}</span> -
           <span>{{ team.number }}</span>
         </h2>
       </div>

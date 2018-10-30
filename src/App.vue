@@ -13,6 +13,7 @@ import ConnectionError from "./components/ConnectionError.vue";
 import PouchDB from "pouchdb";
 import Authentication from "pouchdb-authentication";
 import PitTemplate from "./assets/pitscout.js";
+import MatchTemplate from "./assets/matchscout.js";
 
 export default {
   name: "app",
@@ -31,10 +32,15 @@ export default {
   },
   methods: {},
   created: function() {
-    var doc = {};
-    doc.fields = PitTemplate.fields;
-    doc._id = "TEMPLATE_PITSCOUT";
-    this.localdb.put(doc);
+    var doc_pit = {};
+    doc_pit.fields = PitTemplate.fields;
+    doc_pit._id = "TEMPLATE_PITSCOUT";
+    this.localdb.put(doc_pit).catch(function() {});
+
+    var doc_match = {};
+    doc_match.fields = MatchTemplate.fields;
+    doc_match._id = "TEMPLATE_MATCHSCOUT";
+    this.localdb.put(doc_match).catch(function() {});
 
     PouchDB.plugin(Authentication);
     // this.remotedb

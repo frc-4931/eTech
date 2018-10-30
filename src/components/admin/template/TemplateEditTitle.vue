@@ -4,28 +4,13 @@
 
     <Error v-if="isError">All Fields Are Required!</Error>
     <div v-else class="background-box content-centered">
-      <h3>Edit Number Incremential Field</h3>
+      <h3>Edit Title Field</h3>
     </div>
 
     <div class="field-edit">
       <p class="background-box">Title</p>
       <div class="background-box-input">
         <input type="text" placeholder="Title" v-model.trim="data.title">
-      </div>
-
-      <p class="background-box">Default value</p>
-      <div class="background-box-input">
-        <input type="number" placeholder="Default Number" v-model.number="data.default">
-      </div>
-
-      <p class="background-box">Points per Value</p>
-      <div class="background-box-input">
-        <input type="number" placeholder="Points Per 1 Entered" v-model.number="data.points">
-      </div>
-
-      <p class="background-box">Minimum</p>
-      <div class="background-box-input">
-        <input type="number" placeholder="Minimum" v-model.number="data.min">
       </div>
 
     </div>
@@ -51,7 +36,6 @@
       </div>
 
     </div>
-
     <div class="line"></div>
   </div>
 </template>
@@ -60,7 +44,7 @@
 import Error from "@/components/Error.vue";
 
 export default {
-  name: "TemplateEditNumberInc",
+  name: "TemplateEditTitle",
   components: { Error },
   props: {
     indata: Object
@@ -76,12 +60,7 @@ export default {
       this.$emit("close");
     },
     save() {
-      if (this.allOptionsValid()) {
-        this.isError = false;
-        this.$emit("save", this.data);
-      } else {
-        this.isError = true;
-      }
+      this.$emit("save", this.data);
     },
     moveUp() {
       this.$emit("move-up");
@@ -91,19 +70,6 @@ export default {
     },
     deleteField() {
       this.$emit("delete");
-    },
-    allOptionsValid() {
-      if (
-        this.data.default === "" ||
-        this.data.points === "" ||
-        this.data.min === "" ||
-        this.data.title == "" ||
-        this.data.field == ""
-      ) {
-        return false;
-      } else {
-        return true;
-      }
     }
   },
   created() {
