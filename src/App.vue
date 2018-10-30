@@ -72,7 +72,7 @@ export default {
 @import url("./css/normalize.css");
 
 .background-box-input {
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.6);
   margin: 10px;
   background-color: #37474f;
 }
@@ -103,7 +103,7 @@ body {
 }
 .background-box {
   background-color: #37474f;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.6);
   padding: 10px;
   margin: 10px;
 }
@@ -224,21 +224,8 @@ select {
   }
 }
 @media (max-width: 700px) {
-  .location-span,
-  .location-left,
-  .location-right,
-  .location-centered,
-  .location-centered-small,
-  .location-left-small,
-  .location-left-large,
-  .location-right-small,
-  .location-right-large,
-  .location-left-tiny,
-  .location-left-giant,
-  .location-right-tiny,
-  .location-right-giant,
-  .location-left-padded,
-  .location-right-padded {
+  .grid > *,
+  .grid-perminant > * {
     margin-bottom: 20px;
   }
 }
