@@ -235,12 +235,11 @@ textarea {
     color: #0069c0;
   }
 }
-/* @media (max-width: 700px) {
-  .grid > *,
-  .grid-perminant > * {
+@media (max-width: 700px) {
+  .grid > * {
     margin-bottom: 20px;
   }
-} */
+}
 @keyframes fade-in {
   from {
     opacity: 0;
