@@ -2,7 +2,7 @@
   <div id="menu-admin">
 
     <div class="grid">
-      <div @click="pages.toMenuMain()" class="background-box background-box-hover content-centered">
+      <div @click="goBack()" class="background-box background-box-hover content-centered">
         <h3>Back</h3>
       </div>
 
@@ -22,7 +22,7 @@
         </div>
 
         <div id="leaderboard-container">
-          <AdminTeam v-for="(teamData) in teams" v-bind:key="teamData['_id']" :teamdata="teamData"></AdminTeam>
+          <AdminTeam v-for="(teamData) in teams" v-bind:key="teamData['_id']" :teamdata="teamData" :removeteam="removeTeam"></AdminTeam>
         </div>
       </div>
 
@@ -72,6 +72,7 @@ export default {
       if (teamID !== undefined) this.teams.push(team_doc["doc"]);
     },
     loadTeams() {
+      this.teams = [];
       var dThis = this;
       this.localdb
         .allDocs({
@@ -93,6 +94,22 @@ export default {
             ["asc"]
           );
         });
+    },
+    removeTeam(number) {
+      var shouldDelete = confirm(
+        "Are you sure you want to delete team #" +
+          number +
+          "?\n There's no going back!"
+      );
+
+      if (shouldDelete) {
+        var dThis = this;
+        this.localdb.get("TEAM_" + number).then(function(doc) {
+          dThis.localdb.remove(doc).then(function() {
+            dThis.loadTeams();
+          });
+        });
+      }
     },
     goBack() {
       this.$router.go(-1);

@@ -157,6 +157,9 @@ select {
   border: #455a64 solid 1px;
   color: #eceff1;
   border: none;
+}
+input,
+textarea {
   -webkit-appearance: none;
 }
 .grid-perminant {
@@ -208,6 +211,15 @@ select {
 .location-right-padded {
   grid-column: 4/6;
 }
+@supports (-webkit-overflow-scrolling: touch) {
+  select {
+    -webkit-appearance: none;
+  }
+  .grid > *,
+  .grid-perminant > * {
+    margin-bottom: 20px;
+  }
+}
 @media (min-width: 700px) {
   .grid {
     display: grid;
@@ -223,12 +235,12 @@ select {
     color: #0069c0;
   }
 }
-@media (max-width: 700px) {
+/* @media (max-width: 700px) {
   .grid > *,
   .grid-perminant > * {
     margin-bottom: 20px;
   }
-}
+} */
 @keyframes fade-in {
   from {
     opacity: 0;
