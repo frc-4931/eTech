@@ -162,7 +162,6 @@ export default {
       }
     },
     fieldExists(fieldID) {
-      alert("called");
       for (var i of this.fields) {
         if (i.field == fieldID) {
           return true;
@@ -218,7 +217,7 @@ export default {
       } else if (this.newFieldType == "NumberField") {
         field.field =
           this.newFieldTitle.replace(/[^a-zA-Z]/g, "") + "_" + d + "_number";
-        field.options = 0;
+        field.default = 0;
         field.points = 0;
         field.min = 0;
 

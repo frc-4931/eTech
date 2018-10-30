@@ -13,12 +13,12 @@
         <input type="text" placeholder="Title" v-model.trim="data.title">
       </div>
 
-      <p class="background-box">Default value</p>
+      <p class="background-box">Default Value</p>
       <div class="background-box-input">
         <input type="number" placeholder="Default Number" v-model.number="data.default">
       </div>
 
-      <p class="background-box">Points per Value</p>
+      <p class="background-box">Points Per Value</p>
       <div class="background-box-input">
         <input type="number" placeholder="Points Per 1 Entered" v-model.number="data.points">
       </div>

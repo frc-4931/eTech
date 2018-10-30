@@ -13,7 +13,7 @@
         <input type="text" placeholder="Title" v-model.trim="data.title">
       </div>
 
-      <p class="background-box">Default value</p>
+      <p class="background-box">Default Value</p>
       <div class="background-box-input">
         <select v-model="data.default">
           <option :value="true">True</option>
