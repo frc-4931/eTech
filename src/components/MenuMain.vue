@@ -46,7 +46,7 @@
         </div>
       </div>
       <div class="location-right-small">
-        <AccountPanel :remotedb="remotedb" :user="user" @loggedin="loggedIn()" @loggedout="loggedOut()"></AccountPanel>
+        <AccountPanel :remotedb="remotedb" :sync="sync" :user="user" @loggedin="loggedIn()" @loggedout="loggedOut()"></AccountPanel>
         <div class="background-box">
           <h2 class="content-centered">Member Leaderboard</h2>
         </div>

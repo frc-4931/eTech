@@ -123,7 +123,7 @@ export default {
           { roles: [this.role], metadata: { realName: this.name } },
           function(err) {
             if (err) {
-              console.log(err);
+              //Errer has occured
             } else {
               dThis.goBack();
             }
