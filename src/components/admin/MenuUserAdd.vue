@@ -117,6 +117,7 @@ export default {
             }
           }
         );
+        this.putUserIntoFile();
       } else {
         this.isError = true;
       }
@@ -131,6 +132,25 @@ export default {
     },
     goBack() {
       this.$router.go(-1);
+    },
+    putUserIntoFile() {
+      var dThis = this;
+      this.localdb
+        .get("USER_INDEX")
+        .then(function(doc) {
+          doc.users[dThis.username] = dThis.name;
+          doc.roles[dThis.username] = dThis.role;
+
+          dThis.localdb.put(doc);
+        })
+        .catch(function() {
+          var doc = { _id: "USER_INDEX", users: {}, roles: {} };
+
+          doc.users[dThis.username] = dThis.name;
+          doc.roles[dThis.username] = dThis.role;
+
+          dThis.localdb.put(doc);
+        });
     }
   },
   created() {

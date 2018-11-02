@@ -25,16 +25,22 @@
           <p>Remove Team</p>
         </div>
 
-        <div id="leaderboard-container">
-          <AdminTeam v-for="(teamData) in teams" v-bind:key="teamData['_id']" :teamdata="teamData" :removeteam="removeTeam"></AdminTeam>
-        </div>
+        <AdminTeam v-for="(teamData) in teams" v-bind:key="teamData['_id']" :teamdata="teamData" :removeteam="removeTeam"></AdminTeam>
       </div>
 
       <div class="location-centered-small">
         <div class="background-box content-centered">
           <h2>Members</h2>
         </div>
-        <AdminUser></AdminUser>
+
+        <div class="background-box admin-user">
+          <p>Name</p>
+          <p>Username</p>
+          <p>Role</p>
+          <p>Edit User</p>
+        </div>
+
+        <AdminUser v-for="user in users" :key="user.username" :userdata="user"></AdminUser>
       </div>
 
       <div class="location-right-small">
@@ -71,11 +77,12 @@ export default {
   props: {
     localdb: Object,
     remotedb: Object,
-    sync: Object
+    sync_change: Object
   },
   data: function() {
     return {
       teams: [],
+      users: [],
       isAdmin: false
     };
   },
@@ -126,6 +133,22 @@ export default {
     },
     goBack() {
       this.$router.go(-1);
+    },
+    loadUsers() {
+      var dThis = this;
+
+      this.localdb
+        .get("USER_INDEX")
+        .then(function(doc) {
+          dThis.users = [];
+
+          for (var i in doc.users) {
+            var user = { username: i, name: doc.users[i], role: doc.roles[i] };
+
+            dThis.users.push(user);
+          }
+        })
+        .catch(function() {});
     }
   },
   created: function() {
@@ -138,20 +161,27 @@ export default {
         dThis.isAdmin = true;
 
         dThis.loadTeams();
+        dThis.loadUsers();
 
-        dThis.sync.on("change", function(change) {
+        dThis.sync_change.onChange = function(change) {
           if (change["direction"] == "pull") {
             var shouldLoadTeams = false;
+            var shouldLoadUsers = false;
 
             for (var doc of change.change.docs) {
               if (doc["_id"].startsWith("TEAM_")) {
                 shouldLoadTeams = true;
               }
+
+              if (doc["_id"] === "USER_INDEX") {
+                shouldLoadUsers = true;
+              }
             }
 
             if (shouldLoadTeams) dThis.loadTeams();
+            if (shouldLoadUsers) dThis.loadUsers();
           }
-        });
+        };
       } else {
         // You must be logged in as an admin
         dThis.isAdmin = false;
@@ -169,7 +199,7 @@ export default {
 }
 .admin-user {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   text-align: center;
 }
 </style>

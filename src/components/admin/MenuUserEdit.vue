@@ -3,7 +3,7 @@
     <div class="grid">
 
       <div class="location-centered-small grid-perminant">
-        <Error v-if="isError" class="background=box location-span">All feidls are required!</Error>
+        <Error v-if="isError" class="background=box location-span">{{ errorMessage }}</Error>
         <h2 v-else class="content-centered background-box location-span">{{username}}</h2>
 
         <div class="location-left background-box content-centered">
@@ -19,7 +19,7 @@
         </div>
 
         <div class="location-right background-box-input">
-          <input v-model="password" type="password" placeholder="Password" class="content-centered">
+          <input v-model="password" type="password" placeholder="Password" class="content-centered" :disabled="lockRole">
         </div>
 
         <div class="location-left background-box content-centered">
@@ -27,7 +27,7 @@
         </div>
 
         <div class="location-right background-box-input">
-          <input v-model="confirmPassword" type="password" placeholder="Confirm Password" class="content-centered">
+          <input v-model="confirmPassword" type="password" placeholder="Confirm Password" class="content-centered" :disabled="lockRole">
         </div>
 
         <div class="background-box content-centered location-span grid-perminant">
@@ -76,13 +76,33 @@ export default {
       loggedin: false,
       name: "",
       isError: false,
+      errorMessage: "",
       role: "edit",
       editingUser: "",
       lockRole: false,
       isAdmin: false,
       password: "",
-      confirmPassword: ""
+      confirmPassword: "",
+      o_name: "",
+      o_role: "",
+      fieldsChanged: 0
     };
+  },
+  watch: {
+    fieldsChanged(newValue) {
+      if (newValue != 0) {
+        var values = 0;
+
+        if (this.role !== "admin" && this.isAdmin == true) values++;
+        if (this.role === "admin" && this.isAdmin == false) values++;
+        if (this.password != "") values++;
+        if (this.o_role !== this.role || this.o_name !== this.name) values++;
+
+        if (values == newValue) {
+          this.goBack();
+        }
+      }
+    }
   },
   methods: {
     getUser() {
@@ -99,38 +119,85 @@ export default {
           } else if (response.roles.indexOf("view") != -1) {
             dThis.role = "view";
           }
+          dThis.o_role = dThis.role;
 
           dThis.name = response.realName || "";
+          dThis.o_name = dThis.name;
         }
       });
     },
     updateUser() {
+      this.fieldsChanged = 0;
       if (this.allFieldsValid()) {
         var dThis = this;
 
-        //Changing to admin
-        if (this.role === "admin" && this.isAdmin != true) {
-          this.remotedb.signUpAdmin(this.username, this.password);
-        }
+        this.isError = false;
 
-        //Changing from admin
-        if (this.role !== "admin" && this.isAdmin == true) {
-          this.remotedb.deleteAdmin(this.username);
-        }
+        if (this.o_name !== this.name) {
+          if (this.username === this.editingUser) {
+            this.remotedb.putUser(
+              this.username,
+              { metadata: { realName: this.name } },
+              function(err) {
+                if (err) {
+                  //Errer has occured
+                } else {
+                  dThis.fieldsChanged++;
+                }
+              }
+            );
+            this.putUserIntoFile();
+          }
+        } else {
+          if (this.password != "") {
+            this.remotedb
+              .changePassword(this.username, this.password)
+              .then(function() {
+                dThis.fieldsChanged++;
+              });
+          }
 
-        this.remotedb.putUser(
-          this.username,
-          { roles: [this.role], metadata: { realName: this.name } },
-          function(err) {
-            if (err) {
-              //Errer has occured
+          //Changing to admin
+          if (this.role === "admin" && this.isAdmin != true) {
+            if (this.password != "") {
+              this.remotedb
+                .signUpAdmin(this.username, this.password)
+                .then(function() {
+                  dThis.fieldsChanged++;
+                });
             } else {
-              dThis.goBack();
+              this.isError = true;
+              this.errorMessage =
+                "You must change the password when making a user an admin.";
             }
           }
-        );
+
+          //Changing from admin
+          if (this.role !== "admin" && this.isAdmin == true) {
+            this.remotedb.deleteAdmin(this.username).then(function() {
+              dThis.fieldsChanged++;
+            });
+          }
+
+          if (this.o_role !== this.role || this.o_name !== this.name) {
+            this.remotedb.putUser(
+              this.username,
+              { roles: [this.role], metadata: { realName: this.name } },
+              function(err) {
+                if (err) {
+                  //Errer has occured
+                } else {
+                  dThis.fieldsChanged++;
+                }
+              }
+            );
+
+            this.putUserIntoFile();
+          }
+        }
       } else {
         this.isError = true;
+        this.errorMessage = "All feidls are required!";
       }
     },
     allFieldsValid() {
@@ -138,6 +205,28 @@ export default {
     },
     goBack() {
       this.$router.go(-1);
+    },
+    putUserIntoFile() {
+      var dThis = this;
+      this.localdb
+        .get("USER_INDEX")
+        .then(function(doc) {
+          if (!doc.users) doc.users = {};
+          if (!doc.roles) doc.roles = {};
+
+          doc.users[dThis.username] = dThis.name;
+          doc.roles[dThis.username] = dThis.role;
+
+          dThis.localdb.put(doc);
+        })
+        .catch(function() {
+          var doc = { _id: "USER_INDEX", users: {}, roles: {}, names: {} };
+
+          doc.users[dThis.username] = dThis.name;
+          doc.roles[dThis.username] = dThis.role;
+
+          dThis.localdb.put(doc);
+        });
     }
   },
   created() {

@@ -72,7 +72,7 @@ export default {
   components: { Message },
   props: {
     remotedb: Object,
-    sync: Object,
+    sync_change: Object,
     user: Object
   },
   data: function() {
@@ -210,9 +210,9 @@ export default {
 
     this.getLoggedIn();
 
-    this.sync.on("paused", function() {
+    this.sync_change.onPaused = function() {
       dThis.getLoggedIn();
-    });
+    };
   }
 };
 </script>

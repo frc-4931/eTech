@@ -46,7 +46,7 @@
         </div>
       </div>
       <div class="location-right-small">
-        <AccountPanel :remotedb="remotedb" :sync="sync" :user="user" @loggedin="loggedIn()" @loggedout="loggedOut()"></AccountPanel>
+        <AccountPanel :remotedb="remotedb" :sync_change="sync_change" :user="user" @loggedin="loggedIn()" @loggedout="loggedOut()"></AccountPanel>
         <div class="background-box">
           <h2 class="content-centered">Member Leaderboard</h2>
         </div>
@@ -69,7 +69,7 @@ export default {
   props: {
     localdb: Object,
     remotedb: Object,
-    sync: Object,
+    sync_change: Object,
     user: Object
   },
   data: function() {
@@ -115,7 +115,7 @@ export default {
       this.loggedin = true;
       this.loadTeams();
 
-      this.sync.on("change", function(change) {
+      this.sync_change.onChange = function(change) {
         if (change["direction"] == "pull") {
           var shouldLoadTeams = false;
 
@@ -127,15 +127,15 @@ export default {
 
           if (shouldLoadTeams) dThis.loadTeams();
         }
-      });
+      };
     },
     loggedOut() {
       this.teams = [];
       this.loggedin = false;
 
-      this.sync.on("change", function() {
+      this.sync_change.onChange = function() {
         // Do nothing
-      });
+      };
     }
   },
   created: function() {

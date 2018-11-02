@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <transition enter-active-class="content-fade-in" leave-active-class="content-fade-out" mode="out-in">
-      <router-view :localdb="localdb" :remotedb="remotedb" :sync="sync" :user="user"></router-view>
+      <router-view :localdb="localdb" :remotedb="remotedb" :sync_change="sync_change" :user="user"></router-view>
     </transition>
 
     <ConnectionError v-if="isConnectionError"></ConnectionError>
@@ -30,7 +30,8 @@ export default {
         skip_setup: true
       }),
       sync: {},
-      user: { username: null, role: null }
+      user: { username: null, role: null },
+      sync_change: { onChange: function() {}, onPaused: function() {} }
     };
   },
   methods: {},
@@ -66,6 +67,12 @@ export default {
       })
       .on("error", function(err) {
         console.log(err);
+      })
+      .on("change", function(change) {
+        dThis.sync_change.onChange(change);
+      })
+      .on("paused", function() {
+        dThis.sync_change.onPaused();
       });
   }
 };

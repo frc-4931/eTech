@@ -95,7 +95,7 @@ export default {
     number: { type: [String, Number], required: true },
     localdb: Object,
     remotedb: Object,
-    sync: Object,
+    sync_change: Object,
     user: Object
   },
   watch: {
@@ -326,7 +326,7 @@ export default {
       this.loadComments();
       this.loadScouting();
 
-      this.sync.on("change", function(change) {
+      this.sync_change.onChange = function(change) {
         if (change["direction"] == "pull") {
           var shouldLoadScouting = false;
           var shouldLoadComments = false;
@@ -351,7 +351,7 @@ export default {
             dThis.loadComments();
           }
         }
-      });
+      };
     }
   },
   created: function() {

@@ -6,7 +6,10 @@
     <div>
       <p>{{ user.username }}</p>
     </div>
-    <a>Edit</a>
+    <div>
+      <p>{{ user.role }}</p>
+    </div>
+    <router-link :to="{name: 'user-edit', params: {username: user.username}}">Edit User</router-link>
   </div>
 </template>
 
@@ -20,14 +23,16 @@ export default {
     return {
       user: {
         name: "First Last",
-        username: "Username"
+        username: "Username",
+        role: "None"
       }
     };
   },
   methods: {},
   created() {
-    this.$set(this.user, "username", this.teamdata["username"]);
-    this.$set(this.user, "name", this.teamdata["name"]);
+    this.$set(this.user, "username", this.userdata["username"]);
+    this.$set(this.user, "name", this.userdata["name"]);
+    this.$set(this.user, "role", this.userdata["role"]);
   }
 };
 </script>
