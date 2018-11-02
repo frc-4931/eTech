@@ -7,6 +7,8 @@ import MenuTeamAdd from "./components/MenuTeamAdd.vue";
 import MenuTeamView from "./components/MenuTeamView.vue";
 import MenuAdmin from "./components/MenuAdmin.vue";
 import MenuTemplateEditor from "./components/MenuTemplateEditor.vue";
+import MenuUserAdd from "./components/admin/MenuUserAdd.vue";
+import MenuUserEdit from "./components/admin/MenuUserEdit.vue";
 
 Vue.config.productionTip = false
 
@@ -14,9 +16,11 @@ Vue.use(Router);
 
 const routes = [
   { path: "/", name: "home", component: MenuMain },
-  { path: "/admin/team/add", name: "team-add", component: MenuTeamAdd },
   { path: "/team/:number", name: "team", component: MenuTeamView, props: true },
   { path: "/admin/", name: "admin", component: MenuAdmin },
+  { path: "/admin/team/add", name: "team-add", component: MenuTeamAdd },
+  { path: "/admin/user/add", name: "user-add", component: MenuUserAdd },
+  { path: "/admin/user/:username", name: "user-edit", component: MenuUserEdit, props: true },
   { path: "/admin/template", name: "admin-template", component: MenuTemplateEditor }
 ];
 

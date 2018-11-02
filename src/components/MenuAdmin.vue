@@ -34,12 +34,14 @@
         <div class="background-box content-centered">
           <h2>Members</h2>
         </div>
+        <AdminUser></AdminUser>
       </div>
 
       <div class="location-right-small">
         <div class="background-box">
           <h2 class="content-centered">Tools</h2>
-          <router-link :to="{name: 'team-add'}">Add team</router-link><br>
+          <router-link :to="{name: 'team-add'}">Add Team</router-link><br>
+          <router-link :to="{name: 'user-add'}">Add User</router-link><br>
           <router-link :to="{name: 'admin-template'}">Edit Scouting Templates</router-link><br>
           <a @click="localdb.destroy()">Destroy All Data</a>
         </div>
@@ -55,6 +57,7 @@
 
 <script>
 import AdminTeam from "./admin/AdminTeam.vue";
+import AdminUser from "./admin/AdminUser.vue";
 import orderBy from "lodash.orderby";
 import Error from "./Error.vue";
 
@@ -62,6 +65,7 @@ export default {
   name: "MenuAdmin",
   components: {
     AdminTeam,
+    AdminUser,
     Error
   },
   props: {
@@ -159,6 +163,11 @@ export default {
 
 <style>
 .admin-team {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  text-align: center;
+}
+.admin-user {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   text-align: center;
