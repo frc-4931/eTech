@@ -33,17 +33,20 @@
           <LeaderboardTeam v-for="(teamData) in teams" v-bind:key="teamData['_id']" :teamdata="teamData"></LeaderboardTeam>
         </div>
 
-        <div v-if="this.teams.length == 0" class="grid">
+        <div v-if="teams.length == 0" class="grid">
           <div class="location-centered background-box content-centered">
-            <h3>
+            <h3 v-if="loggedin">
               There aren't any teams to display<br>
-              Click
-              <router-link :to="{name: 'team-add'}">here</router-link> to add a team</h3>
+              Ask an admin to add teams.
+            </h3>
+            <h3 v-else>
+              You must be logged in to view teams!
+            </h3>
           </div>
         </div>
       </div>
       <div class="location-right-small">
-        <AccountPanel :remotedb="remotedb"></AccountPanel>
+        <AccountPanel :remotedb="remotedb" :user="user" @loggedin="loggedIn()" @loggedout="loggedOut()"></AccountPanel>
         <div class="background-box">
           <h2 class="content-centered">Member Leaderboard</h2>
         </div>
@@ -66,11 +69,13 @@ export default {
   props: {
     localdb: Object,
     remotedb: Object,
-    sync: Object
+    sync: Object,
+    user: Object
   },
   data: function() {
     return {
-      teams: []
+      teams: [],
+      loggedin: false
     };
   },
   methods: {
@@ -104,25 +109,43 @@ export default {
             ["desc", "desc"]
           );
         });
+    },
+    loggedIn() {
+      var dThis = this;
+      this.loggedin = true;
+      this.loadTeams();
+
+      this.sync.on("change", function(change) {
+        if (change["direction"] == "pull") {
+          var shouldLoadTeams = false;
+
+          for (var doc of change.change.docs) {
+            if (doc["_id"].startsWith("TEAM_")) {
+              shouldLoadTeams = true;
+            }
+          }
+
+          if (shouldLoadTeams) dThis.loadTeams();
+        }
+      });
+    },
+    loggedOut() {
+      this.teams = [];
+      this.loggedin = false;
+
+      this.sync.on("change", function() {
+        // Do nothing
+      });
     }
   },
   created: function() {
-    var dThis = this;
-    this.loadTeams();
-
-    this.sync.on("change", function(change) {
-      if (change["direction"] == "pull") {
-        var shouldLoadTeams = false;
-
-        for (var doc of change.change.docs) {
-          if (doc["_id"].startsWith("TEAM_")) {
-            shouldLoadTeams = true;
-          }
-        }
-
-        if (shouldLoadTeams) dThis.loadTeams();
-      }
-    });
+    if (
+      this.user.role === "_admin" ||
+      this.user.role === "edit" ||
+      this.user.role === "view"
+    ) {
+      this.loggedIn();
+    }
   }
 };
 </script>

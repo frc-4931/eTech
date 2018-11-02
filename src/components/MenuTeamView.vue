@@ -1,5 +1,5 @@
 <template>
-  <div id="menu-team-view">
+  <div v-if="loggedin" id="menu-team-view">
     <div class="grid">
       <div class="location-centered-small done-button-container">
         <div @click="goBack()" class="background-box background-box-hover content-centered">
@@ -23,16 +23,16 @@
         <div class="background-box-input" id="scouting-select">
           <select v-model="scoutingSelect" @change="openScoutingMenu()" class="content-input-large">
             <option value="none">Select A Scouting Option</option>
-            <option value="create">--- New Scout ---</option>
+            <option v-if="hasEdit" value="create">--- New Scout ---</option>
             <option v-for="(scout, idx) in pitScouts" :key="scout" :value="scout">Pit Scouting: {{ idx + 1 }}</option>
             <option v-for="(scout, idx) in matchScouts" :key="scout" :value="scout">Match Scouting: Match {{ idx + 1 }}</option>
           </select>
         </div>
         <!-- Insert Scouting Fields Here -->
         <transition enter-active-class="content-long-fade-in" leave-active-class="content-long-fade-out" mode="out-in">
-          <NewScout v-if="scoutingSelect == 'create' " :localdb="localdb" :username="username" :teamNumber="teamNumber" :callback="teamCreated"></NewScout>
-          <ScoutMenu :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('PITSCOUT_')" :isMatchScout="false" :localdb="localdb" :docId="scoutingSelect" :callback="teamModified" :closeteam="teamClose" :shouldUpdate="shouldUpdateScoutMenu" :callUpdated="updatedScoutMenu"></ScoutMenu>
-          <ScoutMenu :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('MATCHSCOUT_')" :isMatchScout="true" :localdb="localdb" :docId="scoutingSelect" :callback="teamModified" :closeteam="teamClose" :shouldUpdate="shouldUpdateScoutMenu" :callUpdated="updatedScoutMenu"></ScoutMenu>
+          <NewScout v-if="scoutingSelect == 'create' " :localdb="localdb" :user="user" :teamNumber="teamNumber" :callback="teamCreated"></NewScout>
+          <ScoutMenu :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('PITSCOUT_')" :isMatchScout="false" :localdb="localdb" :docId="scoutingSelect" :callback="teamModified" :closeteam="teamClose" :shouldUpdate="shouldUpdateScoutMenu" :callUpdated="updatedScoutMenu" :hasEdit="hasEdit"></ScoutMenu>
+          <ScoutMenu :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('MATCHSCOUT_')" :isMatchScout="true" :localdb="localdb" :docId="scoutingSelect" :callback="teamModified" :closeteam="teamClose" :shouldUpdate="shouldUpdateScoutMenu" :callUpdated="updatedScoutMenu" :hasEdit="hasEdit"></ScoutMenu>
         </transition>
       </div>
       <div class="location-right-padded">
@@ -46,6 +46,7 @@
         <!-- <transition-group name="comment-menu"> -->
         <!-- beautify ignore:start -->
           <component v-for="(comment, id) in comments"
+            :locked="!hasEdit"
             :is="commentIs(id)"
             :modify="function() {openCommentModifyMenu(id)}"
             :key="id"
@@ -58,13 +59,17 @@
           </component>
           <!-- beautify ignore:end -->
         <!-- </transition-group> -->
-        <div v-if="commentAddMenu == false" @click="openCommentAddMenu()" class="background-box background-box-hover">
-          <h3 class="content-centered">Add comment</h3>
+
+        <div v-if="hasEdit">
+          <div v-if="commentAddMenu == false" @click="openCommentAddMenu()" class="background-box background-box-hover">
+            <h3 class="content-centered">Add comment</h3>
+          </div>
+          <MenuTeamCommentAdd id="comment-add-menu" v-else :localdb="localdb" :user="user" :teamNumber="teamNumber" :callback="commentCreated"></MenuTeamCommentAdd>
         </div>
-        <MenuTeamCommentAdd id="comment-add-menu" v-else :localdb="localdb" :username="username" :teamNumber="teamNumber" :callback="commentCreated"></MenuTeamCommentAdd>
       </div>
     </div>
   </div>
+  <Error v-else>You must be logged in to view this page!</Error>
 </template>
 
 <script>
@@ -73,6 +78,7 @@ import MenuTeamCommentModify from "./MenuTeamCommentModify.vue";
 import CommentField from "./scouting/CommentField.vue";
 import ScoutMenu from "./scouting/ScoutMenu.vue";
 import NewScout from "./scouting/NewScout.vue";
+import Error from "./Error.vue";
 import { scroller } from "vue-scrollto/src/scrollTo";
 
 export default {
@@ -82,14 +88,32 @@ export default {
     MenuTeamCommentModify,
     CommentField,
     ScoutMenu,
-    NewScout
+    NewScout,
+    Error
   },
   props: {
     number: { type: [String, Number], required: true },
     localdb: Object,
     remotedb: Object,
     sync: Object,
-    username: String
+    user: Object
+  },
+  watch: {
+    user: {
+      handler: function(newValue) {
+        if (
+          newValue.role === "_admin" ||
+          newValue.role === "edit" ||
+          newValue.role === "view"
+        ) {
+          if (this.loggedin === false) {
+            this.loggedin = true;
+            this.initRoutine();
+          }
+        }
+      },
+      deep: true
+    }
   },
   data: function() {
     return {
@@ -114,7 +138,8 @@ export default {
       commentAddMenu: false,
       commentModifyMenu: "none",
       scrollTo: scroller(),
-      shouldUpdateScoutMenu: false
+      shouldUpdateScoutMenu: false,
+      loggedin: false
     };
   },
   methods: {
@@ -210,11 +235,13 @@ export default {
       });
     },
     openCommentModifyMenu(id) {
-      var dThis = this;
-      this.commentModifyMenu = id;
-      this.$nextTick().then(function() {
-        dThis.scrollTo("#menu-team-comment-modify");
-      });
+      if (this.hasEdit) {
+        var dThis = this;
+        this.commentModifyMenu = id;
+        this.$nextTick().then(function() {
+          dThis.scrollTo("#menu-team-comment-modify");
+        });
+      }
     },
     openScoutingMenu() {
       var dThis = this;
@@ -286,46 +313,60 @@ export default {
     },
     goBack() {
       this.$router.go(-1);
+    },
+    initRoutine() {
+      var dThis = this;
+      this.localdb.get("TEAM_" + this.teamNumber).then(function(doc) {
+        dThis.$set(dThis.team, "name", doc.name);
+        dThis.$set(dThis.team, "number", doc.number);
+        dThis.$set(dThis.team, "objectivePoints", doc.objectivePoints);
+        dThis.$set(dThis.team, "commentPoints", doc.commentPoints);
+      });
+
+      this.loadComments();
+      this.loadScouting();
+
+      this.sync.on("change", function(change) {
+        if (change["direction"] == "pull") {
+          var shouldLoadScouting = false;
+          var shouldLoadComments = false;
+
+          for (var doc of change.change.docs) {
+            if (doc["_id"].startsWith("PITSCOUT_" + dThis.number + "_")) {
+              shouldLoadScouting = true;
+            } else if (
+              doc["_id"].startsWith("MATCHSCOUT_" + dThis.number + "_")
+            ) {
+              shouldLoadScouting = true;
+            } else if (doc["_id"].startsWith("COMMENT_" + dThis.number + "_")) {
+              shouldLoadComments = true;
+            }
+          }
+
+          if (shouldLoadScouting) {
+            dThis.updateScoutMenu();
+            dThis.loadScouting();
+          }
+          if (shouldLoadComments) {
+            dThis.loadComments();
+          }
+        }
+      });
     }
   },
   created: function() {
-    var dThis = this;
-    this.localdb.get("TEAM_" + this.teamNumber).then(function(doc) {
-      dThis.$set(dThis.team, "name", doc.name);
-      dThis.$set(dThis.team, "number", doc.number);
-      dThis.$set(dThis.team, "objectivePoints", doc.objectivePoints);
-      dThis.$set(dThis.team, "commentPoints", doc.commentPoints);
-    });
-
-    this.loadComments();
-    this.loadScouting();
-
-    this.sync.on("change", function(change) {
-      if (change["direction"] == "pull") {
-        var shouldLoadScouting = false;
-        var shouldLoadComments = false;
-
-        for (var doc of change.change.docs) {
-          if (doc["_id"].startsWith("PITSCOUT_" + dThis.number + "_")) {
-            shouldLoadScouting = true;
-          } else if (
-            doc["_id"].startsWith("MATCHSCOUT_" + dThis.number + "_")
-          ) {
-            shouldLoadScouting = true;
-          } else if (doc["_id"].startsWith("COMMENT_" + dThis.number + "_")) {
-            shouldLoadComments = true;
-          }
-        }
-
-        if (shouldLoadScouting) {
-          dThis.updateScoutMenu();
-          dThis.loadScouting();
-        }
-        if (shouldLoadComments) {
-          dThis.loadComments();
-        }
-      }
-    });
+    if (
+      this.user.role === "_admin" ||
+      this.user.role === "edit" ||
+      this.user.role === "view"
+    ) {
+      // User is logged in
+      this.loggedin = true;
+      this.initRoutine();
+    } else {
+      //User is not logged in
+      this.loggedin = false;
+    }
   },
   computed: {
     totalPoints: function() {
@@ -333,6 +374,9 @@ export default {
     },
     teamNumber() {
       return parseInt(this.number);
+    },
+    hasEdit() {
+      return this.user.role === "_admin" || this.user.role === "edit";
     }
   }
 };

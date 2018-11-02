@@ -1,8 +1,8 @@
 <template>
-  <div class="error background-box content-centered">
-    <h2>
+  <div class="error content-centered">
+    <p>
       <slot></slot>
-    </h2>
+    </p>
   </div>
 </template>
 

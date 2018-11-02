@@ -1,5 +1,10 @@
 <template>
-  <div @click="modify()" class="background-box background-box-hover grid-perminant">
+  <div v-if="!locked" @click="modify()" class="background-box background-box-hover grid-perminant">
+    <h2 class="location-span comment-title content-centered"> {{title}} </h2>
+    <p class="location-span comment-contents"> {{comment}} </p>
+    <p :style="color" class="location-right-tiny content-right"> {{getRating}} </p>
+  </div>
+  <div v-else class="background-box grid-perminant">
     <h2 class="location-span comment-title content-centered"> {{title}} </h2>
     <p class="location-span comment-contents"> {{comment}} </p>
     <p :style="color" class="location-right-tiny content-right"> {{getRating}} </p>
@@ -16,7 +21,8 @@ export default {
     comment: String,
     rating: Number,
     title: String,
-    modify: Function
+    modify: Function,
+    locked: Boolean
   },
   data: function() {
     return {
@@ -24,7 +30,7 @@ export default {
     };
   },
   computed: {
-    getRating: function() {
+    getRating() {
       var prefix;
       var dThis = this;
       if (this.rating > 0) {

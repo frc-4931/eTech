@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="loggedin">
     <div id="scout-new-select" class="background-box grid-perminant">
       <label class="location-left content-padding-left">
         <input class="radio-button" v-model="seleted" value="PitScout" type="radio" name="r_scout_select">
@@ -18,18 +18,21 @@
 
     <div class="line" />
   </div>
+  <Error v-else>You must be logged in to create a new scout!</Error>
 </template>
 
 <script>
 import PitTemplate from "../../assets/pitscout.js";
 import MatchTemplate from "../../assets/matchscout.js";
+import Error from "../Error.vue";
 
 export default {
   name: "NewScout",
+  components: { Error },
   props: {
     teamNumber: Number,
     localdb: Object,
-    username: String,
+    user: Object,
     callback: Function
   },
   data: function() {
@@ -38,7 +41,8 @@ export default {
       pitScoutPrefix: "PITSCOUT_",
       matchScoutPrefix: "MATCHSCOUT_",
       pitTemplate: Object,
-      matchTemplate: Object
+      matchTemplate: Object,
+      loggedin: false
     };
   },
   methods: {
@@ -104,7 +108,7 @@ export default {
           "_" +
           number +
           "_" +
-          this.username
+          this.user.username
       };
 
       var totalPoints = 0;
@@ -131,7 +135,7 @@ export default {
           "_" +
           number +
           "_" +
-          this.username
+          this.user.username
       };
 
       var totalPoints = 0;
@@ -171,26 +175,31 @@ export default {
     }
   },
   created() {
-    var dThis = this;
-    this.localdb
-      .get("TEMPLATE_PITSCOUT")
-      .then(function(doc) {
-        dThis.pitTemplate = doc.fields;
-      })
-      .catch(function() {
-        //If can't pull template use local pre generated
-        dThis.pitTemplate = PitTemplate.fields;
-      });
+    if (this.user.username != null) {
+      this.loggedin = true;
+      var dThis = this;
+      this.localdb
+        .get("TEMPLATE_PITSCOUT")
+        .then(function(doc) {
+          dThis.pitTemplate = doc.fields;
+        })
+        .catch(function() {
+          //If can't pull template use local pre generated
+          dThis.pitTemplate = PitTemplate.fields;
+        });
 
-    this.localdb
-      .get("TEMPLATE_MATCHSCOUT")
-      .then(function(doc) {
-        dThis.matchTemplate = doc.fields;
-      })
-      .catch(function() {
-        //If can't pull template use local pre generated
-        dThis.matchTemplate = MatchTemplate.fields;
-      });
+      this.localdb
+        .get("TEMPLATE_MATCHSCOUT")
+        .then(function(doc) {
+          dThis.matchTemplate = doc.fields;
+        })
+        .catch(function() {
+          //If can't pull template use local pre generated
+          dThis.matchTemplate = MatchTemplate.fields;
+        });
+    } else {
+      this.loggedin = false;
+    }
   }
 };
 </script>

@@ -6,12 +6,12 @@
 
     <div class="location-right background-box grid-perminant">
       <label class="location-left">
-        <input class="radio-button" @change="changed()" :value="true" type="radio" name="radio1" v-model="data.value">
+        <input class="radio-button" @change="changed()" :value="true" type="radio" name="radio1" v-model="data.value" :disabled="locked">
         True
       </label>
 
       <label class="location-right">
-        <input class="radio-button" @change="changed()" :value="false" type="radio" name="radio1" v-model="data.value">
+        <input class="radio-button" @change="changed()" :value="false" type="radio" name="radio1" v-model="data.value" :disabled="locked">
         False
       </label>
     </div>
@@ -22,7 +22,8 @@
 export default {
   name: "BooleanField",
   props: {
-    data: Object
+    data: Object,
+    locked: Boolean
   },
   data: function() {
     return {

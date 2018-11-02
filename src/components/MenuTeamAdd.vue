@@ -1,5 +1,5 @@
 <template>
-  <div id="menu-team-add">
+  <div v-if="loggedin" id="menu-team-add">
     <div class="grid">
       <FieldError v-if="error"></FieldError>
 
@@ -26,24 +26,29 @@
       </div>
     </div>
   </div>
+  <Error v-else>You must be logged in as an admin to view this page!</Error>
 </template>
 
 <script>
 import FieldError from "./scouting/FieldError.vue";
+import Error from "./Error.vue";
 
 export default {
   name: "MenuTeamAdd",
   components: {
-    FieldError
+    FieldError,
+    Error
   },
   props: {
-    localdb: Object
+    localdb: Object,
+    remotedb: Object
   },
   data: function() {
     return {
       number: "",
       name: "",
-      error: false
+      error: false,
+      loggedin: false
     };
   },
   methods: {
@@ -68,6 +73,19 @@ export default {
     goBack() {
       this.$router.go(-1);
     }
+  },
+  created() {
+    var dThis = this;
+
+    this.remotedb.getSession(function(err, response) {
+      if (err) {
+        //There was an error
+      } else if (response.userCtx.roles.indexOf("_admin") != -1) {
+        dThis.loggedin = true;
+      } else {
+        dThis.loggedin = false;
+      }
+    });
   }
 };
 </script>

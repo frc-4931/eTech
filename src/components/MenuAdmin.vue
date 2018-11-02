@@ -1,7 +1,9 @@
 <template>
   <div id="menu-admin">
 
-    <div class="grid">
+    <Error v-if="!isAdmin">You must be logged in as an admin to view this page!</Error>
+
+    <div v-else class="grid">
       <div class="done-button-container location-left-tiny">
         <div @click="goBack()" class="background-box background-box-hover content-centered">
           <h3>Back</h3>
@@ -54,19 +56,23 @@
 <script>
 import AdminTeam from "./admin/AdminTeam.vue";
 import orderBy from "lodash.orderby";
+import Error from "./Error.vue";
 
 export default {
   name: "MenuAdmin",
   components: {
-    AdminTeam
+    AdminTeam,
+    Error
   },
   props: {
     localdb: Object,
+    remotedb: Object,
     sync: Object
   },
   data: function() {
     return {
-      teams: []
+      teams: [],
+      isAdmin: false
     };
   },
   methods: {
@@ -120,19 +126,31 @@ export default {
   },
   created: function() {
     var dThis = this;
-    this.loadTeams();
 
-    this.sync.on("change", function(change) {
-      if (change["direction"] == "pull") {
-        var shouldLoadTeams = false;
+    this.remotedb.getSession(function(err, response) {
+      if (err) {
+        //There was an error
+      } else if (response.userCtx.roles.indexOf("_admin") !== -1) {
+        dThis.isAdmin = true;
 
-        for (var doc of change.change.docs) {
-          if (doc["_id"].startsWith("TEAM_")) {
-            shouldLoadTeams = true;
+        dThis.loadTeams();
+
+        dThis.sync.on("change", function(change) {
+          if (change["direction"] == "pull") {
+            var shouldLoadTeams = false;
+
+            for (var doc of change.change.docs) {
+              if (doc["_id"].startsWith("TEAM_")) {
+                shouldLoadTeams = true;
+              }
+            }
+
+            if (shouldLoadTeams) dThis.loadTeams();
           }
-        }
-
-        if (shouldLoadTeams) dThis.loadTeams();
+        });
+      } else {
+        // You must be logged in as an admin
+        dThis.isAdmin = false;
       }
     });
   }

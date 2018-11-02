@@ -5,7 +5,7 @@
     </div>
 
     <div class="background-box-input location-right">
-      <select @change="changed()" v-model="data.value" :value="data.value" required>
+      <select @change="changed()" v-model="data.value" :value="data.value" :disabled="locked">
         <option v-for="option in data.options" :key="option" :value="option">{{ option }}</option>
       </select>
     </div>
@@ -16,7 +16,8 @@
 export default {
   name: "DropdownField",
   props: {
-    data: Object
+    data: Object,
+    locked: Boolean
   },
   data: function() {
     return {

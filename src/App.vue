@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <transition enter-active-class="content-fade-in" leave-active-class="content-fade-out" mode="out-in">
-      <router-view :localdb="localdb" :remotedb="remotedb" :sync="sync" :username="username"></router-view>
+      <router-view :localdb="localdb" :remotedb="remotedb" :sync="sync" :user="user"></router-view>
     </transition>
 
     <ConnectionError v-if="isConnectionError"></ConnectionError>
@@ -26,32 +26,35 @@ export default {
       teamNumber: 4931,
       localdb: new PouchDB("localdb"),
       remotedb: new PouchDB("http://192.168.0.15:5984/scouting", {
+        //TODO make server localhost/database/scouting
         skip_setup: true
       }),
-      sync: Object,
-      username: "user"
+      sync: {},
+      user: { username: null, role: null }
     };
   },
   methods: {},
   created: function() {
-    var doc_pit = {};
-    doc_pit.fields = PitTemplate.fields;
-    doc_pit._id = "TEMPLATE_PITSCOUT";
-    this.localdb.put(doc_pit).catch(function() {});
-
-    var doc_match = {};
-    doc_match.fields = MatchTemplate.fields;
-    doc_match._id = "TEMPLATE_MATCHSCOUT";
-    this.localdb.put(doc_match).catch(function() {});
-
     PouchDB.plugin(Authentication);
 
-    this.remotedb.logIn("userone", "pass").catch(function(err) {
+    var dThis = this;
+
+    this.remotedb.getSession(function(err, response) {
       if (err) {
-        if (err.name === "unauthorized" || err.name === "forbidden") {
-          // name or password incorrect
-        } else {
-          // cosmic rays, a meteor, etc.
+        //Error
+      } else if (!response.userCtx.name) {
+        dThis.user.username = null;
+        dThis.user.role = null;
+      } else {
+        var roles = response.userCtx.roles;
+        dThis.$set(dThis.user, "username", response.userCtx.name);
+
+        if (roles.indexOf("_admin") !== -1) {
+          dThis.$set(dThis.user, "role", "_admin");
+        } else if (roles.indexOf("edit") !== -1) {
+          dThis.$set(dThis.user, "role", "edit");
+        } else if (roles.indexOf("view") !== -1) {
+          dThis.$set(dThis.user, "role", "view");
         }
       }
     });

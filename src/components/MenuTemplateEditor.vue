@@ -1,5 +1,5 @@
 <template>
-  <div id="menu-template-editor">
+  <div v-if="isAdmin" id="menu-template-editor">
     <div class="grid">
 
       <div class="mobile-view field-buttons done-button-container">
@@ -95,6 +95,7 @@
       </div>
     </div>
   </div>
+  <Error v-else>You must be logged in as an admin to view this page!</Error>
 </template>
 
 <script>
@@ -114,7 +115,8 @@ import { scroller } from "vue-scrollto/src/scrollTo";
 export default {
   name: "MenuTemplateEditor",
   props: {
-    localdb: Object
+    localdb: Object,
+    remotedb: Object
   },
   components: {
     TemplateEditTitle,
@@ -137,7 +139,8 @@ export default {
       errorMessage: "An error has occurred!",
       generalMessage: "",
       curTemplate: "none",
-      scrollTo: scroller()
+      scrollTo: scroller(),
+      isAdmin: false
     };
   },
   methods: {
@@ -355,7 +358,18 @@ export default {
       this.$router.go(-1);
     }
   },
-  created() {}
+  created() {
+    var dThis = this;
+    this.remotedb.getSession(function(err, response) {
+      if (err) {
+        //There was an error
+      } else if (response.userCtx.roles.indexOf("_admin") != -1) {
+        dThis.isAdmin = true;
+      } else {
+        dThis.isAdmin = false;
+      }
+    });
+  }
 };
 </script>
 

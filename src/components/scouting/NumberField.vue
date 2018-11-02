@@ -5,7 +5,7 @@
     </div>
 
     <div class="background-box-input location-right">
-      <input v-model.number="data.value" @input="changed()" type="number" pattern="[0-9]*" :max="max" :min="min" placeholder="Value">
+      <input v-model.number="data.value" @input="changed()" type="number" pattern="[0-9]*" :max="max" :min="min" placeholder="Value" :disabled="locked">
     </div>
   </div>
 </template>
@@ -14,7 +14,8 @@
 export default {
   name: "NumberField",
   props: {
-    data: Object
+    data: Object,
+    locked: Boolean
   },
   data: function() {
     return {

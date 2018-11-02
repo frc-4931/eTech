@@ -4,16 +4,20 @@
       <p>{{ data.title }}</p>
     </div>
 
-    <div @click="increment()" class="noselect background-box content-centered background-box-hover">
+    <div v-if="!locked" @click="increment()" class="noselect background-box content-centered background-box-hover">
       <p>+</p>
     </div>
 
-    <div class="background-box content-centered">
+    <div v-if="!locked" class="background-box content-centered">
       <p>{{ data.value }}</p>
     </div>
 
-    <div @click="decrement()" class="noselect background-box content-centered background-box-hover">
+    <div v-if="!locked" @click="decrement()" class="noselect background-box content-centered background-box-hover">
       <p>-</p>
+    </div>
+
+    <div v-if="locked" class="background-box-input location-right">
+      <input v-model.number="data.value" type="number" pattern="[0-9]*" placeholder="Value" disabled>
     </div>
   </div>
 </template>
@@ -22,7 +26,8 @@
 export default {
   name: "NumberFieldInc",
   props: {
-    data: Object
+    data: Object,
+    locked: Boolean
   },
   data: function() {
     return {
@@ -34,15 +39,19 @@ export default {
   },
   methods: {
     increment: function() {
-      if ((this.useMax && this.data.value < this.data.max) || !this.useMax) {
-        this.data.value++;
-        this.emitValue();
+      if (!this.locked) {
+        if ((this.useMax && this.data.value < this.data.max) || !this.useMax) {
+          this.data.value++;
+          this.emitValue();
+        }
       }
     },
     decrement: function() {
-      if ((this.useMin && this.data.value > this.data.min) || !this.useMin) {
-        this.data.value--;
-        this.emitValue();
+      if (!this.locked) {
+        if ((this.useMin && this.data.value > this.data.min) || !this.useMin) {
+          this.data.value--;
+          this.emitValue();
+        }
       }
     },
     emitValue: function() {

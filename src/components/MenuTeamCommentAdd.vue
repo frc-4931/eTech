@@ -3,7 +3,7 @@
 
     <div class="line" />
 
-    <FieldError v-if="error"></FieldError>
+    <Error v-if="isError">{{ errorMessage }}</Error>
 
     <div v-else class="background-box">
       <h2 class="content-centered">Add comment</h2>
@@ -50,17 +50,17 @@
 </template>
 
 <script>
-import FieldError from "./scouting/FieldError.vue";
+import Error from "./Error.vue";
 
 export default {
   name: "MenuTeamCommentAdd",
   components: {
-    FieldError
+    Error
   },
   props: {
     callback: Function,
     localdb: Object,
-    username: String,
+    user: Object,
     teamNumber: Number
   },
   data: function() {
@@ -69,30 +69,43 @@ export default {
       comment: "",
       rating: "Invalid",
       commentNumber: 0,
-      error: false
+      isError: false,
+      errorMessage: ""
     };
   },
   methods: {
     submitComment: function() {
-      var dThis = this;
-      if (this.title != "" && this.comment != "" && this.rating != "Invalid") {
-        var comment = {
-          comment: this.comment,
-          rating: parseInt(this.rating),
-          title: this.title,
-          _id:
-            "COMMENT_" +
-            this.teamNumber +
-            "_" +
-            this.commentNumber +
-            "_" +
-            this.username
-        };
-        this.localdb.put(comment).then(function() {
-          dThis.callback();
-        });
+      if (this.user.username != null) {
+        //Check if user is logged in
+        var dThis = this;
+        if (
+          this.title != "" &&
+          this.comment != "" &&
+          this.rating != "Invalid"
+        ) {
+          var comment = {
+            comment: this.comment,
+            rating: parseInt(this.rating),
+            title: this.title,
+            _id:
+              "COMMENT_" +
+              this.teamNumber +
+              "_" +
+              this.commentNumber +
+              "_" +
+              this.user.username
+          };
+          this.localdb.put(comment).then(function() {
+            dThis.callback();
+          });
+        } else {
+          this.isError = true;
+          this.errorMessage = "All fields are required!";
+        }
       } else {
-        this.error = true;
+        //If user if not logged in throw error you must be logged in
+        this.isError = true;
+        this.errorMessage = "You must be logged in to create a new comment!";
       }
     }
   },
