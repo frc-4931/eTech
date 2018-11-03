@@ -163,7 +163,13 @@ export default {
               this.remotedb
                 .signUpAdmin(this.username, this.password)
                 .then(function() {
+                  dThis.isAdmin = true;
                   dThis.fieldsChanged++;
+                })
+                .catch(function(err) {
+                  if (err.status == 409) {
+                    dThis.fieldsChanged++;
+                  }
                 });
             } else {
               this.isError = true;
@@ -174,9 +180,17 @@ export default {
 
           //Changing from admin
           if (this.role !== "admin" && this.isAdmin == true) {
-            this.remotedb.deleteAdmin(this.username).then(function() {
-              dThis.fieldsChanged++;
-            });
+            this.remotedb
+              .deleteAdmin(this.username)
+              .then(function() {
+                dThis.isAdmin = false;
+                dThis.fieldsChanged++;
+              })
+              .catch(function(err) {
+                if (err.name === "not_found") {
+                  dThis.fieldsChanged++;
+                }
+              });
           }
 
           if (this.o_role !== this.role || this.o_name !== this.name) {
