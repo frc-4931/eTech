@@ -50,6 +50,7 @@
         <div class="background-box">
           <h2 class="content-centered">Member Leaderboard</h2>
         </div>
+        <User v-for="user in users" :key="user.username" :userdata="user"></User>
       </div>
     </div>
   </div>
@@ -59,12 +60,14 @@
 import LeaderboardTeam from "./LeaderboardTeam.vue";
 import orderBy from "lodash.orderby";
 import AccountPanel from "./user/AccountPanel.vue";
+import User from "./User.vue";
 
 export default {
   name: "MenuMain",
   components: {
     LeaderboardTeam,
-    AccountPanel
+    AccountPanel,
+    User
   },
   props: {
     localdb: Object,
@@ -75,6 +78,7 @@ export default {
   data: function() {
     return {
       teams: [],
+      users: [],
       loggedin: false
     };
   },
@@ -114,18 +118,25 @@ export default {
       var dThis = this;
       this.loggedin = true;
       this.loadTeams();
+      this.loadUsers();
 
       this.sync_change.onChange = function(change) {
         if (change["direction"] == "pull") {
           var shouldLoadTeams = false;
+          var shouldLoadUsers = false;
 
           for (var doc of change.change.docs) {
             if (doc["_id"].startsWith("TEAM_")) {
               shouldLoadTeams = true;
             }
+
+            if (doc["_id"] === "USER_INDEX") {
+              shouldLoadUsers = true;
+            }
           }
 
           if (shouldLoadTeams) dThis.loadTeams();
+          if (shouldLoadUsers) dThis.loadUsers();
         }
       };
     },
@@ -136,6 +147,22 @@ export default {
       this.sync_change.onChange = function() {
         // Do nothing
       };
+    },
+    loadUsers() {
+      var dThis = this;
+
+      this.localdb
+        .get("USER_INDEX")
+        .then(function(doc) {
+          dThis.users = [];
+
+          for (var i in doc.users) {
+            var user = { username: i, name: doc.users[i], role: doc.roles[i] };
+
+            dThis.users.push(user);
+          }
+        })
+        .catch(function() {});
     }
   },
   created: function() {
