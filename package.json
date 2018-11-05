@@ -8,6 +8,8 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "http": "0.0.0",
+    "http-proxy": "^1.17.0",
     "lodash": "^4.17.11",
     "lodash.orderby": "^4.6.0",
     "pouchdb": "^7.0.0",

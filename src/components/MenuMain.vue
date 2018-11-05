@@ -46,7 +46,7 @@
         </div>
       </div>
       <div class="location-right-small">
-        <AccountPanel :remotedb="remotedb" :sync_change="sync_change" :user="user" @loggedin="loggedIn()" @loggedout="loggedOut()"></AccountPanel>
+        <AccountPanel :remotedb="remotedb" :sync_change="sync_change" :user="user" :reloadSync="reloadSync" @loggedin="loggedIn()" @loggedout="loggedOut()"></AccountPanel>
         <div class="background-box">
           <h2 class="content-centered">Member Leaderboard</h2>
         </div>
@@ -73,7 +73,8 @@ export default {
     localdb: Object,
     remotedb: Object,
     sync_change: Object,
-    user: Object
+    user: Object,
+    reloadSync: Function
   },
   data: function() {
     return {

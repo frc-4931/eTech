@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <transition enter-active-class="content-fade-in" leave-active-class="content-fade-out" mode="out-in">
-      <router-view :localdb="localdb" :remotedb="remotedb" :sync_change="sync_change" :user="user"></router-view>
+      <router-view :localdb="localdb" :remotedb="remotedb" :sync_change="sync_change" :user="user" :reloadSync="reloadSync"></router-view>
     </transition>
 
     <ConnectionError v-if="isConnectionError"></ConnectionError>
@@ -25,16 +25,43 @@ export default {
       isConnectionError: false,
       teamNumber: 4931,
       localdb: new PouchDB("localdb"),
-      remotedb: new PouchDB("http://192.168.0.15:5984/scouting", {
-        //TODO make server localhost/database/scouting
-        skip_setup: true
-      }),
+      remotedb: new PouchDB(
+        "http://" + window.location.host + "/database/scouting",
+        //"http://localhost:5984/scouting",
+        {
+          //TODO make server localhost/database/scouting
+          skip_setup: true
+        }
+      ),
       sync: {},
       user: { username: null, role: null },
       sync_change: { onChange: function() {}, onPaused: function() {} }
     };
   },
-  methods: {},
+  methods: {
+    reloadSync() {
+      console.log("Reloading sync");
+
+      var dThis = this;
+
+      this.sync.cancel();
+
+      dThis.sync = dThis.localdb
+        .sync(dThis.remotedb, {
+          live: true,
+          retry: true
+        })
+        .on("error", function(err) {
+          console.log(err);
+        })
+        .on("change", function(change) {
+          dThis.sync_change.onChange(change);
+        })
+        .on("paused", function() {
+          dThis.sync_change.onPaused();
+        });
+    }
+  },
   created: function() {
     PouchDB.plugin(Authentication);
 

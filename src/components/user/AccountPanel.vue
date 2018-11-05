@@ -73,7 +73,8 @@ export default {
   props: {
     remotedb: Object,
     sync_change: Object,
-    user: Object
+    user: Object,
+    reloadSync: Function
   },
   data: function() {
     return {
@@ -109,6 +110,7 @@ export default {
         } else {
           //Login successful
           dThis.getLoggedIn();
+          dThis.reloadSync();
         }
       });
     },
