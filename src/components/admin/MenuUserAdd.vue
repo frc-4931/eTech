@@ -164,6 +164,8 @@ export default {
       } else {
         dThis.loggedin = false;
       }
+
+      dThis.loggedin = true;
     });
   }
 };
