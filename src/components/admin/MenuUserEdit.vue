@@ -54,6 +54,11 @@
         <div @click="goBack()" class="background-box background-box-hover content-centered">
           <h3>Cancel</h3>
         </div>
+
+        <div @click="deleteUser()" class="background-box background-box-hover content-centered">
+          <h3>Delete</h3>
+        </div>
+
       </div>
     </div>
   </div>
@@ -126,6 +131,9 @@ export default {
         }
       });
     },
+    deleteUser() {
+      var dialog = confirm("Are you sure you want to delete this user?");
+    },    
     updateUser() {
       this.fieldsChanged = 0;
       if (this.allFieldsValid()) {
@@ -249,6 +257,8 @@ export default {
     this.remotedb.getSession(function(err, response) {
       if (err) {
         //There was an error
+
+        dThis.loggedin = true;
       } else if (response.userCtx.roles.indexOf("_admin") != -1) {
         dThis.loggedin = true;
         dThis.editingUser = response.userCtx.name;
