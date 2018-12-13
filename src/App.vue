@@ -125,6 +125,10 @@ export default {
   background-color: #37474f;
 }
 
+pre {
+  white-space: pre-wrap; 
+  word-wrap: break-word;
+}
 *:focus {
   outline: none;
 }

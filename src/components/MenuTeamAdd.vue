@@ -85,6 +85,9 @@ export default {
       } else {
         dThis.loggedin = false;
       }
+
+      // FIXME: Remove override
+      dThis.loggedin = true;
     });
   }
 };
