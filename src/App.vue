@@ -1,7 +1,17 @@
 <template>
   <div id="app">
-    <transition enter-active-class="content-fade-in" leave-active-class="content-fade-out" mode="out-in">
-      <router-view :localdb="localdb" :remotedb="remotedb" :sync_change="sync_change" :user="user" :reloadSync="reloadSync"></router-view>
+    <transition
+      enter-active-class="content-fade-in"
+      leave-active-class="content-fade-out"
+      mode="out-in"
+    >
+      <router-view
+        :localdb="localdb"
+        :remotedb="remotedb"
+        :sync_change="sync_change"
+        :user="user"
+        :reloadSync="reloadSync"
+      ></router-view>
     </transition>
 
     <ConnectionError v-if="isConnectionError"></ConnectionError>
@@ -257,6 +267,16 @@ textarea {
 .location-right-padded {
   grid-column: 4/6;
 }
+.background-box-hover {
+  transition: all 0.2s ease-in-out;
+}
+.background-box-hover:hover,
+.background-box-hover:active {
+  background-color: #546e7a;
+}
+a:hover {
+  color: #0069c0;
+}
 @supports (-webkit-overflow-scrolling: touch) {
   select {
     -webkit-appearance: none;
@@ -270,15 +290,6 @@ textarea {
   .grid {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
-  }
-  .background-box-hover {
-    transition: all 0.2s ease-in-out;
-  }
-  .background-box-hover:hover {
-    background-color: #546e7a;
-  }
-  a:hover {
-    color: #0069c0;
   }
   .mobile-view {
     display: none;
