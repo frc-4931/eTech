@@ -1,12 +1,12 @@
 <template>
   <div v-if="!locked" @click="modify()" class="background-box background-box-hover grid-perminant">
     <h2 class="location-span comment-title content-centered"> {{title}} </h2>
-    <p class="location-span comment-contents"> {{comment}} </p>
+    <pre class="location-span comment-contents"> {{comment}} </pre>
     <p :style="color" class="location-right-tiny content-right"> {{getRating}} </p>
   </div>
   <div v-else class="background-box grid-perminant">
     <h2 class="location-span comment-title content-centered"> {{title}} </h2>
-    <p class="location-span comment-contents"> {{comment}} </p>
+    <pre class="location-span comment-contents"> {{comment}} </pre>
     <p :style="color" class="location-right-tiny content-right"> {{getRating}} </p>
   </div>
 </template>

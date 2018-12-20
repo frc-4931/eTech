@@ -58,7 +58,6 @@
         <div @click="deleteUser()" class="background-box background-box-hover content-centered">
           <h3>Delete</h3>
         </div>
-
       </div>
     </div>
   </div>
@@ -69,7 +68,7 @@
 import Error from "../Error.vue";
 
 export default {
-  name: "MenuUserAdd",
+  name: "MenuUserEdit",
   components: { Error },
   props: {
     localdb: Object,
@@ -132,8 +131,28 @@ export default {
       });
     },
     deleteUser() {
-      var dialog = confirm("Are you sure you want to delete this user?");
-    },    
+      var dThis = this;
+
+      if (!confirm("Are you sure you would like to delete this user?")) return;
+
+      if (this.role !== "admin" && this.isAdmin == true) {
+        this.remotedb
+          .deleteAdmin(this.username)
+          .then(function() {
+            dThis.isAdmin = false;
+          })
+          .then(function() {
+            dThis.remotedb.deleteUser(dThis.username);
+            dThis.removeUserFromFile();
+          })
+          .catch(function(err) {
+            //FAILED
+          });
+      } else {
+        this.remotedb.deleteUser(dThis.username);
+        this.removeUserFromFile();
+      }
+    },
     updateUser() {
       this.fieldsChanged = 0;
       if (this.allFieldsValid()) {
@@ -248,6 +267,23 @@ export default {
           doc.roles[dThis.username] = dThis.role;
 
           dThis.localdb.put(doc);
+        });
+    },
+    removeUserFromFile() {
+      var dThis = this;
+
+      this.localdb
+        .get("USER_INDEX")
+        .then(function(doc) {
+          delete doc.users[dThis.username];
+          delete doc.roles[dThis.username];
+
+          dThis.localdb.put(doc).then(function() {
+            dThis.goBack();
+          });
+        })
+        .catch(function() {
+          //FAILED
         });
     }
   },

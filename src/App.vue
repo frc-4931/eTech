@@ -26,8 +26,8 @@ export default {
       teamNumber: 4931,
       localdb: new PouchDB("localdb"),
       remotedb: new PouchDB(
-        "http://" + window.location.host + "/database/scouting",
-        //"http://localhost:5984/scouting",
+        //"http://" + window.location.host + "/database/scouting",
+        "http://localhost:5984/scouting",
         {
           //TODO make server localhost/database/scouting
           skip_setup: true
@@ -124,9 +124,9 @@ export default {
   margin: 10px;
   background-color: #37474f;
 }
-
 pre {
-  white-space: pre-wrap; 
+  font-family: "Open Sans", sans-serif;
+  white-space: pre-wrap;
   word-wrap: break-word;
 }
 *:focus {
@@ -182,6 +182,7 @@ h3,
 p {
   margin: 0;
   font-weight: normal;
+  word-break: break-word;
 }
 a {
   transition: all 0.2s ease-in-out;
