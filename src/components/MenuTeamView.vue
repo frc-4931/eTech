@@ -1,5 +1,5 @@
 <template>
-  <div v-if="loggedin" id="menu-team-view">
+  <div v-if="loggedin && teamExists" id="menu-team-view">
     <div class="grid">
       <div class="location-centered-small done-button-container">
         <div @click="goBack()" class="background-box background-box-hover content-centered">
@@ -69,6 +69,7 @@
       </div>
     </div>
   </div>
+  <Error v-else-if="!teamExists">This team does not exist!</Error>
   <Error v-else>You must be logged in to view this page!</Error>
 </template>
 
@@ -139,7 +140,8 @@ export default {
       commentModifyMenu: "none",
       scrollTo: scroller(),
       shouldUpdateScoutMenu: false,
-      loggedin: false
+      loggedin: false,
+      teamExists: false
     };
   },
   methods: {
@@ -321,6 +323,10 @@ export default {
         dThis.$set(dThis.team, "number", doc.number);
         dThis.$set(dThis.team, "objectivePoints", doc.objectivePoints);
         dThis.$set(dThis.team, "commentPoints", doc.commentPoints);
+
+        dThis.teamExists = true;
+      }).catch(function () {
+        dThis.teamExists = false;
       });
 
       this.loadComments();
