@@ -149,6 +149,7 @@ export default {
           doc[i + "_POINTS"] = this.scoutPoints[i];
         }
       }
+      this.modifiedFields = [];
       doc["TOTAL-POINTS"] = this.getAllFieldPoints();
       this.localdb.put(doc).then(function() {
         dThis.callback();
