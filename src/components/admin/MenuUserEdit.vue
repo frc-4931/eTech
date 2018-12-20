@@ -293,6 +293,8 @@ export default {
     this.remotedb.getSession(function(err, response) {
       if (err) {
         //There was an error
+
+        dThis.loggedin = true;
       } else if (response.userCtx.roles.indexOf("_admin") != -1) {
         dThis.loggedin = true;
         dThis.editingUser = response.userCtx.name;

@@ -165,6 +165,7 @@ export default {
         dThis.loggedin = false;
       }
 
+      //FIXME
       dThis.loggedin = true;
     });
   }
