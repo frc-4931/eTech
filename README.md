@@ -1,5 +1,13 @@
 # scouting-app
 
+## Installation
+Install CouchDB
+Create a DB named "scouting"
+
+Install npm
+run `npm server.js path/to/folder`
+
+
 ## Project setup
 ```
 npm install
