@@ -30,10 +30,17 @@
           </div>
         </div>
         <div id="leaderboard-container">
-          <LeaderboardTeam v-for="(teamData) in teams" v-bind:key="teamData['_id']" :teamdata="teamData"></LeaderboardTeam>
+          <LeaderboardTeam
+            v-for="(teamData) in teams"
+            v-bind:key="teamData['_id']"
+            :teamdata="teamData"
+          ></LeaderboardTeam>
         </div>
 
-        <div v-if="teams.length == 0" class="grid">
+        <div
+          v-if="teams.length == 0"
+          class="grid"
+        >
           <div class="location-centered background-box content-centered">
             <h3 v-if="loggedin">
               There aren't any teams to display<br>
@@ -46,11 +53,22 @@
         </div>
       </div>
       <div class="location-right-small">
-        <AccountPanel :remotedb="remotedb" :sync_change="sync_change" :user="user" :reloadSync="reloadSync" @loggedin="loggedIn()" @loggedout="loggedOut()"></AccountPanel>
+        <AccountPanel
+          :remotedb="remotedb"
+          :sync_change="sync_change"
+          :user="user"
+          :reloadSync="reloadSync"
+          @loggedin="loggedIn()"
+          @loggedout="loggedOut()"
+        ></AccountPanel>
         <div class="background-box">
           <h2 class="content-centered">Member Leaderboard</h2>
         </div>
-        <User v-for="user in users" :key="user.username" :userdata="user"></User>
+        <User
+          v-for="user in users"
+          :key="user.username"
+          :userdata="user"
+        ></User>
       </div>
     </div>
   </div>

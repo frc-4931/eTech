@@ -271,7 +271,8 @@ textarea {
   transition: all 0.2s ease-in-out;
 }
 .background-box-hover:hover,
-.background-box-hover:active {
+.background-box-hover:active,
+.background-box-hover:focus {
   background-color: #546e7a;
 }
 a:hover {
