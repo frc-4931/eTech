@@ -22,8 +22,6 @@
 import ConnectionError from "./components/ConnectionError.vue";
 import PouchDB from "pouchdb";
 import Authentication from "pouchdb-authentication";
-import PitTemplate from "./assets/pitscout.js";
-import MatchTemplate from "./assets/matchscout.js";
 
 export default {
   name: "app",
@@ -36,8 +34,8 @@ export default {
       teamNumber: 4931,
       localdb: new PouchDB("localdb"),
       remotedb: new PouchDB(
-        //"http://" + window.location.host + "/database/scouting",
-        "http://localhost:5984/scouting",
+        "http://" + window.location.host + "/database/scouting",
+        //"http://localhost:5984/scouting",
         {
           //TODO make server localhost/database/scouting
           skip_setup: true
@@ -50,8 +48,7 @@ export default {
   },
   methods: {
     reloadSync() {
-      console.log("Reloading sync");
-
+      //console.log("Reloading sync");
       var dThis = this;
 
       this.sync.cancel();

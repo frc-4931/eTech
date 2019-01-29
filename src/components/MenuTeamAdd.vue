@@ -1,5 +1,8 @@
 <template>
-  <div v-if="loggedin" id="menu-team-add">
+  <div
+    v-if="loggedin"
+    id="menu-team-add"
+  >
     <div class="grid">
       <FieldError v-if="error"></FieldError>
 
@@ -7,20 +10,41 @@
         <h2 class="content-centered background-box location-span">Add team</h2>
 
         <div class="location-left background-box-input">
-          <input v-model.trim="name" type="text" name="team-name" placeholder="Team Name" class="content-centered">
+          <input
+            v-model.trim="name"
+            type="text"
+            name="team-name"
+            placeholder="Team Name"
+            class="content-centered"
+          >
         </div>
 
         <div class="location-right background-box-input">
-          <input v-model="number" type="number" pattern="[0-9]*" max="9999" min="1" name="team-number" placeholder="Team Number" class="content-centered">
+          <input
+            v-model.number="number"
+            type="number"
+            pattern="[0-9]*"
+            max="9999"
+            min="1"
+            name="team-number"
+            placeholder="Team Number"
+            class="content-centered"
+          >
         </div>
       </div>
 
       <div class="location-centered-small">
-        <div @click="submitTeam()" class="background-box background-box-hover content-centered">
+        <div
+          @click="submitTeam()"
+          class="background-box background-box-hover content-centered"
+        >
           <h3>Add</h3>
         </div>
 
-        <div @click="goBack()" class="background-box background-box-hover content-centered">
+        <div
+          @click="goBack()"
+          class="background-box background-box-hover content-centered"
+        >
           <h3>Cancel</h3>
         </div>
       </div>
