@@ -1,11 +1,26 @@
 <template>
   <div id="scouting-menu">
-    <component v-for="scField in template" :key="docId+(scField.field || scField.title)" :is="scField.type" :data="scField" :locked="!hasEdit" @valuechange="valueChange(scField.field, ...arguments)"></component>
+    <component
+      v-for="scField in template"
+      :key="docId+(scField.field || scField.title)"
+      :is="scField.type"
+      :data="scField"
+      :locked="!hasEdit"
+      @valuechange="valueChange(scField.field, ...arguments)"
+    ></component>
 
-    <div v-if="hasEdit" @click="save()" class="location-centered-small background-box background-box-hover content-centered">
+    <div
+      v-if="hasEdit"
+      @click="save()"
+      class="location-centered-small background-box background-box-hover content-centered"
+    >
       <h3>Save</h3>
     </div>
-    <div v-if="hasEdit" @click="deleteScout()" class="location-centered-small background-box background-box-hover content-centered">
+    <div
+      v-if="hasEdit"
+      @click="deleteScout()"
+      class="location-centered-small background-box background-box-hover content-centered"
+    >
       <h3>Delete</h3>
     </div>
     <div class="line"></div>
@@ -223,22 +238,5 @@ export default {
 }
 .pit-scout-div:nth-child(1) div {
   margin-top: 10px !important;
-}
-.radio-button {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  border-radius: 50%;
-  width: 16px;
-  height: 16px;
-  border: 2px solid #eceff1;
-  transition: 0.2s all ease-in-out;
-  outline: none;
-  margin-right: 5px;
-  position: relative;
-  top: 4px;
-}
-.radio-button:checked {
-  border: 6px solid #607d8b;
 }
 </style>

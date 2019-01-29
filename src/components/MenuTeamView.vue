@@ -1,12 +1,21 @@
 <template>
-  <div v-if="loggedin && teamExists" id="menu-team-view">
+  <div
+    v-if="loggedin && teamExists"
+    id="menu-team-view"
+  >
     <div class="grid">
       <div class="location-centered-small done-button-container">
-        <div @click="goBack()" class="background-box background-box-hover content-centered">
+        <div
+          @click="goBack()"
+          class="background-box background-box-hover content-centered"
+        >
           <h3>Back</h3>
         </div>
       </div>
-      <div id="team-title" class="location-centered background-box">
+      <div
+        id="team-title"
+        class="location-centered background-box"
+      >
         <h2 class="content-centered">
           <span>{{ team.name }}</span> -
           <span>{{ team.number }}</span>
@@ -20,19 +29,69 @@
             <span>{{ team.objectivePoints }}</span>
           </h3>
         </div>
-        <div class="background-box-input" id="scouting-select">
-          <select v-model="scoutingSelect" @change="openScoutingMenu()" class="content-input-large">
+        <div
+          class="background-box-input"
+          id="scouting-select"
+        >
+          <select
+            v-model="scoutingSelect"
+            @change="openScoutingMenu()"
+            class="content-input-large"
+          >
             <option value="none">Select A Scouting Option</option>
-            <option v-if="hasEdit" value="create">--- New Scout ---</option>
-            <option v-for="(scout, idx) in pitScouts" :key="scout" :value="scout">Pit Scouting: {{ idx + 1 }}</option>
-            <option v-for="(scout, idx) in matchScouts" :key="scout" :value="scout">Match Scouting: Match {{ idx + 1 }}</option>
+            <option
+              v-if="hasEdit"
+              value="create"
+            >--- New Scout ---</option>
+            <option
+              v-for="(scout, idx) in pitScouts"
+              :key="scout"
+              :value="scout"
+            >Pit Scouting: {{ idx + 1 }}</option>
+            <option
+              v-for="(scout, idx) in matchScouts"
+              :key="scout"
+              :value="scout"
+            >Match Scouting: Match {{ idx + 1 }}</option>
           </select>
         </div>
         <!-- Insert Scouting Fields Here -->
-        <transition enter-active-class="content-long-fade-in" leave-active-class="content-long-fade-out" mode="out-in">
-          <NewScout v-if="scoutingSelect == 'create' " :localdb="localdb" :user="user" :teamNumber="teamNumber" :callback="teamCreated"></NewScout>
-          <ScoutMenu :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('PITSCOUT_')" :isMatchScout="false" :localdb="localdb" :docId="scoutingSelect" :callback="teamModified" :closeteam="teamClose" :shouldUpdate="shouldUpdateScoutMenu" :callUpdated="updatedScoutMenu" :hasEdit="hasEdit"></ScoutMenu>
-          <ScoutMenu :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('MATCHSCOUT_')" :isMatchScout="true" :localdb="localdb" :docId="scoutingSelect" :callback="teamModified" :closeteam="teamClose" :shouldUpdate="shouldUpdateScoutMenu" :callUpdated="updatedScoutMenu" :hasEdit="hasEdit"></ScoutMenu>
+        <transition
+          enter-active-class="content-long-fade-in"
+          leave-active-class="content-long-fade-out"
+          mode="out-in"
+        >
+          <NewScout
+            v-if="scoutingSelect == 'create' "
+            :localdb="localdb"
+            :user="user"
+            :teamNumber="teamNumber"
+            :callback="teamCreated"
+          ></NewScout>
+          <ScoutMenu
+            :key="scoutingSelect"
+            v-else-if="scoutingSelect.startsWith('PITSCOUT_')"
+            :isMatchScout="false"
+            :localdb="localdb"
+            :docId="scoutingSelect"
+            :callback="teamModified"
+            :closeteam="teamClose"
+            :shouldUpdate="shouldUpdateScoutMenu"
+            :callUpdated="updatedScoutMenu"
+            :hasEdit="hasEdit"
+          ></ScoutMenu>
+          <ScoutMenu
+            :key="scoutingSelect"
+            v-else-if="scoutingSelect.startsWith('MATCHSCOUT_')"
+            :isMatchScout="true"
+            :localdb="localdb"
+            :docId="scoutingSelect"
+            :callback="teamModified"
+            :closeteam="teamClose"
+            :shouldUpdate="shouldUpdateScoutMenu"
+            :callUpdated="updatedScoutMenu"
+            :hasEdit="hasEdit"
+          ></ScoutMenu>
         </transition>
       </div>
       <div class="location-right-padded">
@@ -61,10 +120,21 @@
         <!-- </transition-group> -->
 
         <div v-if="hasEdit">
-          <div v-if="commentAddMenu == false" @click="openCommentAddMenu()" class="background-box background-box-hover">
+          <div
+            v-if="commentAddMenu == false"
+            @click="openCommentAddMenu()"
+            class="background-box background-box-hover"
+          >
             <h3 class="content-centered">Add comment</h3>
           </div>
-          <MenuTeamCommentAdd id="comment-add-menu" v-else :localdb="localdb" :user="user" :teamNumber="teamNumber" :callback="commentCreated"></MenuTeamCommentAdd>
+          <MenuTeamCommentAdd
+            id="comment-add-menu"
+            v-else
+            :localdb="localdb"
+            :user="user"
+            :teamNumber="teamNumber"
+            :callback="commentCreated"
+          ></MenuTeamCommentAdd>
         </div>
       </div>
     </div>
@@ -318,16 +388,19 @@ export default {
     },
     initRoutine() {
       var dThis = this;
-      this.localdb.get("TEAM_" + this.teamNumber).then(function(doc) {
-        dThis.$set(dThis.team, "name", doc.name);
-        dThis.$set(dThis.team, "number", doc.number);
-        dThis.$set(dThis.team, "objectivePoints", doc.objectivePoints);
-        dThis.$set(dThis.team, "commentPoints", doc.commentPoints);
+      this.localdb
+        .get("TEAM_" + this.teamNumber)
+        .then(function(doc) {
+          dThis.$set(dThis.team, "name", doc.name);
+          dThis.$set(dThis.team, "number", doc.number);
+          dThis.$set(dThis.team, "objectivePoints", doc.objectivePoints);
+          dThis.$set(dThis.team, "commentPoints", doc.commentPoints);
 
-        dThis.teamExists = true;
-      }).catch(function () {
-        dThis.teamExists = false;
-      });
+          dThis.teamExists = true;
+        })
+        .catch(function() {
+          dThis.teamExists = false;
+        });
 
       this.loadComments();
       this.loadScouting();
