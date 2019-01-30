@@ -1,17 +1,31 @@
 <template>
-  <div v-if="loggedin" id="menu-team-add">
+  <div
+    v-if="loggedin"
+    id="menu-team-add"
+  >
     <div class="grid">
 
       <div class="location-centered-small grid-perminant">
-        <Error v-if="isError" class="background=box location-span">All feidls are required!</Error>
-        <h2 v-else class="content-centered background-box location-span">Add User</h2>
+        <Error
+          v-if="isError"
+          class="background=box location-span"
+        >All feidls are required!</Error>
+        <h2
+          v-else
+          class="content-centered background-box location-span"
+        >Add User</h2>
 
         <div class="location-left background-box content-centered">
           <p>Name</p>
         </div>
 
         <div class="location-right background-box-input">
-          <input v-model.trim="name" type="text" placeholder="Name" class="content-centered">
+          <input
+            v-model.trim="name"
+            type="text"
+            placeholder="Name"
+            class="content-centered"
+          >
         </div>
 
         <div class="location-left background-box content-centered">
@@ -19,7 +33,12 @@
         </div>
 
         <div class="location-right background-box-input">
-          <input v-model.trim="username" type="text" placeholder="Username" class="content-centered">
+          <input
+            v-model.trim="username"
+            type="text"
+            placeholder="Username"
+            class="content-centered"
+          >
         </div>
 
         <div class="location-left background-box content-centered">
@@ -27,7 +46,12 @@
         </div>
 
         <div class="location-right background-box-input">
-          <input v-model="password" type="password" placeholder="Password" class="content-centered">
+          <input
+            v-model="password"
+            type="password"
+            placeholder="Password"
+            class="content-centered"
+          >
         </div>
 
         <div class="location-left background-box content-centered">
@@ -35,31 +59,60 @@
         </div>
 
         <div class="location-right background-box-input">
-          <input v-model="confrimPassword" type="password" placeholder="Confirm Password" class="content-centered">
+          <input
+            v-model="confrimPassword"
+            type="password"
+            placeholder="Confirm Password"
+            class="content-centered"
+          >
         </div>
 
         <div class="background-box content-centered location-span grid-perminant">
           <label class="location-left-small">
-            <input class="radio-button" v-model="role" value="admin" type="radio" name="radio1">
+            <input
+              class="radio-button"
+              v-model="role"
+              value="admin"
+              type="radio"
+              name="radio1"
+            >
             Admin
           </label>
           <label class="location-centered-small">
-            <input class="radio-button" v-model="role" value="edit" type="radio" name="radio1">
+            <input
+              class="radio-button"
+              v-model="role"
+              value="edit"
+              type="radio"
+              name="radio1"
+            >
             Edit
           </label>
           <label class="location-right-small">
-            <input class="radio-button" v-model="role" value="view" type="radio" name="radio1">
+            <input
+              class="radio-button"
+              v-model="role"
+              value="view"
+              type="radio"
+              name="radio1"
+            >
             View
           </label>
         </div>
       </div>
 
       <div class="location-centered-small">
-        <div @click="addUser()" class="background-box background-box-hover content-centered">
+        <div
+          @click="addUser()"
+          class="background-box background-box-hover content-centered"
+        >
           <h3>Add</h3>
         </div>
 
-        <div @click="goBack()" class="background-box background-box-hover content-centered">
+        <div
+          @click="goBack()"
+          class="background-box background-box-hover content-centered"
+        >
           <h3>Cancel</h3>
         </div>
       </div>
@@ -117,7 +170,6 @@ export default {
             }
           }
         );
-        this.putUserIntoFile();
       } else {
         this.isError = true;
       }
@@ -132,25 +184,6 @@ export default {
     },
     goBack() {
       this.$router.go(-1);
-    },
-    putUserIntoFile() {
-      var dThis = this;
-      this.localdb
-        .get("USER_INDEX")
-        .then(function(doc) {
-          doc.users[dThis.username] = dThis.name;
-          doc.roles[dThis.username] = dThis.role;
-
-          dThis.localdb.put(doc);
-        })
-        .catch(function() {
-          var doc = { _id: "USER_INDEX", users: {}, roles: {} };
-
-          doc.users[dThis.username] = dThis.name;
-          doc.roles[dThis.username] = dThis.role;
-
-          dThis.localdb.put(doc);
-        });
     }
   },
   created() {

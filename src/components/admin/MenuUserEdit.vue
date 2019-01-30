@@ -1,17 +1,31 @@
 <template>
-  <div v-if="loggedin" id="menu-team-add">
+  <div
+    v-if="loggedin"
+    id="menu-team-add"
+  >
     <div class="grid">
 
       <div class="location-centered-small grid-perminant">
-        <Error v-if="isError" class="background=box location-span">{{ errorMessage }}</Error>
-        <h2 v-else class="content-centered background-box location-span">{{username}}</h2>
+        <Error
+          v-if="isError"
+          class="background=box location-span"
+        >{{ errorMessage }}</Error>
+        <h2
+          v-else
+          class="content-centered background-box location-span"
+        >{{username}}</h2>
 
         <div class="location-left background-box content-centered">
           <p>Name</p>
         </div>
 
         <div class="location-right background-box-input">
-          <input v-model.trim="name" type="text" placeholder="Name" class="content-centered">
+          <input
+            v-model.trim="name"
+            type="text"
+            placeholder="Name"
+            class="content-centered"
+          >
         </div>
 
         <div class="location-left background-box content-centered">
@@ -19,7 +33,13 @@
         </div>
 
         <div class="location-right background-box-input">
-          <input v-model="password" type="password" placeholder="Password" class="content-centered" :disabled="lockRole">
+          <input
+            v-model="password"
+            type="password"
+            placeholder="Password"
+            class="content-centered"
+            :disabled="lockRole"
+          >
         </div>
 
         <div class="location-left background-box content-centered">
@@ -27,35 +47,71 @@
         </div>
 
         <div class="location-right background-box-input">
-          <input v-model="confirmPassword" type="password" placeholder="Confirm Password" class="content-centered" :disabled="lockRole">
+          <input
+            v-model="confirmPassword"
+            type="password"
+            placeholder="Confirm Password"
+            class="content-centered"
+            :disabled="lockRole"
+          >
         </div>
 
         <div class="background-box content-centered location-span grid-perminant">
           <label class="location-left-small">
-            <input class="radio-button" v-model="role" value="admin" type="radio" name="radio1" :disabled="lockRole">
+            <input
+              class="radio-button"
+              v-model="role"
+              value="admin"
+              type="radio"
+              name="radio1"
+              :disabled="lockRole"
+            >
             Admin
           </label>
           <label class="location-centered-small">
-            <input class="radio-button" v-model="role" value="edit" type="radio" name="radio1" :disabled="lockRole">
+            <input
+              class="radio-button"
+              v-model="role"
+              value="edit"
+              type="radio"
+              name="radio1"
+              :disabled="lockRole"
+            >
             Edit
           </label>
           <label class="location-right-small">
-            <input class="radio-button" v-model="role" value="view" type="radio" name="radio1" :disabled="lockRole">
+            <input
+              class="radio-button"
+              v-model="role"
+              value="view"
+              type="radio"
+              name="radio1"
+              :disabled="lockRole"
+            >
             View
           </label>
         </div>
       </div>
 
       <div class="location-centered-small">
-        <div @click="updateUser()" class="background-box background-box-hover content-centered">
+        <div
+          @click="updateUser()"
+          class="background-box background-box-hover content-centered"
+        >
           <h3>Save</h3>
         </div>
 
-        <div @click="goBack()" class="background-box background-box-hover content-centered">
+        <div
+          @click="goBack()"
+          class="background-box background-box-hover content-centered"
+        >
           <h3>Cancel</h3>
         </div>
 
-        <div @click="deleteUser()" class="background-box background-box-hover content-centered">
+        <div
+          @click="deleteUser()"
+          class="background-box background-box-hover content-centered"
+        >
           <h3>Delete</h3>
         </div>
       </div>
@@ -135,7 +191,7 @@ export default {
 
       if (!confirm("Are you sure you would like to delete this user?")) return;
 
-      if (this.role !== "admin" && this.isAdmin == true) {
+      if (this.isAdmin) {
         this.remotedb
           .deleteAdmin(this.username)
           .then(function() {
@@ -143,15 +199,16 @@ export default {
           })
           .then(function() {
             dThis.remotedb.deleteUser(dThis.username);
-            dThis.removeUserFromFile();
+            //dThis.removeUserFromFile();
           })
           .catch(function(err) {
             //FAILED
           });
       } else {
         this.remotedb.deleteUser(dThis.username);
-        this.removeUserFromFile();
+        //this.removeUserFromFile();
       }
+      this.goBack();
     },
     updateUser() {
       this.fieldsChanged = 0;
@@ -160,68 +217,44 @@ export default {
 
         this.isError = false;
 
-        if (this.o_name !== this.name) {
-          if (this.username === this.editingUser) {
-            this.remotedb.putUser(
-              this.username,
-              { metadata: { realName: this.name } },
-              function(err) {
-                if (err) {
-                  //Errer has occured
-                } else {
-                  dThis.fieldsChanged++;
-                }
-              }
-            );
-            this.putUserIntoFile();
-          }
-        } else {
+        //Changing to admin
+        if (this.role === "admin" && this.isAdmin != true) {
           if (this.password != "") {
             this.remotedb
-              .changePassword(this.username, this.password)
+              .signUpAdmin(this.username, this.password)
               .then(function() {
-                dThis.fieldsChanged++;
-              });
-          }
-
-          //Changing to admin
-          if (this.role === "admin" && this.isAdmin != true) {
-            if (this.password != "") {
-              this.remotedb
-                .signUpAdmin(this.username, this.password)
-                .then(function() {
-                  dThis.isAdmin = true;
-                  dThis.fieldsChanged++;
-                })
-                .catch(function(err) {
-                  if (err.status == 409) {
-                    dThis.fieldsChanged++;
-                  }
-                });
-            } else {
-              this.isError = true;
-              this.errorMessage =
-                "You must change the password when making a user an admin.";
-            }
-          }
-
-          //Changing from admin
-          if (this.role !== "admin" && this.isAdmin == true) {
-            this.remotedb
-              .deleteAdmin(this.username)
-              .then(function() {
-                dThis.isAdmin = false;
+                dThis.isAdmin = true;
                 dThis.fieldsChanged++;
               })
               .catch(function(err) {
-                if (err.name === "not_found") {
+                if (err.status == 409) {
                   dThis.fieldsChanged++;
                 }
               });
+          } else {
+            this.isError = true;
+            this.errorMessage =
+              "You must change the password when making a user an admin.";
           }
+        }
+        //Changing from admin
+        else if (this.role !== "admin" && this.isAdmin == true) {
+          this.remotedb
+            .deleteAdmin(this.username)
+            .then(function() {
+              dThis.isAdmin = false;
+              dThis.fieldsChanged++;
+            })
+            .catch(function(err) {
+              if (err.name === "not_found") {
+                dThis.fieldsChanged++;
+              }
+            });
+        }
 
-          if (this.o_role !== this.role || this.o_name !== this.name) {
-            this.remotedb.putUser(
+        if (this.o_role !== this.role || this.o_name !== this.name) {
+          this.remotedb
+            .putUser(
               this.username,
               { roles: [this.role], metadata: { realName: this.name } },
               function(err) {
@@ -229,12 +262,24 @@ export default {
                   //Errer has occured
                 } else {
                   dThis.fieldsChanged++;
+
+                  if (dThis.password != "") {
+                    dThis.remotedb
+                      .changePassword(dThis.username, dThis.password)
+                      .then(function() {
+                        dThis.fieldsChanged++;
+                      });
+                  }
                 }
               }
-            );
-
-            this.putUserIntoFile();
-          }
+            )
+            .then(function() {});
+        } else if (this.password != "") {
+          this.remotedb
+            .changePassword(this.username, this.password)
+            .then(function() {
+              dThis.fieldsChanged++;
+            });
         }
       } else {
         this.isError = true;
@@ -246,45 +291,6 @@ export default {
     },
     goBack() {
       this.$router.go(-1);
-    },
-    putUserIntoFile() {
-      var dThis = this;
-      this.localdb
-        .get("USER_INDEX")
-        .then(function(doc) {
-          if (!doc.users) doc.users = {};
-          if (!doc.roles) doc.roles = {};
-
-          doc.users[dThis.username] = dThis.name;
-          doc.roles[dThis.username] = dThis.role;
-
-          dThis.localdb.put(doc);
-        })
-        .catch(function() {
-          var doc = { _id: "USER_INDEX", users: {}, roles: {}, names: {} };
-
-          doc.users[dThis.username] = dThis.name;
-          doc.roles[dThis.username] = dThis.role;
-
-          dThis.localdb.put(doc);
-        });
-    },
-    removeUserFromFile() {
-      var dThis = this;
-
-      this.localdb
-        .get("USER_INDEX")
-        .then(function(doc) {
-          delete doc.users[dThis.username];
-          delete doc.roles[dThis.username];
-
-          dThis.localdb.put(doc).then(function() {
-            dThis.goBack();
-          });
-        })
-        .catch(function() {
-          //FAILED
-        });
     }
   },
   created() {

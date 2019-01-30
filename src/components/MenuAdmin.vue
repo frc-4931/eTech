@@ -3,9 +3,15 @@
 
     <Error v-if="!isAdmin">You must be logged in as an admin to view this page!</Error>
 
-    <div v-else class="grid">
+    <div
+      v-else
+      class="grid"
+    >
       <div class="done-button-container location-left-tiny">
-        <div @click="goBack()" class="background-box background-box-hover content-centered">
+        <div
+          @click="goBack()"
+          class="background-box background-box-hover content-centered"
+        >
           <h3>Back</h3>
         </div>
       </div>
@@ -25,7 +31,12 @@
           <p>Remove Team</p>
         </div>
 
-        <AdminTeam v-for="(teamData) in teams" v-bind:key="teamData['_id']" :teamdata="teamData" :removeteam="removeTeam"></AdminTeam>
+        <AdminTeam
+          v-for="(teamData) in teams"
+          v-bind:key="teamData['_id']"
+          :teamdata="teamData"
+          :removeteam="removeTeam"
+        ></AdminTeam>
       </div>
 
       <div class="location-centered-small">
@@ -40,7 +51,11 @@
           <p>Edit User</p>
         </div>
 
-        <AdminUser v-for="user in users" :key="user.username" :userdata="user"></AdminUser>
+        <AdminUser
+          v-for="user in users"
+          :key="user.username"
+          :userdata="user"
+        ></AdminUser>
       </div>
 
       <div class="location-right-small">
@@ -66,6 +81,23 @@ import AdminTeam from "./admin/AdminTeam.vue";
 import AdminUser from "./admin/AdminUser.vue";
 import orderBy from "lodash.orderby";
 import Error from "./Error.vue";
+import PouchDB from "pouchdb";
+
+// Setup for running dev server
+var url = "";
+var setup = {};
+if (window.webpackHotUpdate) {
+  url = "http://" + window.location.hostname + ":5984/_users/";
+  setup = {
+    fetch(url, opts) {
+      opts.credentials = "include";
+      return PouchDB.fetch(url, opts);
+    }
+  };
+} else {
+  url = "http://" + window.location.host + "/database/_users";
+  setup = {};
+}
 
 export default {
   name: "MenuAdmin",
@@ -83,7 +115,8 @@ export default {
     return {
       teams: [],
       users: [],
-      isAdmin: false
+      isAdmin: false,
+      usersdb: new PouchDB(url, setup)
     };
   },
   methods: {
@@ -137,18 +170,25 @@ export default {
     loadUsers() {
       var dThis = this;
 
-      this.localdb
-        .get("USER_INDEX")
-        .then(function(doc) {
-          dThis.users = [];
+      this.usersdb
+        .allDocs({
+          include_docs: true,
+          startkey: "org.couchdb.user",
+          endkey: "org.couchdb.user\ufff0"
+        })
+        .then(function(docs) {
+          for (var i in docs["rows"]) {
+            var doc = docs["rows"][i]["doc"];
 
-          for (var i in doc.users) {
-            var user = { username: i, name: doc.users[i], role: doc.roles[i] };
+            var user = {
+              username: doc.name,
+              name: doc.realName,
+              role: doc.roles[0]
+            };
 
             dThis.users.push(user);
           }
-        })
-        .catch(function() {});
+        });
     }
   },
   created: function() {
@@ -166,20 +206,14 @@ export default {
         dThis.sync_change.onChange = function(change) {
           if (change["direction"] == "pull") {
             var shouldLoadTeams = false;
-            var shouldLoadUsers = false;
 
             for (var doc of change.change.docs) {
               if (doc["_id"].startsWith("TEAM_")) {
                 shouldLoadTeams = true;
               }
-
-              if (doc["_id"] === "USER_INDEX") {
-                shouldLoadUsers = true;
-              }
             }
 
             if (shouldLoadTeams) dThis.loadTeams();
-            if (shouldLoadUsers) dThis.loadUsers();
           }
         };
       } else {

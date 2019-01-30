@@ -23,6 +23,24 @@ import ConnectionError from "./components/ConnectionError.vue";
 import PouchDB from "pouchdb";
 import Authentication from "pouchdb-authentication";
 
+var url = "";
+var setup = {};
+if (window.webpackHotUpdate) {
+  url = "http://" + window.location.hostname + ":5984/scouting/";
+  setup = {
+    skip_setup: true,
+    fetch(url, opts) {
+      opts.credentials = "include";
+      return PouchDB.fetch(url, opts);
+    }
+  };
+} else {
+  url = "http://" + window.location.host + "/database/scouting";
+  setup = {
+    skip_setup: true
+  };
+}
+
 export default {
   name: "app",
   components: {
@@ -31,16 +49,8 @@ export default {
   data: function() {
     return {
       isConnectionError: false,
-      teamNumber: 4931,
       localdb: new PouchDB("localdb"),
-      remotedb: new PouchDB(
-        "http://" + window.location.host + "/database/scouting",
-        //"http://localhost:5984/scouting",
-        {
-          //TODO make server localhost/database/scouting
-          skip_setup: true
-        }
-      ),
+      remotedb: new PouchDB(url, setup),
       sync: {},
       user: { username: null, role: null },
       sync_change: { onChange: function() {}, onPaused: function() {} }
