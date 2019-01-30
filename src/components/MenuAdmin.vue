@@ -64,7 +64,6 @@
           <router-link :to="{name: 'team-add'}">Add Team</router-link><br>
           <router-link :to="{name: 'user-add'}">Add User</router-link><br>
           <router-link :to="{name: 'admin-template'}">Edit Scouting Templates</router-link><br>
-          <a @click="localdb.destroy()">Destroy All Data</a>
         </div>
 
         <!-- <div @click="goBack()" class="background-box background-box-hover content-centered">
