@@ -1,0 +1,233 @@
+@import url("https://fonts.googleapis.com/css?family=Open+Sans");
+
+@media (max-width: 700px) {
+  .done-button-container {
+    margin-left: 25px;
+    margin-right: 25px;
+  }
+}
+.content-input-large {
+  text-align-last: center;
+  font-size: 18px;
+}
+.background-box-input {
+  box-shadow: var(--shadow);
+  margin: 10px;
+}
+pre {
+  font-family: "Open Sans", sans-serif;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+*:focus {
+  outline: none;
+}
+body {
+  font-family: "Open Sans", sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  overflow: auto;
+}
+.content-centered {
+  text-align: center;
+}
+.content-right {
+  text-align: right;
+}
+.content-fade-in-out {
+  animation: fade-in 0.2s ease-in-out;
+}
+.content-fade-in {
+  animation: fade-in 0.1s ease;
+}
+.content-fade-out {
+  animation: fade-out 0.1s ease;
+}
+.background-box {
+  background-color: var(--box-color);
+  box-shadow: var(--shadow);
+  padding: 10px;
+  margin: 10px;
+}
+.comment-contents {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+.comment-title {
+  margin-bottom: 10px;
+}
+.line {
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) calc(50% - 1px),
+    var(--text-color) calc(50%),
+    rgba(0, 0, 0, 0) calc(50% + 1px)
+  );
+  padding: 5px;
+  margin: 10px;
+}
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+  font-weight: normal;
+  word-break: break-word;
+}
+a {
+  transition: all 0.2s ease-in-out;
+  color: var(--link-color);
+  text-decoration: none;
+}
+a:active {
+  color: var(--link-active-color);
+}
+input,
+textarea,
+select {
+  width: 100%;
+  padding: 10px;
+  display: inline-block;
+  box-sizing: border-box;
+  background-color: var(--box-color);
+  color: var(--text-color);
+  border: none;
+}
+input,
+textarea {
+  -webkit-appearance: none;
+}
+.radio-button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--text-color);
+  transition: 0.2s all ease-in-out;
+  outline: none;
+  margin-right: 5px;
+  position: relative;
+  top: 4px;
+}
+.radio-button:checked {
+  border: 6px solid var(--box-hover-color);
+}
+.grid-perminant {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+}
+.location-span {
+  grid-column: 1/7;
+}
+.location-left {
+  grid-column: 1/4;
+}
+.location-right {
+  grid-column: 4/7;
+}
+.location-centered {
+  grid-column: 2/6;
+}
+.location-centered-small {
+  grid-column: 3/5;
+}
+.location-left-small {
+  grid-column: 1/3;
+}
+.location-left-large {
+  grid-column: 1/5;
+}
+.location-right-small {
+  grid-column: 5/7;
+}
+.location-right-large {
+  grid-column: 3/7;
+}
+.location-left-tiny {
+  grid-column: 1/2;
+}
+.location-left-giant {
+  grid-column: 1/6;
+}
+.location-right-tiny {
+  grid-column: 6/7;
+}
+.location-right-giant {
+  grid-column: 2/7;
+}
+.location-left-padded {
+  grid-column: 2/4;
+}
+.location-right-padded {
+  grid-column: 4/6;
+}
+.background-box-hover {
+  transition: all 0.2s ease-in-out;
+}
+.background-box-hover:hover,
+.background-box-hover:active,
+.background-box-hover:focus {
+  background-color: var(--box-hover-color);
+}
+a:hover {
+  color: var(--link-active-color);
+}
+@supports (-webkit-overflow-scrolling: touch) {
+  select {
+    -webkit-appearance: none;
+  }
+  .grid > *,
+  .grid-perminant > * {
+    margin-bottom: 20px;
+  }
+}
+@media (min-width: 700px) {
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+  }
+  .mobile-view {
+    display: none;
+  }
+}
+@media (max-width: 700px) {
+  .grid > * {
+    margin-bottom: 20px;
+  }
+  .desktop-view {
+    display: none;
+  }
+  .mobile-none-margin-top {
+    margin-top: 0px;
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+:root {
+  --shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5);
+
+  --background-color: #455a64;
+  --text-color: #eceff1;
+  --box-color: #37474f;
+  --box-hover-color: #546e7a;
+
+  --link-color: #2196f3;
+  --link-active-color: #0069c0;
+}
