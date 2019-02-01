@@ -7,13 +7,11 @@
       v-else
       class="grid"
     >
-      <div class="done-button-container location-left-tiny">
-        <div
-          @click="goBack()"
-          class="background-box background-box-hover content-centered"
-        >
-          <h3>Back</h3>
-        </div>
+      <div
+        class="done-button-container location-left-tiny background-box background-box-hover content-centered"
+        @click="goBack()"
+      >
+        <h3>Back</h3>
       </div>
 
       <div class="location-centered background-box content-centered">

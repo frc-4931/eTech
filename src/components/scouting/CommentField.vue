@@ -5,7 +5,7 @@
     class="background-box background-box-hover grid-perminant"
   >
     <h2 class="location-span comment-title content-centered"> {{title}} </h2>
-    <pre class="location-span comment-contents"> {{comment}} </pre>
+    <pre class="location-span comment-contents"> {{getTruncatedMessage}} </pre>
     <p
       :style="color"
       class="location-right-tiny content-right"
@@ -16,7 +16,7 @@
     class="background-box grid-perminant"
   >
     <h2 class="location-span comment-title content-centered"> {{title}} </h2>
-    <pre class="location-span comment-contents"> {{comment}} </pre>
+    <pre class="location-span comment-contents"> {{getTruncatedMessage}} </pre>
     <p
       :style="color"
       class="location-right-tiny content-right"
@@ -57,6 +57,12 @@ export default {
         dThis.color = "color: gray";
       }
       return prefix + this.rating;
+    },
+
+    getTruncatedMessage() {
+      return (
+        this.comment.slice(0, 440) + (440 < this.comment.length ? "..." : "")
+      );
     }
   }
 };
