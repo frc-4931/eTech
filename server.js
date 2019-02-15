@@ -33,9 +33,9 @@ var server = http.createServer(function (request, response) {
       file = url;
     } else if (url.endsWith(".js.map") && url.startsWith("/js/")) {
       file = url;
-    } else if (url === "/favicon.ico") {
-      file = "/favicon.ico";
-      type = "image/x-icon";
+    } else if (url.startsWith("/favicon/")) {
+      file = url.substring(8, url.length);
+      if (url.endsWith(".png")) type = "image/x-icon";
     } else {
       file = "/index.html";
     }

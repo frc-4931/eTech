@@ -82,7 +82,7 @@
         <div class="background-box-input">
           <input
             type="number"
-            min="0"
+            min="-999"
             v-model.number="points[index]"
             placeholder="Option Points"
           >
