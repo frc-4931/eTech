@@ -1,6 +1,12 @@
 <template>
-  <div @click="teamView()" class="background-box background-box-hover leaderboard-team">
-    <div v-for="(teamEl, teamTitle) in team" v-bind:key="teamTitle">
+  <div
+    @click="teamView()"
+    class="background-box background-box-hover leaderboard-team"
+  >
+    <div
+      v-for="(teamEl, teamTitle) in team"
+      v-bind:key="teamTitle"
+    >
       <p>{{ teamEl }}</p>
     </div>
 
@@ -19,10 +25,10 @@ export default {
   data: function() {
     return {
       team: {
-        name: "Test Team",
-        number: 1337,
-        objectivePoints: 7,
-        commentPoints: 5
+        name: "Error",
+        number: -404,
+        objectivePoints: -1,
+        commentPoints: -1
       }
     };
   },
@@ -32,6 +38,14 @@ export default {
         name: "team",
         params: { number: this.team.number }
       });
+    }
+  },
+  watch: {
+    teamdata(val) {
+      this.$set(this.team, "name", this.teamdata["name"]);
+      this.$set(this.team, "number", this.teamdata["number"]);
+      this.$set(this.team, "objectivePoints", this.teamdata["objectivePoints"]);
+      this.$set(this.team, "commentPoints", this.teamdata["commentPoints"]);
     }
   },
   computed: {
