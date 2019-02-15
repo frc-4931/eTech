@@ -1,66 +1,119 @@
 <template>
   <div class="background-box">
-    <h2 class="content-centered">Account</h2>
+    <div class="accountpanel-contents">
+      <h2 class="content-centered">Account</h2>
 
-    <Message v-if="networkError && loggedin">Could not connect to server.<br> You are working offline.</Message>
-    <Message v-else-if="networkError">Could not connect to server.<br> You must be online to login.</Message>
-    <div v-else>
-      <Message v-if="isError">{{ errorMessage }}</Message>
-      <p v-else-if="loggedin" class="content-centered">Logged in as: {{username}}</p>
-      <p v-else class="content-centered">Not logged in</p>
+      <Message v-if="networkError && loggedin">Could not connect to server.<br> You are working offline.</Message>
+      <Message v-else-if="networkError">Could not connect to server.<br> You must be online to login.</Message>
+      <div v-else>
+        <Message v-if="isError">{{ errorMessage }}</Message>
+        <p
+          v-else-if="loggedin"
+          class="content-centered"
+        >Logged in as: {{username}}</p>
+        <p
+          v-else
+          class="content-centered"
+        >Not logged in</p>
 
-      <br>
-      <div v-if="changePasswordMenu === true" class="grid-perminant">
-        <div class="content-centered background-box location-left">
-          <h3>Password</h3>
-        </div>
-        <div class="background-box-input location-right">
-          <input v-model="password" placeholder="Password" type="password" class="location-span content-centered">
-        </div>
-        <div class="content-centered background-box location-left">
-          <h3>Confirm Password</h3>
-        </div>
-        <div class="background-box-input location-right">
-          <input v-on:keydown.enter="changePassword()" v-model="confirmPassword" placeholder="Confirm Password" type="password" class="content-centered">
-        </div>
-        <div @click="closeChangePasswordMenu()" class="location-left content-centered background-box background-box-hover">
-          <h3>Cancel</h3>
-        </div>
-        <div @click="changePassword()" class="location-right content-centered background-box background-box-hover">
-          <h3>Change Password</h3>
-        </div>
-      </div>
+        <br>
+        <div
+          v-if="changePasswordMenu === true"
+          class="grid-perminant"
+        >
+          <p class="content-centered background-box location-left">Password</p>
+          <div class="background-box-input location-right">
+            <input
+              v-model="password"
+              placeholder="Password"
+              type="password"
+              class="location-span content-centered"
+            >
+          </div>
 
-      <div v-else-if="loggedin && isAdmin" class="grid-perminant">
-        <a @click="openChangePasswordMenu()" class="location-left-small content-centered">Change Password</a>
-        <router-link class="location-centered-small content-centered" :to="{name: 'admin'}">Admin Tools</router-link>
-        <a @click="logOut()" class="location-right-small content-centered">Logout</a>
-      </div>
+          <p class="content-centered background-box location-left">Confirm Password</p>
+          <div class="background-box-input location-right">
+            <input
+              v-on:keydown.enter="changePassword()"
+              v-model="confirmPassword"
+              placeholder="Confirm Password"
+              type="password"
+              class="content-centered"
+            >
+          </div>
+          <p
+            @click="closeChangePasswordMenu()"
+            class="location-left content-centered background-box background-box-hover"
+          >Cancel</p>
 
-      <div v-else-if="loggedin && !isAdmin" class="grid-perminant">
-        <a @click="openChangePasswordMenu()" class="location-left content-centered">Change Password</a>
-        <a @click="logOut()" class="location-right content-centered">Logout</a>
-      </div>
+          <p
+            @click="changePassword()"
+            class="location-right content-centered background-box background-box-hover"
+          >Change Password</p>
+        </div>
 
-      <div v-else class="grid-perminant">
-        <div class="content-centered background-box location-left">
-          <h3>Username</h3>
+        <div
+          v-else-if="loggedin && isAdmin"
+          class="grid-perminant"
+        >
+          <a
+            @click="openChangePasswordMenu()"
+            class="location-left-small content-centered"
+          >Change Password</a>
+          <router-link
+            class="location-centered-small content-centered"
+            :to="{name: 'admin'}"
+          >Admin Tools</router-link>
+          <a
+            @click="logOut()"
+            class="location-right-small content-centered"
+          >Logout</a>
         </div>
-        <div class="background-box-input location-right">
-          <input v-model="username" placeholder="Username" type="text" class="location-span content-centered">
+
+        <div
+          v-else-if="loggedin && !isAdmin"
+          class="grid-perminant"
+        >
+          <a
+            @click="openChangePasswordMenu()"
+            class="location-left content-centered"
+          >Change Password</a>
+          <a
+            @click="logOut()"
+            class="location-right content-centered"
+          >Logout</a>
         </div>
-        <div class="content-centered background-box location-left">
-          <h3>Password</h3>
-        </div>
-        <div class="background-box-input location-right">
-          <input v-on:keydown.enter="login()" v-model="password" placeholder="Password" type="password" class="content-centered">
-        </div>
-        <div @click="login()" class="location-span content-centered background-box background-box-hover">
-          <h3>Login</h3>
+
+        <div
+          v-else
+          class="grid-perminant"
+        >
+          <p class="content-centered background-box location-left">Username</p>
+          <div class="background-box-input location-right">
+            <input
+              v-model="username"
+              placeholder="Username"
+              type="text"
+              class="location-span content-centered"
+            >
+          </div>
+          <p class="content-centered background-box location-left">Password</p>
+          <div class="background-box-input location-right">
+            <input
+              v-on:keydown.enter="login()"
+              v-model="password"
+              placeholder="Password"
+              type="password"
+              class="content-centered"
+            >
+          </div>
+          <p
+            @click="login()"
+            class="location-span content-centered background-box background-box-hover"
+          >Login</p>
         </div>
       </div>
     </div>
-
   </div>
 </template>
 
@@ -203,7 +256,7 @@ export default {
         });
       } else {
         this.isError = true;
-        this.errorMessage = "Password do not match!";
+        this.errorMessage = "Passwords do not match!";
       }
     }
   },
@@ -220,4 +273,7 @@ export default {
 </script>
 
 <style>
+.accountpanel-contents {
+  --box-color: var(--background-color);
+}
 </style>

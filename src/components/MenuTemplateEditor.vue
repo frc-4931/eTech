@@ -5,7 +5,7 @@
   >
     <div class="grid">
 
-      <div class="mobile-view field-buttons done-button-container">
+      <div class="mobile-view field-edit done-button-container">
         <div
           @click="goBack()"
           class="mobile-view background-box background-box-hover content-centered"
@@ -89,15 +89,13 @@
         </component>
         <!-- beautify ignore:end -->
 
+        <div class="line" />
+
         <div
           v-if="curOpen == 'field_add'"
           id="template-field-add"
         >
-          <div class="line" />
-
-          <div class="background-box content-centered">
-            <h3>Creating New Field</h3>
-          </div>
+          <h3 class="background-box content-centered">Creating New Field</h3>
 
           <div class="field-edit">
             <p class="background-box">Display Name</p>
@@ -431,14 +429,5 @@ export default {
 .field-edit {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-}
-.field-edit .background-box,
-.field-edit .background-box-input {
-  margin-top: 0px;
-}
-.field-buttons {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  margin-bottom: 0px;
 }
 </style>
