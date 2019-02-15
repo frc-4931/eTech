@@ -131,7 +131,6 @@ export default {
       this.sync_change.onChange = function(change) {
         if (change["direction"] == "pull") {
           var shouldLoadTeams = false;
-          var shouldLoadUsers = false;
 
           for (var doc of change.change.docs) {
             if (doc["_id"].startsWith("TEAM_")) {
