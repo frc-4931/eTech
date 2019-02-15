@@ -283,7 +283,7 @@ export default {
         }
       } else {
         this.isError = true;
-        this.errorMessage = "All feidls are required!";
+        this.errorMessage = "All fields are required!";
       }
     },
     allFieldsValid() {

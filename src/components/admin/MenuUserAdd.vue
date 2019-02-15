@@ -9,7 +9,7 @@
         <Error
           v-if="isError"
           class="background=box location-span"
-        >All feidls are required!</Error>
+        >All fields are required!</Error>
         <h2
           v-else
           class="content-centered background-box location-span"
