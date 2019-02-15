@@ -3,20 +3,31 @@
     <div class="line"></div>
 
     <Error v-if="isError">All Fields Are Required!</Error>
-    <div v-else class="background-box content-centered">
+    <div
+      v-else
+      class="background-box content-centered"
+    >
       <h3>Edit Dropdown Field</h3>
     </div>
 
     <div class="field-edit">
       <p class="background-box">Title</p>
       <div class="background-box-input">
-        <input type="text" placeholder="Title" v-model.trim="data.title">
+        <input
+          type="text"
+          placeholder="Title"
+          v-model.trim="data.title"
+        >
       </div>
 
       <p class="background-box">Default Value</p>
       <div class="background-box-input">
         <select v-model="data.default">
-          <option v-for="option in options" :key="option" :value="option">{{option}}</option>
+          <option
+            v-for="option in options"
+            :key="option"
+            :value="option"
+          >{{option}}</option>
         </select>
       </div>
     </div>
@@ -27,14 +38,26 @@
 
     <div class="field-edit">
       <div class="background-box-input">
-        <input type="text" v-model.trim="currentOptionName" placeholder="Option Name">
+        <input
+          type="text"
+          v-model.trim="currentOptionName"
+          placeholder="Option Name"
+        >
       </div>
       <div class="background-box-input">
-        <input type="number" v-model.number="currentPoints" placeholder="Option Points">
+        <input
+          type="number"
+          v-model.number="currentPoints"
+          placeholder="Option Points"
+        >
       </div>
     </div>
 
-    <div @click="addOption()" style="margin-top: 0px; margin-bottom: 20px;" class="background-box background-box-hover content-centered">
+    <div
+      @click="addOption()"
+      style="margin-top: 0px; margin-bottom: 20px;"
+      class="background-box background-box-hover content-centered"
+    >
       <p>Add</p>
     </div>
 
@@ -42,16 +65,32 @@
       <p>Dropdown Options</p>
     </div>
 
-    <div v-for="(option, index) in options" :key="option" class="field-edit">
+    <div
+      v-for="(option, index) in options"
+      :key="option"
+      class="field-edit"
+    >
       <div class="background-box-input">
-        <input type="text" v-model.trim="options[index]" placeholder="Option Name">
+        <input
+          type="text"
+          v-model.trim="options[index]"
+          placeholder="Option Name"
+        >
       </div>
 
       <div class="field-edit">
         <div class="background-box-input">
-          <input type="number" min="0" v-model.number="points[index]" placeholder="Option Points">
+          <input
+            type="number"
+            min="0"
+            v-model.number="points[index]"
+            placeholder="Option Points"
+          >
         </div>
-        <div @click="deleteOption(index)" class="background-box background-box-hover content-centered">
+        <div
+          @click="deleteOption(index)"
+          class="background-box background-box-hover content-centered"
+        >
           <p>Delete</p>
         </div>
       </div>
@@ -60,21 +99,36 @@
 
     <div class="grid-perminant content-centered">
 
-      <div @click="deleteField()" class="location-left-small background-box background-box-hover">
+      <div
+        @click="deleteField()"
+        class="location-left-small background-box background-box-hover"
+      >
         <p>Delete</p>
       </div>
-      <div @click="moveUp()" class="location-centered-small background-box background-box-hover">
+      <div
+        @click="moveUp()"
+        class="location-centered-small background-box background-box-hover"
+      >
         <p>Move Up</p>
       </div>
-      <div @click="moveDown()" class="location-right-small background-box background-box-hover">
+      <div
+        @click="moveDown()"
+        class="location-right-small background-box background-box-hover"
+      >
         <p>Move Down</p>
       </div>
 
       <div class="location-span">
-        <div @click="save()" class="background-box background-box-hover">
+        <div
+          @click="save()"
+          class="background-box background-box-hover"
+        >
           <p>Save</p>
         </div>
-        <div @click="close()" class="background-box background-box-hover">
+        <div
+          @click="close()"
+          class="background-box background-box-hover"
+        >
           <p>Close</p>
         </div>
       </div>
@@ -117,6 +171,8 @@ export default {
       } else {
         this.isError = true;
       }
+
+      this.close();
     },
     moveUp() {
       this.$emit("move-up");

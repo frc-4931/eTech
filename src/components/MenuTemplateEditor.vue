@@ -100,13 +100,17 @@
           </div>
 
           <div class="field-edit">
+            <p class="background-box">Display Name</p>
             <div class="background-box-input">
               <input
                 type="text"
                 v-model.trim="newFieldTitle"
-                placeholder="Option Name"
+                placeholder="Display Name"
               >
             </div>
+          </div>
+          <div class="field-edit">
+            <p class="background-box">Type</p>
             <div class="background-box-input">
               <select v-model="newFieldType">
                 <option value="TitleField">Title</option>
