@@ -53,7 +53,7 @@
           @click="close()"
           class="background-box background-box-hover"
         >
-          <p>Close</p>
+          <p>Cancel</p>
         </div>
       </div>
 

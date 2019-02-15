@@ -6,7 +6,7 @@ var SERVER_DATABASE = "/scouting";
 var LOCAL_DATABASE = "/database";
 var PROXY_TARGET = 'http://localhost:5984';
 var DIRECTORY = process.argv[2] || "";
-var PORT = 80;
+var PORT = parseInt(process.argv[3]) || 80;
 
 var proxy = httpProxy.createProxyServer({});
 var server = http.createServer(function (request, response) {
