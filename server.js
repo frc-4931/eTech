@@ -2,7 +2,6 @@ var http = require('http');
 var httpProxy = require('http-proxy');
 var fs = require("fs");
 
-var SERVER_DATABASE = "/scouting";
 var LOCAL_DATABASE = "/database";
 var PROXY_TARGET = 'http://localhost:5984';
 var DIRECTORY = process.argv[2] || "";
