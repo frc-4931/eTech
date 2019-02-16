@@ -3,7 +3,7 @@
     id="menu-main"
     class="grid"
   >
-    <h1 class="content-centered location-span background-box">FRC 4931 Scouting App</h1>
+    <h1 class="content-centered location-span background-box">FRC Scouting App</h1>
 
     <div class="location-left-small">
       <AccountPanel
@@ -41,14 +41,11 @@
           <p>Total Points</p>
         </div>
       </div>
-      <div id="leaderboard-container">
-        <LeaderboardTeam
-          v-for="(teamData) in teams"
-          v-bind:key="teamData['_id']"
-          :teamdata="teamData"
-        ></LeaderboardTeam>
-      </div>
-
+      <LeaderboardTeam
+        v-for="(teamData) in teams"
+        v-bind:key="teamData['_id']"
+        :teamdata="teamData"
+      ></LeaderboardTeam>
       <div
         v-if="teams.length == 0"
         class="grid"
