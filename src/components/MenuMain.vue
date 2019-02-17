@@ -1,11 +1,8 @@
 <template>
-  <div
-    id="menu-main"
-    class="grid"
-  >
+  <div class="grid">
     <h1 class="content-centered location-span background-box">FRC Scouting App</h1>
 
-    <div v-bind:class="{'location-left-small': loggedin, 'location-centered-small': !loggedin }">
+    <div v-bind:class="[loggedin ? 'location-left-small' : 'location-centered-small']">
       <AccountPanel
         :remotedb="remotedb"
         :sync_change="sync_change"

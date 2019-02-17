@@ -3,7 +3,7 @@ import App from './App.vue'
 import Router from "vue-router";
 
 import MenuMain from "./components/MenuMain.vue"
-import MenuTeamAdd from "./components/MenuTeamAdd.vue";
+import MenuTeamAdd from "./components/admin/MenuTeamAdd.vue";
 import MenuTeamView from "./components/MenuTeamView.vue";
 import MenuAdmin from "./components/MenuAdmin.vue";
 import MenuTemplateEditor from "./components/MenuTemplateEditor.vue";

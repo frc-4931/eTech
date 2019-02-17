@@ -102,19 +102,16 @@
       </div>
 
       <div class="location-centered-small">
-        <div
+        <h3
           @click="addUser()"
           class="background-box background-box-hover content-centered"
-        >
-          <h3>Add</h3>
-        </div>
+          v-bind:class="[this.allFieldsValid() ?  'background-box-hover' : 'background-box-disabled']"
+        >Add</h3>
 
-        <div
+        <h3
           @click="goBack()"
           class="background-box background-box-hover content-centered"
-        >
-          <h3>Cancel</h3>
-        </div>
+        >Cancel</h3>
       </div>
     </div>
   </div>

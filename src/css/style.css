@@ -45,6 +45,10 @@ body {
   box-shadow: var(--shadow);
   padding: 10px;
   margin: 10px;
+  transition: all 0.2s ease-in-out;
+}
+.background-box-disabled {
+  color: var(--box-hover-color) !important;
 }
 .comment-contents {
   padding-left: 20px;
@@ -159,9 +163,6 @@ textarea {
 }
 .location-right-padded {
   grid-column: 4/6;
-}
-.background-box-hover {
-  transition: all 0.2s ease-in-out;
 }
 .background-box-hover:hover,
 .background-box-hover:active,

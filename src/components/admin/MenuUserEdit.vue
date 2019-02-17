@@ -4,16 +4,12 @@
     id="menu-team-add"
   >
     <div class="grid">
-
       <div class="location-centered-small grid-perminant">
         <Error
           v-if="isError"
-          class="background=box location-span"
+          class="background-box location-span"
         >{{ errorMessage }}</Error>
-        <h2
-          v-else
-          class="content-centered background-box location-span"
-        >{{username}}</h2>
+        <h2 class="content-centered background-box location-span">Editing user: {{username}}</h2>
 
         <div class="location-left background-box content-centered">
           <p>Name</p>
@@ -94,26 +90,21 @@
       </div>
 
       <div class="location-centered-small">
-        <div
+        <h3
           @click="updateUser()"
-          class="background-box background-box-hover content-centered"
-        >
-          <h3>Save</h3>
-        </div>
+          class="background-box content-centered"
+          v-bind:class="[this.allFieldsValid() ?  'background-box-hover' : 'background-box-disabled']"
+        >Save</h3>
 
-        <div
-          @click="goBack()"
-          class="background-box background-box-hover content-centered"
-        >
-          <h3>Cancel</h3>
-        </div>
-
-        <div
+        <h3
           @click="deleteUser()"
           class="background-box background-box-hover content-centered"
-        >
-          <h3>Delete</h3>
-        </div>
+        >Delete</h3>
+
+        <h3
+          @click="goBack()"
+          class="background-box background-box-hover content-centered"
+        >Cancel</h3>
       </div>
     </div>
   </div>
@@ -274,7 +265,7 @@ export default {
               }
             )
             .then(function() {});
-        } else if (this.password != "") {
+        } else if (this.password.length !== 0) {
           this.remotedb
             .changePassword(this.username, this.password)
             .then(function() {
@@ -287,7 +278,7 @@ export default {
       }
     },
     allFieldsValid() {
-      return this.name != "" && this.password === this.confirmPassword;
+      return this.name.length !== 0 && this.password === this.confirmPassword;
     },
     goBack() {
       this.$router.go(-1);

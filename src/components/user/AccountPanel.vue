@@ -48,7 +48,8 @@
 
           <p
             @click="changePassword()"
-            class="location-right content-centered background-box background-box-hover"
+            v-bind:class="[this.password === this.confirmPassword && this.password.length !== 0 ? 'background-box-hover' : 'background-box-disabled']"
+            class="location-right content-centered background-box"
           >Change Password</p>
         </div>
 
@@ -109,7 +110,8 @@
           </div>
           <p
             @click="login()"
-            class="location-span content-centered background-box background-box-hover"
+            v-bind:class="[this.username.length !== 0 && this.password.length !== 0 ? 'background-box-hover' : 'background-box-disabled']"
+            class="location-span content-centered background-box"
           >Login</p>
         </div>
       </div>

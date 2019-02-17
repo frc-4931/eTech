@@ -34,19 +34,16 @@
       </div>
 
       <div class="location-centered-small">
-        <div
+        <h3
           @click="submitTeam()"
-          class="background-box background-box-hover content-centered"
-        >
-          <h3>Add</h3>
-        </div>
+          class="background-box content-centered"
+          v-bind:class="[this.allFieldsValid() ? 'background-box-hover' : 'background-box-disabled']"
+        >Add</h3>
 
-        <div
+        <h3
           @click="goBack()"
           class="background-box background-box-hover content-centered"
-        >
-          <h3>Cancel</h3>
-        </div>
+        >Cancel</h3>
       </div>
     </div>
   </div>
@@ -54,8 +51,8 @@
 </template>
 
 <script>
-import FieldError from "./scouting/FieldError.vue";
-import Error from "./Error.vue";
+import FieldError from "../scouting/FieldError.vue";
+import Error from "../Error.vue";
 
 export default {
   name: "MenuTeamAdd",
@@ -78,7 +75,7 @@ export default {
   methods: {
     submitTeam: function() {
       var dThis = this;
-      if (this.name != "" && this.number != "" && this.number != 0) {
+      if (this.allFieldsValid()) {
         var team = {
           name: this.name,
           number: parseInt(this.number),
@@ -96,6 +93,9 @@ export default {
     },
     goBack() {
       this.$router.go(-1);
+    },
+    allFieldsValid() {
+      return this.name.length !== 0 && this.number != 0;
     }
   },
   created() {
