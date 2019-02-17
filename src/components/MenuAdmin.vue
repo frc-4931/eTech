@@ -1,32 +1,53 @@
 <template>
   <div id="menu-admin">
-
     <Error v-if="!isAdmin">You must be logged in as an admin to view this page!</Error>
 
     <div
       v-else
       class="grid"
     >
-      <div
-        class="done-button-container location-left-tiny background-box background-box-hover content-centered"
-        @click="goBack()"
-      >
-        <h3>Back</h3>
+      <div class="done-button-container mobile-view">
+        <h3
+          class="location-left-tiny background-box background-box-hover content-centered"
+          @click="goBack()"
+        >Back</h3>
       </div>
 
-      <div class="location-centered background-box content-centered">
-        <h2>Admin Tools</h2>
-      </div>
+      <h3
+        class="location-left-tiny background-box background-box-hover content-centered desktop-view"
+        @click="goBack()"
+      >Back</h3>
+
+      <h2 class="location-centered background-box content-centered">Admin Tools</h2>
 
       <div class="location-left-small">
-        <div class="background-box content-centered">
-          <h2>Teams</h2>
-        </div>
+        <h2 class="content-centered background-box">Tools</h2>
 
-        <div class="background-box admin-team">
+        <div class="background-box">
+          <router-link :to="{name: 'team-add'}">Add Team</router-link><br>
+          <router-link :to="{name: 'user-add'}">Add User</router-link><br>
+          <router-link :to="{name: 'admin-template'}">Edit Scouting Templates</router-link><br>
+        </div>
+      </div>
+
+      <div class="location-centered-small">
+        <h2 class="background-box content-centered">Teams</h2>
+
+        <div
+          v-if="teams.length != 0"
+          class="background-box admin-team"
+        >
           <p>Team Number</p>
           <p>Team Name</p>
           <p>Remove Team</p>
+        </div>
+
+        <div
+          v-else
+          class="location-centered background-box content-centered"
+        >
+          <p>There aren't any teams to display yet.</p>
+          <router-link :to="{name: 'team-add'}">Add a team here.</router-link>
         </div>
 
         <AdminTeam
@@ -37,16 +58,25 @@
         ></AdminTeam>
       </div>
 
-      <div class="location-centered-small">
-        <div class="background-box content-centered">
-          <h2>Members</h2>
-        </div>
+      <div class="location-right-small">
+        <h2 class="background-box content-centered">Members</h2>
 
-        <div class="background-box admin-user">
+        <div
+          v-if="users.length != 0"
+          class="background-box admin-user"
+        >
           <p>Name</p>
           <p>Username</p>
           <p>Role</p>
           <p>Edit User</p>
+        </div>
+
+        <div
+          v-else
+          class="background-box content-centered"
+        >
+          <p>There aren't any users to display yet.</p>
+          <router-link :to="{name: 'user-add'}">Add a user here.</router-link>
         </div>
 
         <AdminUser
@@ -55,21 +85,7 @@
           :userdata="user"
         ></AdminUser>
       </div>
-
-      <div class="location-right-small">
-        <div class="background-box">
-          <h2 class="content-centered">Tools</h2>
-          <router-link :to="{name: 'team-add'}">Add Team</router-link><br>
-          <router-link :to="{name: 'user-add'}">Add User</router-link><br>
-          <router-link :to="{name: 'admin-template'}">Edit Scouting Templates</router-link><br>
-        </div>
-
-        <!-- <div @click="goBack()" class="background-box background-box-hover content-centered">
-          <h3>Back</h3>
-        </div> -->
-      </div>
     </div>
-
   </div>
 </template>
 

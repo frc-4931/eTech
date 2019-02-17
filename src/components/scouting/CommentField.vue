@@ -60,8 +60,6 @@ export default {
     },
 
     getTruncatedMessage() {
-      print(this.comment);
-
       return (
         this.comment.slice(0, 440) + (440 < this.comment.length ? "..." : "")
       );

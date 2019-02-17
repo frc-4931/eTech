@@ -5,7 +5,7 @@
   >
     <h1 class="content-centered location-span background-box">FRC Scouting App</h1>
 
-    <div class="location-left-small">
+    <div v-bind:class="{'location-left-small': loggedin, 'location-centered-small': !loggedin }">
       <AccountPanel
         :remotedb="remotedb"
         :sync_change="sync_change"
@@ -16,50 +16,40 @@
       ></AccountPanel>
     </div>
 
-    <div class="location-right-large">
+    <div
+      class="location-right-large"
+      v-if="loggedin"
+    >
       <div class="background-box content-centered">
         <h2>Team Leaderboard</h2>
         <p>
           Teams are given a rating by combining various different pieces of information collected by team
-          members
+          members.
         </p>
       </div>
-      <div class="background-box leaderboard-team">
-        <div>
-          <p>Team Name</p>
-        </div>
-        <div>
-          <p>Team Number</p>
-        </div>
-        <div>
-          <p>Objective Points</p>
-        </div>
-        <div>
-          <p>Comment Points</p>
-        </div>
-        <div>
-          <p>Total Points</p>
-        </div>
+      <div
+        v-if="teams.length != 0"
+        class="background-box leaderboard-team"
+      >
+        <h3>Team Name</h3>
+        <h3>Team Number</h3>
+        <h3>Objective Points</h3>
+        <h3>Comment Points</h3>
+        <h3>Total Points</h3>
       </div>
+      <p
+        v-else
+        class="location-centered background-box content-centered"
+      >
+        There aren't any teams to display yet.<br>
+        Ask an admin to add teams.
+      </p>
+
       <LeaderboardTeam
         v-for="(teamData) in teams"
         v-bind:key="teamData['_id']"
         :teamdata="teamData"
       ></LeaderboardTeam>
-      <div
-        v-if="teams.length == 0"
-        class="grid"
-      >
-        <div class="location-centered background-box content-centered">
-          <h3 v-if="loggedin">
-            There aren't any teams to display<br>
-            Ask an admin to add teams.
-          </h3>
-          <h3 v-else>
-            You must be logged in to view teams!
-          </h3>
-        </div>
-      </div>
     </div>
   </div>
 </template>

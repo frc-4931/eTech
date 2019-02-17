@@ -54,33 +54,33 @@
 
         <div
           v-else-if="loggedin && isAdmin"
-          class="grid-perminant"
+          class="grid-perminant content-centered"
         >
           <a
             @click="openChangePasswordMenu()"
-            class="location-left-small content-centered"
+            class="location-left-small"
           >Change Password</a>
           <router-link
-            class="location-centered-small content-centered"
+            class="location-centered-small"
             :to="{name: 'admin'}"
           >Admin Tools</router-link>
           <a
             @click="logOut()"
-            class="location-right-small content-centered"
+            class="location-right-small"
           >Logout</a>
         </div>
 
         <div
           v-else-if="loggedin && !isAdmin"
-          class="grid-perminant"
+          class="grid-perminant content-centered"
         >
           <a
             @click="openChangePasswordMenu()"
-            class="location-left content-centered"
+            class="location-left"
           >Change Password</a>
           <a
             @click="logOut()"
-            class="location-right content-centered"
+            class="location-right"
           >Logout</a>
         </div>
 
