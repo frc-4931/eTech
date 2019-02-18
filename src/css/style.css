@@ -1,26 +1,41 @@
 @import url("https://fonts.googleapis.com/css?family=Open+Sans");
 
-@media (max-width: 700px) {
-  .done-button-container {
-    margin-left: 25px;
-    margin-right: 25px;
-  }
+*:focus {
+  outline: none;
 }
 .content-input-large {
   text-align-last: center;
   font-size: 18px;
 }
-.background-box-input {
-  box-shadow: var(--shadow);
-  margin: 10px;
+a {
+  transition: all 0.2s ease-in-out;
+  color: var(--link-color);
+  text-decoration: none;
+}
+a:active {
+  color: var(--link-active-color);
 }
 pre {
   font-family: "Open Sans", sans-serif;
   white-space: pre-wrap;
   word-wrap: break-word;
+
+  /*
+  -webkit-touch-callout: text;
+  -webkit-user-select: text;
+  -khtml-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+  */
 }
-*:focus {
-  outline: none;
+h1,
+h2,
+h3,
+pre,
+p {
+  margin: 0;
+  font-weight: normal;
 }
 body {
   font-family: "Open Sans", sans-serif;
@@ -47,15 +62,17 @@ body {
   margin: 10px;
   transition: all 0.2s ease-in-out;
 }
+.background-box-input {
+  box-shadow: var(--shadow);
+  margin: 10px;
+}
 .background-box-disabled {
   color: var(--box-hover-color) !important;
 }
-.comment-contents {
-  padding-left: 20px;
-  padding-right: 20px;
-}
-.comment-title {
-  margin-bottom: 10px;
+.background-box-hover:hover,
+.background-box-hover:active,
+.background-box-hover:focus {
+  background-color: var(--box-hover-color);
 }
 .line {
   background: linear-gradient(
@@ -66,22 +83,6 @@ body {
   );
   padding: 5px;
   margin: 10px;
-}
-h1,
-h2,
-h3,
-p {
-  margin: 0;
-  font-weight: normal;
-  word-break: break-word;
-}
-a {
-  transition: all 0.2s ease-in-out;
-  color: var(--link-color);
-  text-decoration: none;
-}
-a:active {
-  color: var(--link-active-color);
 }
 input,
 textarea,
@@ -94,26 +95,21 @@ select {
   color: var(--text-color);
   border: none;
 }
-input,
-textarea {
-  -webkit-appearance: none;
-}
 .radio-button {
-  -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
   border-radius: 50%;
   width: 16px;
   height: 16px;
   border: 2px solid var(--text-color);
-  transition: 0.2s all ease-in-out;
+  transition: 0.1s all ease-in-out;
   outline: none;
   margin-right: 5px;
   position: relative;
   top: 4px;
 }
 .radio-button:checked {
-  border: 6px solid var(--box-hover-color);
+  border: 8px solid var(--box-hover-color);
 }
 .grid-perminant {
   display: grid;
@@ -164,22 +160,8 @@ textarea {
 .location-right-padded {
   grid-column: 4/6;
 }
-.background-box-hover:hover,
-.background-box-hover:active,
-.background-box-hover:focus {
-  background-color: var(--box-hover-color);
-}
 a:hover {
   color: var(--link-active-color);
-}
-@supports (-webkit-overflow-scrolling: touch) {
-  select {
-    -webkit-appearance: none;
-  }
-  .grid > *,
-  .grid-perminant > * {
-    margin-bottom: 20px;
-  }
 }
 @media (min-width: 700px) {
   .grid {
@@ -200,8 +182,9 @@ a:hover {
   .mobile-none-margin-top {
     margin-top: 0px;
   }
-  p {
-    font-size: 0.9em;
+  .done-button-container {
+    margin-left: 25px;
+    margin-right: 25px;
   }
 }
 @keyframes fade-in {
@@ -222,15 +205,19 @@ a:hover {
 }
 
 :root {
---shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5);
+  --shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5);
 
---background-color: #455a64;
---text-color: #eceff1;
---box-color: #37474f;
---box-hover-color: #546e7a;
+  --background-color: #455a64;
+  --text-color: #eceff1;
+  --box-color: #37474f;
+  --box-hover-color: #546e7a;
 
---link-color: #2196f3;
---link-active-color: #0069c0;
+  --link-color: #2196f3;
+  --link-active-color: #0069c0;
+
+  --positive: #4caf50;
+  --negative: #f44336;
+  --neutral: #90a4ae;
   
 
 /* Light theme
@@ -244,4 +231,13 @@ a:hover {
 --link-color: #2196f3;
 --link-active-color: #0069c0;
 */
+
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
+
+  -webkit-appearance: none;
 }

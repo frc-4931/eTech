@@ -278,7 +278,11 @@ export default {
       }
     },
     allFieldsValid() {
-      return this.name.length !== 0 && this.password === this.confirmPassword;
+      return (
+        this.name.length !== 0 &&
+        this.password === this.confirmPassword &&
+        (this.password.length !== 0 || this.o_name !== this.name)
+      );
     },
     goBack() {
       this.$router.go(-1);

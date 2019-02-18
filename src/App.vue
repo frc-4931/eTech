@@ -123,6 +123,5 @@ export default {
 </script>
 
 <style>
-@import url("./css/normalize.css");
 @import url("./css/style.css");
 </style>

@@ -8,22 +8,16 @@
       :locked="!hasEdit"
       @valuechange="valueChange(scField.field, ...arguments)"
     ></component>
-
-    <div
+    <h3
       v-if="hasEdit"
       @click="save()"
       class="location-centered-small background-box background-box-hover content-centered"
-    >
-      <h3>Save</h3>
-    </div>
-    <div
+    >Save</h3>
+    <h3
       v-if="hasEdit"
       @click="deleteScout()"
       class="location-centered-small background-box background-box-hover content-centered"
-    >
-      <h3>Delete</h3>
-    </div>
-    <div class="line"></div>
+    >Delete</h3>
   </div>
 </template>
 

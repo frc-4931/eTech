@@ -28,11 +28,11 @@
         v-if="teams.length != 0"
         class="background-box leaderboard-team"
       >
-        <h3>Team Name</h3>
-        <h3>Team Number</h3>
-        <h3>Objective Points</h3>
-        <h3>Comment Points</h3>
-        <h3>Total Points</h3>
+        <p>Team Name</p>
+        <p>Team Number</p>
+        <p>Objective Points</p>
+        <p>Comment Points</p>
+        <p>Total Points</p>
       </div>
       <p
         v-else

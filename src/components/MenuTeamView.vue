@@ -12,21 +12,15 @@
           <h3>Back</h3>
         </div>
       </div>
-      <div
-        id="team-title"
-        class="location-centered background-box"
-      >
+      <div class="location-centered background-box">
         <h2 class="content-centered">
-          <span>{{ team.name }}</span> -
-          <span>{{ team.number }}</span>
+          {{ team.name }} - {{ team.number }}
         </h2>
       </div>
       <div class="location-left-padded">
-        <!--<div class="line"></div>-->
         <div class="background-box">
           <h3 class="content-centered">
-            Total Objective Points:
-            <span>{{ team.objectivePoints }}</span>
+            Total Objective Points: {{ team.objectivePoints }}
           </h3>
         </div>
         <div
@@ -55,7 +49,12 @@
             >Match Scouting: Match {{ idx + 1 }}</option>
           </select>
         </div>
-        <!-- Insert Scouting Fields Here -->
+
+        <div
+          v-if="scoutingSelect != 'none'"
+          class="line"
+        ></div>
+
         <transition
           enter-active-class="content-long-fade-in"
           leave-active-class="content-long-fade-out"
@@ -95,13 +94,9 @@
         </transition>
       </div>
       <div class="location-right-padded">
-        <!--<div class="line"></div>-->
-        <div class="background-box">
-          <h3 class="content-centered">
-            Total Comment Points:
-            <span>{{team.commentPoints}}</span>
-          </h3>
-        </div>
+        <h3 class="content-centered background-box">
+          Total Comment Points: {{team.commentPoints}}
+        </h3>
         <!-- <transition-group name="comment-menu"> -->
         <!-- beautify ignore:start -->
           <component v-for="(comment, id) in comments"
@@ -120,13 +115,12 @@
         <!-- </transition-group> -->
 
         <div v-if="hasEdit">
-          <div
+          <h3
             v-if="commentAddMenu == false"
             @click="openCommentAddMenu()"
-            class="background-box background-box-hover"
-          >
-            <h3 class="content-centered">Add comment</h3>
-          </div>
+            class="background-box background-box-hover content-centered"
+          >Add comment</h3>
+
           <MenuTeamCommentAdd
             id="comment-add-menu"
             v-else
@@ -461,12 +455,12 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 #scouting-select {
   margin-bottom: 20px;
 }
 .content-long-fade-in {
-  animation: fade-in 0.1s ease;
+  animation: fade-in 0.4s ease;
 }
 .content-long-fade-out {
   animation: fade-out 0.1s ease;
@@ -478,5 +472,10 @@ export default {
 .comment-menu-leave-to {
   transition: 0s;
   opacity: 0;
+}
+@media (max-width: 1200px) {
+  .grid {
+    grid-template-columns: 0px repeat(4, 1fr) 0px;
+  }
 }
 </style>

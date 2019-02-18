@@ -1,9 +1,6 @@
 <template>
   <div v-if="loggedin">
-    <div
-      id="scout-new-select"
-      class="background-box grid-perminant"
-    >
+    <div class="background-box grid-perminant">
       <label class="location-left content-padding-left">
         <input
           class="radio-button"
@@ -226,9 +223,5 @@ export default {
 }
 .content-padding-left {
   padding-left: 30%;
-}
-#scout-new-select {
-  padding-top: 15px;
-  padding-bottom: 15px;
 }
 </style>
