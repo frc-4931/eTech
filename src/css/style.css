@@ -63,8 +63,16 @@ body {
   transition: all 0.2s ease-in-out;
 }
 .background-box-input {
+  background-color: var(--box-color);
   box-shadow: var(--shadow);
   margin: 10px;
+  position: relative;
+}
+.background-box-input > * {
+  position: absolute;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
 }
 .background-box-disabled {
   color: var(--box-hover-color) !important;
@@ -202,6 +210,17 @@ a:hover {
   to {
     opacity: 0;
   }
+}
+
+button,
+input,
+optgroup,
+select,
+textarea {
+  font-family: inherit; /* 1 */
+  font-size: 100%; /* 1 */
+  line-height: 1.15; /* 1 */
+  margin: 0; /* 2 */
 }
 
 :root {

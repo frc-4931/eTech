@@ -19,9 +19,7 @@
       </div>
       <div class="location-left-padded">
         <div class="background-box">
-          <h3 class="content-centered">
-            Total Objective Points: {{ team.objectivePoints }}
-          </h3>
+          <h3 class="content-centered">Total Objective Points: {{ team.objectivePoints }}</h3>
         </div>
         <div
           class="background-box-input"
@@ -94,9 +92,7 @@
         </transition>
       </div>
       <div class="location-right-padded">
-        <h3 class="content-centered background-box">
-          Total Comment Points: {{team.commentPoints}}
-        </h3>
+        <h3 class="content-centered background-box">Total Comment Points: {{team.commentPoints}}</h3>
         <!-- <transition-group name="comment-menu"> -->
         <!-- beautify ignore:start -->
           <component v-for="(comment, id) in comments"
