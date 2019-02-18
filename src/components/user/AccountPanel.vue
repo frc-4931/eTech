@@ -147,7 +147,9 @@ export default {
   methods: {
     login() {
       var dThis = this;
-      this.remotedb.logIn(this.username, this.password, function(err) {
+      this.remotedb.logIn(this.username.toLowerCase(), this.password, function(
+        err
+      ) {
         dThis.password = "";
         dThis.confirmPassword = "";
         if (err) {

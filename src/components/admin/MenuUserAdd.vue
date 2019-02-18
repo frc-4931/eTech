@@ -145,12 +145,16 @@ export default {
         var dThis = this;
 
         if (this.role === "admin") {
-          this.remotedb.signUpAdmin(this.username, this.password, {
-            metadata: { realName: dThis.name }
-          });
+          this.remotedb.signUpAdmin(
+            this.username.toLowerCase(),
+            this.password,
+            {
+              metadata: { realName: dThis.name }
+            }
+          );
         }
         this.remotedb.signUp(
-          this.username,
+          this.username.toLowerCase(),
           this.password,
           { roles: [this.role], metadata: { realName: dThis.name } },
           function(err) {
