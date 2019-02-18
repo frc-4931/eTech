@@ -1,4 +1,4 @@
-# scouting-app
+# Scouting App
 
 ## Supported Browsers
 ### Desktop Browsers
@@ -7,6 +7,11 @@
 * Firefox
 
 * Edge
+
+### Mobile Browsers
+* Chrome
+
+* Safari
 
 
 ## Installation
@@ -20,25 +25,4 @@ Run `npm install`
 
 Run `npm run build`
 
-Run `node server.js path/to/folder` (Example `node server/server.js dist 80`)
-
-
-## Project setup
-```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
+Run `node server.js path/to/folder port` (Example `node server.js dist 80`)
