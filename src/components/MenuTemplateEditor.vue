@@ -51,9 +51,7 @@
       </div>
 
       <div class="location-centered-small content-centered">
-        <div class="background-box">
-          <h3>Select Template to Edit:</h3>
-        </div>
+        <h3 class="background-box">Select Template to Edit:</h3>
 
         <div class="background-box-input">
           <select

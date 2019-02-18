@@ -6,10 +6,12 @@
     <div class="grid">
       <FieldError v-if="error"></FieldError>
 
-      <div class="location-centered-small grid">
-        <h2 class="content-centered background-box location-span">Add team</h2>
+      <div class="location-centered-small grid-perminant">
+        <h2 class=" background-box location-span content-centered">Add team</h2>
 
-        <div class="location-left background-box-input">
+        <p class="location-left background-box content-centered">Team Name</p>
+
+        <div class="location-right background-box-input">
           <input
             v-model.trim="name"
             type="text"
@@ -18,6 +20,8 @@
             class="content-centered"
           >
         </div>
+
+        <p class="location-left background-box content-centered">Team Number</p>
 
         <div class="location-right background-box-input">
           <input
@@ -31,19 +35,19 @@
             class="content-centered"
           >
         </div>
-      </div>
 
-      <div class="location-centered-small">
-        <h3
-          @click="submitTeam()"
-          class="background-box content-centered"
-          v-bind:class="[this.allFieldsValid() ? 'background-box-hover' : 'background-box-disabled']"
-        >Add</h3>
+        <div class="location-span">
+          <h3
+            @click="submitTeam()"
+            class="background-box content-centered"
+            v-bind:class="[this.allFieldsValid() ? 'background-box-hover' : 'background-box-disabled']"
+          >Add</h3>
 
-        <h3
-          @click="goBack()"
-          class="background-box background-box-hover content-centered"
-        >Cancel</h3>
+          <h3
+            @click="goBack()"
+            class="background-box background-box-hover content-centered"
+          >Cancel</h3>
+        </div>
       </div>
     </div>
   </div>

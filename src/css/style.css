@@ -68,7 +68,7 @@ body {
   margin: 10px;
   position: relative;
 }
-.background-box-input > * {
+.background-box-input input {
   position: absolute;
   top: 50%;
   -ms-transform: translateY(-50%);
