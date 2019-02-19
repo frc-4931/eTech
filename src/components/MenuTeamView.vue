@@ -374,7 +374,7 @@ export default {
         });
     },
     goBack() {
-      this.$router.push("/admin/");
+      this.$router.push("/");
     },
     initRoutine() {
       var dThis = this;

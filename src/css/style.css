@@ -110,7 +110,7 @@ select {
   width: 16px;
   height: 16px;
   border: 2px solid var(--text-color);
-  transition: 0.1s all ease-in-out;
+  transition: all 400ms ease-in;
   outline: none;
   margin-right: 5px;
   position: relative;

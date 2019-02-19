@@ -12,7 +12,6 @@
         @loggedout="loggedOut()"
       ></AccountPanel>
     </div>
-
     <div
       class="location-right-large"
       v-if="loggedin"
@@ -28,11 +27,26 @@
         v-if="teams.length != 0"
         class="background-box leaderboard-team"
       >
-        <p>Team Name</p>
-        <p>Team Number</p>
-        <p>Objective Points</p>
-        <p>Comment Points</p>
-        <p>Total Points</p>
+        <p
+          v-bind:class="sortedTeamOption === 'name' ? (sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''"
+          @click="toggleSorted(true, 'name')"
+        >Team Name</p>
+        <p
+          v-bind:class="sortedTeamOption === 'number' ? (sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''"
+          @click="toggleSorted(true, 'number')"
+        >Team Number</p>
+        <p
+          v-bind:class="sortedTeamOption === 'objectivePoints' ? (sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''"
+          @click="toggleSorted(true, 'objectivePoints')"
+        >Objective Points</p>
+        <p
+          v-bind:class="sortedTeamOption === 'commentPoints' ? (sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''"
+          @click="toggleSorted(true, 'commentPoints')"
+        >Comment Points</p>
+        <p
+          v-bind:class="sortedTeamOption === 'totalPoints' ? (sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''"
+          @click="toggleSorted(true, 'totalPoints')"
+        >Total Points</p>
       </div>
       <p
         v-else
@@ -42,11 +56,13 @@
         Ask an admin to add teams.
       </p>
 
-      <LeaderboardTeam
-        v-for="(teamData) in teams"
-        v-bind:key="teamData['_id']"
-        :teamdata="teamData"
-      ></LeaderboardTeam>
+      <transition-group>
+        <LeaderboardTeam
+          v-for="(teamData) in teams"
+          v-bind:key="teamData['_id']"
+          :teamdata="teamData"
+        ></LeaderboardTeam>
+      </transition-group>
     </div>
   </div>
 </template>
@@ -73,10 +89,115 @@ export default {
     return {
       teams: [],
       users: [],
-      loggedin: false
+      loggedin: false,
+      sortedTeamOption: "totalPoints",
+      sortedTeamFlipped: false
     };
   },
   methods: {
+    sortTeamsByName() {
+      this.teams = orderBy(
+        this.teams,
+        [
+          function(team) {
+            return team.name;
+          },
+          function(team) {
+            return team.number;
+          }
+        ],
+        ["desc", "desc"]
+      ).reverse();
+    },
+    sortTeamsByNumber() {
+      this.teams = orderBy(
+        this.teams,
+        [
+          function(team) {
+            return team.number;
+          },
+          function(team) {
+            return team.name;
+          }
+        ],
+        ["desc", "desc"]
+      );
+    },
+    sortTeamsByObjectivePoints() {
+      this.teams = orderBy(
+        this.teams,
+        [
+          function(team) {
+            return team.objectivePoints;
+          },
+          function(team) {
+            return team.number;
+          }
+        ],
+        ["desc", "desc"]
+      );
+    },
+    sortTeamsByCommentPoints() {
+      this.teams = orderBy(
+        this.teams,
+        [
+          function(team) {
+            return team.commentPoints;
+          },
+          function(team) {
+            return team.number;
+          }
+        ],
+        ["desc", "desc"]
+      );
+    },
+    sortTeamsByTotalPoints() {
+      this.teams = orderBy(
+        this.teams,
+        [
+          function(team) {
+            return team.objectivePoints + team.commentPoints;
+          },
+          function(team) {
+            return team.number;
+          }
+        ],
+        ["desc", "desc"]
+      );
+    },
+    toggleSorted(reverse, sortingMethod) {
+      var dThis = this;
+
+      var func;
+
+      switch (sortingMethod) {
+        case "name":
+          func = dThis.sortTeamsByName;
+          break;
+        case "number":
+          func = dThis.sortTeamsByNumber;
+          break;
+        case "objectivePoints":
+          func = dThis.sortTeamsByObjectivePoints;
+          break;
+        case "commentPoints":
+          func = dThis.sortTeamsByCommentPoints;
+          break;
+        case "totalPoints":
+          func = dThis.sortTeamsByTotalPoints;
+          break;
+      }
+      func();
+
+      if (sortingMethod != this.sortedTeamOption) {
+        this.sortedTeamFlipped = false;
+        this.sortedTeamOption = sortingMethod;
+      } else if (reverse) {
+        this.sortedTeamFlipped = !this.sortedTeamFlipped;
+      }
+
+      if (this.sortedTeamFlipped) this.teams.reverse();
+    },
     addToBoard(team_doc) {
       var teamID = team_doc["doc"]["_id"];
       if (teamID !== undefined) this.teams.push(team_doc["doc"]);
@@ -94,18 +215,8 @@ export default {
           for (var docID in result["rows"]) {
             dThis.addToBoard(result["rows"][docID]);
           }
-          dThis.teams = orderBy(
-            dThis.teams,
-            [
-              function(team) {
-                return team.objectivePoints + team.commentPoints;
-              },
-              function(team) {
-                return team.number;
-              }
-            ],
-            ["desc", "desc"]
-          );
+
+          dThis.toggleSorted(false, this.sortedTeamOption);
         });
     },
     loggedIn() {
@@ -153,5 +264,23 @@ export default {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   text-align: center;
+}
+.sorting-option-selected::after {
+  position: absolute;
+  content: "";
+  width: 0;
+  height: 0;
+  margin-left: 15px;
+  border-top: 8.66px solid transparent;
+  border-bottom: 8.66px solid transparent;
+  transition: 0.2s all ease-in-out;
+
+  border-left: 10px solid var(--box-hover-color);
+}
+.sorting-option-up::after {
+  transform: rotate(-90deg);
+}
+.sorting-option-down::after {
+  transform: rotate(90deg);
 }
 </style>
