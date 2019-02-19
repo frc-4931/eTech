@@ -405,7 +405,7 @@ export default {
       arr.splice(newIndex, 0, arr.splice(oldIndex, 1)[0]);
     },
     goBack() {
-      this.$router.go(-1);
+      this.$router.push("/admin/");
     }
   },
   created() {

@@ -94,7 +94,7 @@ export default {
       }
     },
     goBack() {
-      this.$router.go(-1);
+      this.$router.push("/admin/");
     },
     allFieldsValid() {
       return this.name.length !== 0 && this.number != 0;
