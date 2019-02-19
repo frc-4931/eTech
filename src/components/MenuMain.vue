@@ -12,10 +12,7 @@
         @loggedout="loggedOut()"
       ></AccountPanel>
     </div>
-    <div
-      class="location-right-large"
-      v-if="loggedin"
-    >
+    <div class="location-right-large" v-if="loggedin">
       <div class="background-box content-centered">
         <h2>Team Leaderboard</h2>
         <p>
@@ -23,10 +20,7 @@
           members.
         </p>
       </div>
-      <div
-        v-if="teams.length != 0"
-        class="background-box leaderboard-team"
-      >
+      <div v-if="teams.length != 0" class="background-box leaderboard-team">
         <p
           v-bind:class="sortedTeamOption === 'name' ? (sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''"
           @click="toggleSorted(true, 'name')"
@@ -51,9 +45,8 @@
       <p
         v-else
         class="location-centered background-box content-centered"
-      >
-        There aren't any teams to display yet.<br>
-        Ask an admin to add teams.
+      >There aren't any teams to display yet.
+        <br>Ask an admin to add teams.
       </p>
 
       <transition-group>
@@ -202,7 +195,7 @@ export default {
       var teamID = team_doc["doc"]["_id"];
       if (teamID !== undefined) this.teams.push(team_doc["doc"]);
     },
-    loadTeams() {
+    loadTeams(sort) {
       var dThis = this;
       this.localdb
         .allDocs({
@@ -216,13 +209,13 @@ export default {
             dThis.addToBoard(result["rows"][docID]);
           }
 
-          dThis.toggleSorted(false, this.sortedTeamOption);
+          if (sort) dThis.toggleSorted(false, dThis.sortedTeamOption);
         });
     },
     loggedIn() {
       var dThis = this;
       this.loggedin = true;
-      this.loadTeams();
+      this.loadTeams(true);
 
       this.sync_change.onChange = function(change) {
         if (change["direction"] == "pull") {
@@ -234,8 +227,10 @@ export default {
             }
           }
 
-          if (shouldLoadTeams) dThis.loadTeams();
+          if (shouldLoadTeams) dThis.loadTeams(false);
         }
+
+        dThis.toggleSorted(false, dThis.sortedTeamOption);
       };
     },
     loggedOut() {
