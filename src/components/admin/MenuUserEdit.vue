@@ -1,111 +1,109 @@
 <template>
   <div
     v-if="loggedin"
-    id="menu-team-add"
+    class="grid"
   >
-    <div class="grid">
-      <div class="location-centered-small grid-perminant">
-        <Error
-          v-if="isError"
-          class="background-box location-span"
-        >{{ errorMessage }}</Error>
-        <h2 class="content-centered background-box location-span">Editing user: {{username}}</h2>
+    <div class="location-centered-small grid-perminant">
+      <Error
+        v-if="isError"
+        class="background-box location-span"
+      >{{ errorMessage }}</Error>
+      <h2 class="content-centered background-box location-span">Editing user: {{username}}</h2>
 
-        <div class="location-left background-box content-centered">
-          <p>Name</p>
-        </div>
-
-        <div class="location-right background-box-input">
-          <input
-            v-model.trim="name"
-            type="text"
-            placeholder="Name"
-            class="content-centered"
-          >
-        </div>
-
-        <div class="location-left background-box content-centered">
-          <p>Password</p>
-        </div>
-
-        <div class="location-right background-box-input">
-          <input
-            v-model="password"
-            type="password"
-            placeholder="Password"
-            class="content-centered"
-            :disabled="lockRole"
-          >
-        </div>
-
-        <div class="location-left background-box content-centered">
-          <p>Confirm Password</p>
-        </div>
-
-        <div class="location-right background-box-input">
-          <input
-            v-model="confirmPassword"
-            type="password"
-            placeholder="Confirm Password"
-            class="content-centered"
-            :disabled="lockRole"
-          >
-        </div>
-
-        <div class="background-box content-centered location-span grid-perminant">
-          <label class="location-left-small">
-            <input
-              class="radio-button"
-              v-model="role"
-              value="admin"
-              type="radio"
-              name="radio1"
-              :disabled="lockRole"
-            >
-            Admin
-          </label>
-          <label class="location-centered-small">
-            <input
-              class="radio-button"
-              v-model="role"
-              value="edit"
-              type="radio"
-              name="radio1"
-              :disabled="lockRole"
-            >
-            Edit
-          </label>
-          <label class="location-right-small">
-            <input
-              class="radio-button"
-              v-model="role"
-              value="view"
-              type="radio"
-              name="radio1"
-              :disabled="lockRole"
-            >
-            View
-          </label>
-        </div>
+      <div class="location-left background-box content-centered">
+        <p>Name</p>
       </div>
 
-      <div class="location-centered-small">
-        <h3
-          @click="updateUser()"
-          class="background-box content-centered"
-          v-bind:class="[this.allFieldsValid() ?  'background-box-hover' : 'background-box-disabled']"
-        >Save</h3>
-
-        <h3
-          @click="deleteUser()"
-          class="background-box background-box-hover content-centered"
-        >Delete</h3>
-
-        <h3
-          @click="goBack()"
-          class="background-box background-box-hover content-centered"
-        >Cancel</h3>
+      <div class="location-right background-box-input">
+        <input
+          v-model.trim="name"
+          type="text"
+          placeholder="Name"
+          class="content-centered"
+        >
       </div>
+
+      <div class="location-left background-box content-centered">
+        <p>Password</p>
+      </div>
+
+      <div class="location-right background-box-input">
+        <input
+          v-model="password"
+          type="password"
+          placeholder="Password"
+          class="content-centered"
+          :disabled="lockRole"
+        >
+      </div>
+
+      <div class="location-left background-box content-centered">
+        <p>Confirm Password</p>
+      </div>
+
+      <div class="location-right background-box-input">
+        <input
+          v-model="confirmPassword"
+          type="password"
+          placeholder="Confirm Password"
+          class="content-centered"
+          :disabled="lockRole"
+        >
+      </div>
+
+      <div class="background-box content-centered location-span grid-perminant">
+        <label class="location-left-small">
+          <input
+            class="radio-button"
+            v-model="role"
+            value="admin"
+            type="radio"
+            name="radio1"
+            :disabled="lockRole"
+          >
+          Admin
+        </label>
+        <label class="location-centered-small">
+          <input
+            class="radio-button"
+            v-model="role"
+            value="edit"
+            type="radio"
+            name="radio1"
+            :disabled="lockRole"
+          >
+          Edit
+        </label>
+        <label class="location-right-small">
+          <input
+            class="radio-button"
+            v-model="role"
+            value="view"
+            type="radio"
+            name="radio1"
+            :disabled="lockRole"
+          >
+          View
+        </label>
+      </div>
+    </div>
+
+    <div class="location-centered-small">
+      <h3
+        @click="updateUser()"
+        class="background-box content-centered"
+        v-bind:class="[this.allFieldsValid() ?  'background-box-hover' : 'background-box-disabled']"
+      >Save</h3>
+
+      <h3
+        @click="deleteUser()"
+        class="background-box background-box-hover content-centered"
+      >Delete</h3>
+
+      <h3
+        @click="goBack()"
+        class="background-box background-box-hover content-centered"
+      >Cancel</h3>
     </div>
   </div>
   <Error v-else>You must be logged in as an admin to view this page!</Error>
@@ -294,8 +292,6 @@ export default {
     this.remotedb.getSession(function(err, response) {
       if (err) {
         //There was an error
-
-        dThis.loggedin = true;
       } else if (response.userCtx.roles.indexOf("_admin") != -1) {
         dThis.loggedin = true;
         dThis.editingUser = response.userCtx.name;
@@ -305,8 +301,6 @@ export default {
         }
 
         dThis.getUser();
-      } else {
-        dThis.loggedin = false;
       }
     });
   }

@@ -9,6 +9,7 @@ import MenuAdmin from "./components/MenuAdmin.vue";
 import MenuTemplateEditor from "./components/MenuTemplateEditor.vue";
 import MenuUserAdd from "./components/admin/MenuUserAdd.vue";
 import MenuUserEdit from "./components/admin/MenuUserEdit.vue";
+import PageNotFound from "./components/PageNotFound.vue";
 
 Vue.config.productionTip = false
 
@@ -21,7 +22,8 @@ const routes = [
   { path: "/admin/team/add", name: "team-add", component: MenuTeamAdd },
   { path: "/admin/user/add", name: "user-add", component: MenuUserAdd },
   { path: "/admin/user/:username", name: "user-edit", component: MenuUserEdit, props: true },
-  { path: "/admin/template", name: "admin-template", component: MenuTemplateEditor }
+  { path: "/admin/template", name: "admin-template", component: MenuTemplateEditor, },
+  { path: "*", name: "page-not-found", component: PageNotFound }
 ];
 
 const router = new Router({

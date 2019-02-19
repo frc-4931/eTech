@@ -1,53 +1,51 @@
 <template>
   <div
     v-if="loggedin"
-    id="menu-team-add"
+    class="grid"
   >
-    <div class="grid">
-      <FieldError v-if="error"></FieldError>
+    <FieldError v-if="error"></FieldError>
 
-      <div class="location-centered-small grid-perminant">
-        <h2 class=" background-box location-span content-centered">Add team</h2>
+    <div class="location-centered-small grid-perminant">
+      <h2 class=" background-box location-span content-centered">Add team</h2>
 
-        <p class="location-left background-box content-centered">Team Name</p>
+      <p class="location-left background-box content-centered">Team Name</p>
 
-        <div class="location-right background-box-input">
-          <input
-            v-model.trim="name"
-            type="text"
-            name="team-name"
-            placeholder="Team Name"
-            class="content-centered"
-          >
-        </div>
+      <div class="location-right background-box-input">
+        <input
+          v-model.trim="name"
+          type="text"
+          name="team-name"
+          placeholder="Team Name"
+          class="content-centered"
+        >
+      </div>
 
-        <p class="location-left background-box content-centered">Team Number</p>
+      <p class="location-left background-box content-centered">Team Number</p>
 
-        <div class="location-right background-box-input">
-          <input
-            v-model.number="number"
-            type="number"
-            pattern="[0-9]*"
-            max="9999"
-            min="1"
-            name="team-number"
-            placeholder="Team Number"
-            class="content-centered"
-          >
-        </div>
+      <div class="location-right background-box-input">
+        <input
+          v-model.number="number"
+          type="number"
+          pattern="[0-9]*"
+          max="9999"
+          min="1"
+          name="team-number"
+          placeholder="Team Number"
+          class="content-centered"
+        >
+      </div>
 
-        <div class="location-span">
-          <h3
-            @click="submitTeam()"
-            class="background-box content-centered"
-            v-bind:class="[this.allFieldsValid() ? 'background-box-hover' : 'background-box-disabled']"
-          >Add</h3>
+      <div class="location-span">
+        <h3
+          @click="submitTeam()"
+          class="background-box content-centered"
+          v-bind:class="[this.allFieldsValid() ? 'background-box-hover' : 'background-box-disabled']"
+        >Add</h3>
 
-          <h3
-            @click="goBack()"
-            class="background-box background-box-hover content-centered"
-          >Cancel</h3>
-        </div>
+        <h3
+          @click="goBack()"
+          class="background-box background-box-hover content-centered"
+        >Cancel</h3>
       </div>
     </div>
   </div>
@@ -103,20 +101,13 @@ export default {
     }
   },
   created() {
-    var dThis = this;
-
-    this.remotedb.getSession(function(err, response) {
-      if (err) {
-        //There was an error
-      } else if (response.userCtx.roles.indexOf("_admin") != -1) {
-        dThis.loggedin = true;
-      } else {
-        dThis.loggedin = false;
-      }
-
-      // FIXME: Remove override
-      dThis.loggedin = true;
-    });
+    if (
+      this.user.role === "_admin" ||
+      this.user.role === "edit" ||
+      this.user.role === "view"
+    ) {
+      this.loggedin = loggedin;
+    }
   }
 };
 </script>
