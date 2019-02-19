@@ -101,13 +101,14 @@ export default {
     }
   },
   created() {
-    if (
-      this.user.role === "_admin" ||
-      this.user.role === "edit" ||
-      this.user.role === "view"
-    ) {
-      this.loggedin = loggedin;
-    }
+    var dThis = this;
+    this.remotedb.getSession(function(err, response) {
+      if (err) {
+        //There was an error
+      } else if (response.userCtx.roles.indexOf("_admin") != -1) {
+        dThis.loggedin = true;
+      }
+    });
   }
 };
 </script>
