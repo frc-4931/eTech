@@ -10,9 +10,7 @@
       <p>{{ teamEl }}</p>
     </div>
 
-    <div>
-      <p>{{ totalPoints }}</p>
-    </div>
+    <p>{{ totalPoints }}</p>
   </div>
 </template>
 

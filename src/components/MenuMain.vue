@@ -12,7 +12,10 @@
         @loggedout="loggedOut()"
       ></AccountPanel>
     </div>
-    <div class="location-right-large" v-if="loggedin">
+    <div
+      class="location-right-large"
+      v-if="loggedin"
+    >
       <div class="background-box content-centered">
         <h2>Team Leaderboard</h2>
         <p>
@@ -20,7 +23,10 @@
           members.
         </p>
       </div>
-      <div v-if="teams.length != 0" class="background-box leaderboard-team">
+      <div
+        v-if="teams.length != 0"
+        class="background-box leaderboard-team"
+      >
         <p
           v-bind:class="sortedTeamOption === 'name' ? (sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''"
           @click="toggleSorted(true, 'name')"
@@ -227,10 +233,8 @@ export default {
             }
           }
 
-          if (shouldLoadTeams) dThis.loadTeams(false);
+          if (shouldLoadTeams) dThis.loadTeams(true);
         }
-
-        dThis.toggleSorted(false, dThis.sortedTeamOption);
       };
     },
     loggedOut() {
