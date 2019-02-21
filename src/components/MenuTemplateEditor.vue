@@ -190,7 +190,7 @@ export default {
       generalMessage: "",
       curTemplate: "none",
       scrollTo: scroller(),
-      isAdmin: false
+      isAdmin: true
     };
   },
   methods: {

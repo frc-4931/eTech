@@ -72,7 +72,6 @@
             v-model="role"
             value="admin"
             type="radio"
-            name="radio1"
           >
           Admin
         </label>
@@ -82,7 +81,6 @@
             v-model="role"
             value="edit"
             type="radio"
-            name="radio1"
           >
           Edit
         </label>
@@ -92,7 +90,6 @@
             v-model="role"
             value="view"
             type="radio"
-            name="radio1"
           >
           View
         </label>

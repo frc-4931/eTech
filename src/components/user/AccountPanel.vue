@@ -92,7 +92,7 @@
           <p class="content-centered background-box location-left">Username</p>
           <div class="background-box-input location-right">
             <input
-              v-model="username"
+              v-model.trim="username"
               placeholder="Username"
               type="text"
               class="location-span content-centered"
@@ -134,7 +134,7 @@ export default {
   data: function() {
     return {
       loggedin: false,
-      isAdmin: false,
+      isAdmin: true,
       username: "",
       password: "",
       confirmPassword: "",

@@ -50,12 +50,14 @@
           <router-link :to="{name: 'team-add'}">Add a team here.</router-link>
         </div>
 
-        <AdminTeam
-          v-for="(teamData) in teams"
-          v-bind:key="teamData['_id']"
-          :teamdata="teamData"
-          :removeteam="removeTeam"
-        ></AdminTeam>
+        <transition-group>
+          <AdminTeam
+            v-for="(teamData) in teams"
+            v-bind:key="teamData['_id']"
+            :teamdata="teamData"
+            :removeteam="removeTeam"
+          ></AdminTeam>
+        </transition-group>
       </div>
 
       <div class="location-right-small">
@@ -79,11 +81,13 @@
           <router-link :to="{name: 'user-add'}">Add a user here.</router-link>
         </div>
 
-        <AdminUser
-          v-for="user in users"
-          :key="user.username"
-          :userdata="user"
-        ></AdminUser>
+        <transition-group>
+          <AdminUser
+            v-for="user in users"
+            :key="user.username"
+            :userdata="user"
+          ></AdminUser>
+        </transition-group>
       </div>
     </div>
   </div>
@@ -128,7 +132,7 @@ export default {
     return {
       teams: [],
       users: [],
-      isAdmin: false,
+      isAdmin: true,
       usersdb: new PouchDB(url, setup)
     };
   },

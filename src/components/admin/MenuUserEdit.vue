@@ -4,11 +4,13 @@
     class="grid"
   >
     <div class="location-centered-small grid-perminant">
+      <h2 class="content-centered background-box location-span">Editing user: {{username}}</h2>
+
       <Error
+        @click="isError = false"
         v-if="isError"
         class="background-box location-span"
       >{{ errorMessage }}</Error>
-      <h2 class="content-centered background-box location-span">Editing user: {{username}}</h2>
 
       <div class="location-left background-box content-centered">
         <p>Name</p>
@@ -58,7 +60,6 @@
             v-model="role"
             value="admin"
             type="radio"
-            name="radio1"
             :disabled="lockRole"
           >
           Admin
@@ -69,7 +70,6 @@
             v-model="role"
             value="edit"
             type="radio"
-            name="radio1"
             :disabled="lockRole"
           >
           Edit
@@ -80,7 +80,6 @@
             v-model="role"
             value="view"
             type="radio"
-            name="radio1"
             :disabled="lockRole"
           >
           View
@@ -122,7 +121,7 @@ export default {
   },
   data() {
     return {
-      loggedin: false,
+      loggedin: true,
       name: "",
       isError: false,
       errorMessage: "",
@@ -208,7 +207,7 @@ export default {
 
         //Changing to admin
         if (this.role === "admin" && this.isAdmin != true) {
-          if (this.password != "") {
+          if (this.password.length > 0) {
             this.remotedb
               .signUpAdmin(this.username, this.password)
               .then(function() {
@@ -224,6 +223,7 @@ export default {
             this.isError = true;
             this.errorMessage =
               "You must change the password when making a user an admin.";
+            return;
           }
         }
         //Changing from admin
@@ -272,14 +272,17 @@ export default {
         }
       } else {
         this.isError = true;
-        this.errorMessage = "All fields are required!";
+        this.errorMessage =
+          "You didn't change any values or passwords do not match!";
       }
     },
     allFieldsValid() {
       return (
         this.name.length !== 0 &&
         this.password === this.confirmPassword &&
-        (this.password.length !== 0 || this.o_name !== this.name)
+        (this.password.length !== 0 ||
+          this.o_name !== this.name ||
+          this.o_role !== this.role)
       );
     },
     goBack() {
@@ -293,7 +296,6 @@ export default {
       if (err) {
         //There was an error
       } else if (response.userCtx.roles.indexOf("_admin") != -1) {
-        dThis.loggedin = true;
         dThis.editingUser = response.userCtx.name;
 
         if (dThis.editingUser == dThis.username) {
@@ -301,6 +303,8 @@ export default {
         }
 
         dThis.getUser();
+      } else {
+        dThis.loggedin = false;
       }
     });
   }
