@@ -6,10 +6,10 @@ const commandLineUsage = require('command-line-usage');
 const chalk = require('chalk')
 
 const optionDefinitions = [
-  { name: 'directory', alias: 'd', type: String, defaultValue: 'dist', description: 'The location of the directory to stream content from. (Defualts to "dist")' },
-  { name: 'port', alias: 'p', type: Number, defaultValue: 80, description: 'Port on which to run the server. (Defualts to "80")' },
-  { name: 'database-address', alias: 'a', type: String, defaultValue: "http://localhost", description: 'Address on which the server redirects database requests to. (Defualts to "http://localhost")' },
-  { name: 'database-port', alias: 'o', type: Number, defaultValue: 5984, description: 'Port on which the server redirects database requests to. (Defualts to "5984")' },
+  { name: 'directory', alias: 'd', type: String, defaultValue: 'dist', description: 'The location of the directory to stream content from. (Defaults to "dist")' },
+  { name: 'port', alias: 'p', type: Number, defaultValue: 80, description: 'Port on which to run the server. (Defaults to "80")' },
+  { name: 'database-address', alias: 'a', type: String, defaultValue: "http://localhost", description: 'Address on which the server redirects database requests to. (Defaults to "http://localhost")' },
+  { name: 'database-port', alias: 'o', type: Number, defaultValue: 5984, description: 'Port on which the server redirects database requests to. (Defaults to "5984")' },
   { name: 'log-file-requests', alias: 'r', type: Boolean, description: 'Enable logging requests to the server for files.' },
   { name: 'log-db-requests', alias: 'l', type: Boolean, description: 'Enable logging requests for the database.' },
   { name: 'help', alias: 'h', type: Boolean, description: 'Display this usage guide.' }
