@@ -18,7 +18,10 @@
     "vue": "^2.6.6",
     "vue-cli": "^2.9.6",
     "vue-router": "^3.0.2",
-    "vue-scrollto": "^2.13.0"
+    "vue-scrollto": "^2.13.0",
+    "command-line-args": "^5.0.2",
+    "command-line-usage": "^5.0.5",
+    "chalk": "^2.4.2"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.4.0",
