@@ -15,7 +15,7 @@ Mobile Browsers
 
 
 ## Installation
-Install CouchDB. (Or [pouchdb-server](https://github.com/pouchdb/pouchdb-server))
+Install CouchDB. (Or [pouchdb-server](https://github.com/pouchdb/pouchdb-server) for testing. Not recommended for production)
 
 Create an admin account at `http://localhost:5984/_utils/`. This account will be what you'll use to login and create user accounts with for the first time. (Note: The username MUST be all lowercase)
 
