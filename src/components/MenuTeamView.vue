@@ -3,14 +3,12 @@
     v-if="loggedin && teamExists"
     id="menu-team-view"
   >
-    <div class="grid">
+    <div class="grid grid-shrink">
       <div class="location-centered-small done-button-container">
-        <div
+        <h3
           @click="goBack()"
           class="background-box background-box-hover content-centered"
-        >
-          <h3>Back</h3>
-        </div>
+        >Back</h3>
       </div>
       <div class="location-centered background-box">
         <h2 class="content-centered">
@@ -451,7 +449,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 #scouting-select {
   margin-bottom: 20px;
 }
@@ -468,10 +466,5 @@ export default {
 .comment-menu-leave-to {
   transition: 0s;
   opacity: 0;
-}
-@media (max-width: 1200px) {
-  .grid {
-    grid-template-columns: 0px repeat(4, 1fr) 0px;
-  }
 }
 </style>

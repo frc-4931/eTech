@@ -69,7 +69,7 @@ export default {
           retry: true
         })
         .on("error", function(err) {
-          console.log(err);
+          dThis.console.log(err);
         })
         .on("change", function(change) {
           dThis.sync_change.onChange(change);
@@ -110,7 +110,7 @@ export default {
         retry: true
       })
       .on("error", function(err) {
-        console.log(err);
+        dThis.console.log(err);
       })
       .on("change", function(change) {
         dThis.sync_change.onChange(change);
