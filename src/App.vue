@@ -25,8 +25,9 @@ import Authentication from "pouchdb-authentication";
 
 var url = "";
 var setup = {};
+var protocal = location.protocol == "https:" ? "https://" : "http://";
 if (window.webpackHotUpdate) {
-  url = "http://" + window.location.hostname + ":5984/scouting/";
+  url = protocal + window.location.hostname + ":5984/scouting/";
   setup = {
     skip_setup: true,
     fetch(url, opts) {
@@ -35,7 +36,7 @@ if (window.webpackHotUpdate) {
     }
   };
 } else {
-  url = "http://" + window.location.host + "/database/scouting";
+  url = protocal + window.location.host + "/database/scouting";
   setup = {
     skip_setup: true
   };

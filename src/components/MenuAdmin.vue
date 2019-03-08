@@ -103,8 +103,9 @@ import PouchDB from "pouchdb";
 // Setup for running dev server
 var url = "";
 var setup = {};
+var protocal = location.protocol == "https:" ? "https://" : "http://";
 if (window.webpackHotUpdate) {
-  url = "http://" + window.location.hostname + ":5984/_users/";
+  url = protocal + window.location.hostname + ":5984/_users/";
   setup = {
     fetch(url, opts) {
       opts.credentials = "include";
@@ -112,7 +113,7 @@ if (window.webpackHotUpdate) {
     }
   };
 } else {
-  url = "http://" + window.location.host + "/database/_users";
+  url = protocal + window.location.host + "/database/_users";
   setup = {};
 }
 
