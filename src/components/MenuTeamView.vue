@@ -46,11 +46,6 @@
           </select>
         </div>
 
-        <div
-          v-if="scoutingSelect != 'none'"
-          class="line"
-        ></div>
-
         <transition
           enter-active-class="content-long-fade-in"
           leave-active-class="content-long-fade-out"

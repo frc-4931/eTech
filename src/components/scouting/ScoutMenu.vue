@@ -8,6 +8,9 @@
       :locked="!hasEdit"
       @valuechange="valueChange(scField.field, ...arguments)"
     ></component>
+
+    <div class="line" />
+
     <h3
       v-if="hasEdit"
       @click="save()"
@@ -51,7 +54,7 @@ export default {
     hasEdit: Boolean
   },
   watch: {
-    shouldUpdate(newValue, oldValue) {
+    shouldUpdate(newValue) {
       if (newValue === true) {
         this.updateScoutData();
         this.callUpdated();

@@ -1,4 +1,5 @@
 const http = require('http');
+const https = require('https');
 const httpProxy = require('http-proxy');
 const fs = require("fs");
 const commandLineArgs = require('command-line-args');
@@ -12,6 +13,7 @@ const optionDefinitions = [
   { name: 'database-port', alias: 'o', type: Number, defaultValue: 5984, description: 'Port on which the server redirects database requests to. (Defaults to "5984")' },
   { name: 'log-file-requests', alias: 'r', type: Boolean, description: 'Enable logging requests to the server for files.' },
   { name: 'log-db-requests', alias: 'l', type: Boolean, description: 'Enable logging requests for the database.' },
+  { name: 'use-ssl', alias: 's', type: Boolean, description: 'Enable SSL. (EXPERIMENTAL)' },
   { name: 'help', alias: 'h', type: Boolean, description: 'Display this usage guide.' }
 ]
 
@@ -43,7 +45,7 @@ const PORT = options.port;
 
 const proxy = httpProxy.createProxyServer({});
 
-const server = http.createServer(function (request, response) {
+const handler = function (request, response) {
   var url = request.url;
 
   if (url.startsWith(LOCAL_DATABASE)) {
@@ -92,7 +94,25 @@ const server = http.createServer(function (request, response) {
       response.end(content)
     })
   }
-});
+};
+
+var server;
+
+if (options.useSsl) {
+  try {
+    var cert = {
+      key: fs.readFileSync('certs/server-key.pem'),
+      cert: fs.readFileSync('certs/server-crt.pem'),
+      ca: fs.readFileSync('certs/ca-crt.pem'),
+    };
+
+    server = https.createServer(cert, handler).listen(PORT);;
+  } catch (err) {
+    console.log("Error while creating HTTPS server");
+  }
+} else {
+  server = http.createServer(handler).listen(PORT);;
+}
 
 proxy.on('error', function (err, req, response) {
   response.writeHead(500, {
@@ -102,5 +122,4 @@ proxy.on('error', function (err, req, response) {
   response.end('Something went wrong. Maybe the database is down?');
 });
 
-console.log(chalk.cyan('Listening on port %s\nFiles are streamed from %s\nDatabase requests are to directed to %s'), chalk.yellowBright(PORT), chalk.yellowBright(DIRECTORY), chalk.yellowBright(PROXY_TARGET));
-server.listen(PORT);
+console.log(chalk.cyan('Listening on port %s\nFiles are streamed from %s\nDatabase requests are redirected to %s'), chalk.yellowBright(PORT), chalk.yellowBright(DIRECTORY), chalk.yellowBright(PROXY_TARGET));

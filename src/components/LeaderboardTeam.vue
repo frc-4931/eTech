@@ -40,10 +40,10 @@ export default {
   },
   watch: {
     teamdata(val) {
-      this.$set(this.team, "name", this.teamdata["name"]);
-      this.$set(this.team, "number", this.teamdata["number"]);
-      this.$set(this.team, "objectivePoints", this.teamdata["objectivePoints"]);
-      this.$set(this.team, "commentPoints", this.teamdata["commentPoints"]);
+      this.$set(this.team, "name", val["name"]);
+      this.$set(this.team, "number", val["number"]);
+      this.$set(this.team, "objectivePoints", val["objectivePoints"]);
+      this.$set(this.team, "commentPoints", val["commentPoints"]);
     }
   },
   computed: {

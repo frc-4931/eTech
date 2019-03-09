@@ -28,8 +28,6 @@
       @click="createScout()"
       class="location-centered-small background-box background-box-hover content-centered"
     >Create</h3>
-
-    <div class="line" />
   </div>
   <Error v-else>You must be logged in to create a new scout!</Error>
 </template>
