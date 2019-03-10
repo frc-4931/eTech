@@ -13,7 +13,7 @@ const optionDefinitions = [
   { name: 'database-port', alias: 'o', type: Number, defaultValue: 5984, description: 'Port on which the server redirects database requests to. (Defaults to "5984")' },
   { name: 'log-file-requests', alias: 'r', type: Boolean, description: 'Enable logging requests to the server for files.' },
   { name: 'log-db-requests', alias: 'l', type: Boolean, description: 'Enable logging requests for the database.' },
-  { name: 'use-ssl', alias: 's', type: Boolean, description: 'Enable SSL. (EXPERIMENTAL)' },
+  { name: 'use-ssl', alias: 's', type: Boolean, description: 'Enable SSL. Read how to use it here: https://github.com/Damian0001/Scouting-App#enable-ssl' },
   { name: 'help', alias: 'h', type: Boolean, description: 'Display this usage guide.' }
 ]
 
@@ -108,7 +108,8 @@ if (options.useSsl) {
 
     server = https.createServer(cert, handler).listen(PORT);;
   } catch (err) {
-    console.log("Error while creating HTTPS server");
+    console.log(chalk.redBright("Error while creating HTTPS server"));
+    return;
   }
 } else {
   server = http.createServer(handler).listen(PORT);;

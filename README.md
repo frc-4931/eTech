@@ -35,10 +35,22 @@ Run `node server.js`.
 
 ### Launch Options
 
-``` -d, --directory                 The location of the directory to stream content from. (Defaults to "dist")
-  -p, --port                      Port on which to run the server. (Defaults to "80")
-  -a, --database-address          Address on which the server redirects database requests to. (Defaults to
-                                  "http://localhost")
-  -o, --database-port             Port on which the server redirects database requests to. (Defaults to "5984")
-  -r, --log-file-requests         Enable logging requests to the server for files.
-  -l, --log-db-requests           Enable logging requests for the database.`
+```-d, --directory string          The location of the directory to stream content from. (Defaults to "dist")
+-p, --port number               Port on which to run the server. (Defaults to "80")
+-a, --database-address string   Address on which the server redirects database requests to. (Defaults to
+                                "http://localhost")
+-o, --database-port number      Port on which the server redirects database requests to. (Defaults to "5984")
+-r, --log-file-requests         Enable logging requests to the server for files.
+-l, --log-db-requests           Enable logging requests for the database.
+-s, --use-ssl                   Enable SSL. Read how to use it here: https://github.com/Damian0001/Scouting-
+                                App#enable-ssl
+```
+
+# Enable SSL
+Create a folder in the same directory as server.js and call it "certs"
+
+Inside this folder create 3 files coresponding to their respective purposes
+
+- server-key.pem
+- server-crt.pem
+- ca-crt.pem
