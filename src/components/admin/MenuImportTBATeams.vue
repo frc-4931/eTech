@@ -98,7 +98,6 @@ export default {
 
           res.setEncoding("utf8");
           res.on("data", function(chunk) {
-            console.log(chunk);
             data = JSON.parse(chunk);
           });
 
@@ -129,15 +128,27 @@ export default {
                   _id: "TEAM_" + team.team_number
                 };
 
-                dThis.localdb.put(teamData).catch(function(err) {
-                  dThis.isError = true;
-                  if (err.name === "conflict") {
-                    dThis.errorMessage =
-                      "Team '" + team.nickname + "' is already imported";
-                  } else {
-                    dThis.errorMessage = "An unknown error occurred";
-                  }
-                });
+                dThis.localdb
+                  .put(teamData)
+                  .then(function() {
+                    console.log(
+                      "Successfully imported team '" + team.nickname + "'"
+                    );
+                  })
+                  .catch(function(err) {
+                    dThis.isError = true;
+                    if (err.name === "conflict") {
+                      dThis.errorMessage =
+                        "Team '" + team.nickname + "' is already imported";
+                    } else {
+                      dThis.errorMessage =
+                        "An unknown error occurred while importing team '" +
+                        team.nickname +
+                        "'";
+                    }
+
+                    console.log(dThis.errorMessage);
+                  });
               });
             }
           });
