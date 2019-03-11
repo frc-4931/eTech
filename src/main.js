@@ -22,11 +22,11 @@ const routes = [
   { path: "/team/:number", name: "team", component: MenuTeamView, props: true },
   { path: "/admin/", name: "admin", component: MenuAdmin },
   { path: "/admin/team/add", name: "team-add", component: MenuTeamAdd },
+  { path: "/admin/team/import", name: "import-tba-teams", component: MenuImportTBATeams },
   { path: "/admin/user/add", name: "user-add", component: MenuUserAdd },
   { path: "/admin/user/:username", name: "user-edit", component: MenuUserEdit, props: true },
   { path: "/admin/template", name: "admin-template", component: MenuTemplateEditor, },
   //{ path: "/analytics", name: "analytics", component: MenuAnalytics },
-  { path: "/admin/importteams", name: "import-tba-teams", component: MenuImportTBATeams },
   { path: "*", name: "page-not-found", component: PageNotFound }
 ];
 

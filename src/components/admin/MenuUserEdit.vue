@@ -91,7 +91,7 @@
       <h3
         @click="updateUser()"
         class="background-box content-centered"
-        v-bind:class="[this.allFieldsValid() ?  'background-box-hover' : 'background-box-disabled']"
+        v-bind:class="[this.allFieldsValid ?  'background-box-hover' : 'background-box-disabled']"
       >Save</h3>
 
       <h3
@@ -200,7 +200,7 @@ export default {
     },
     updateUser() {
       this.fieldsChanged = 0;
-      if (this.allFieldsValid()) {
+      if (this.allFieldsValid) {
         var dThis = this;
 
         this.isError = false;
@@ -276,15 +276,6 @@ export default {
           "You didn't change any values or passwords do not match!";
       }
     },
-    allFieldsValid() {
-      return (
-        this.name.length !== 0 &&
-        this.password === this.confirmPassword &&
-        (this.password.length !== 0 ||
-          this.o_name !== this.name ||
-          this.o_role !== this.role)
-      );
-    },
     goBack() {
       this.$router.push("/admin/");
     }
@@ -307,6 +298,17 @@ export default {
         dThis.loggedin = false;
       }
     });
+  },
+  computed: {
+    allFieldsValid() {
+      return (
+        this.name.length !== 0 &&
+        this.password === this.confirmPassword &&
+        (this.password.length !== 0 ||
+          this.o_name !== this.name ||
+          this.o_role !== this.role)
+      );
+    }
   }
 };
 </script>

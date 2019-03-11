@@ -1,7 +1,17 @@
 <template>
-  <div class="grid grid-shrink">
+  <Error v-if="!loggedin">You must be logged in as an admin to view this page</Error>
+
+  <div
+    v-else
+    class="grid grid-shrink"
+  >
     <div class="location-centered-small grid-perminant">
-      <h2 class="background-box location-span content-centered">Import Teams from The Blue Alliance</h2>
+      <h2 class="background-box location-span content-centered">Import Teams From The Blue Alliance</h2>
+
+      <Error
+        v-if="isError"
+        class="location-span"
+      >{{ errorMessage }}</Error>
 
       <p class="location-left background-box content-centered">Event ID</p>
 
@@ -44,11 +54,12 @@
 </template>
 
 <script>
+import Error from "../Error.vue";
 import https from "https";
 
 export default {
   name: "MenuImportTBATeams",
-  components: {},
+  components: { Error },
   props: {
     localdb: Object,
     remotedb: Object
@@ -56,7 +67,10 @@ export default {
   data: function() {
     return {
       event: "",
-      key: ""
+      key: "",
+      loggedin: false,
+      isError: false,
+      errorMessage: ""
     };
   },
   methods: {
@@ -67,6 +81,8 @@ export default {
       var dThis = this;
 
       if (this.allFieldsValid) {
+        this.isError = false;
+
         var options = {
           host: "www.thebluealliance.com",
           port: 443,
@@ -77,41 +93,80 @@ export default {
           }
         };
 
-        var req = https.request(options, function(res) {
+        var request = https.request(options, function(res) {
+          var data;
+
           res.setEncoding("utf8");
           res.on("data", function(chunk) {
-            var data = JSON.parse(chunk);
+            console.log(chunk);
+            data = JSON.parse(chunk);
+          });
 
-            data.forEach(function(team) {
-              console.log(
-                "NAME: " + team.nickname + " NUMBER: " + team.team_number
-              );
+          res.on("end", function() {
+            if (res.statusCode == 404) {
+              dThis.isError = true;
+              dThis.errorMessage =
+                "TBA returned a 404 response code. '" +
+                dThis.event +
+                "' is probably not a valid event.";
+            }
 
-              var teamData = {
-                name: team.nickname,
-                number: parseInt(team.team_number),
-                objectivePoints: 0,
-                commentPoints: 0,
-                _id: "TEAM_" + team.team_number
-              };
+            if (res.statusCode == 401) {
+              dThis.isError = true;
+              dThis.errorMessage =
+                "TBA returned a 401 response code. '" +
+                dThis.key +
+                "' is probably not a valid key.";
+            }
 
-              dThis.localdb.put(teamData);
-            });
+            if (!dThis.isError) {
+              data.forEach(function(team) {
+                var teamData = {
+                  name: team.nickname,
+                  number: team.team_number,
+                  objectivePoints: 0,
+                  commentPoints: 0,
+                  _id: "TEAM_" + team.team_number
+                };
+
+                dThis.localdb.put(teamData).catch(function(err) {
+                  dThis.isError = true;
+                  if (err.name === "conflict") {
+                    dThis.errorMessage =
+                      "Team '" + team.nickname + "' is already imported";
+                  } else {
+                    dThis.errorMessage = "An unknown error occurred";
+                  }
+                });
+              });
+            }
           });
         });
 
-        req.on("error", function(err) {
-          console.log("Eror with request to TBA: " + err.message);
+        request.on("error", function(err) {
+          dThis.isError = true;
+          dThis.errorMessage =
+            "Error while importing teams from TBA: " + err.message;
         });
 
-        req.end();
+        request.end();
       }
     }
   },
   computed: {
     allFieldsValid() {
-      return this.event.length != 0 && this.key.length == 64;
+      return this.event.length >= 8 && this.key.length == 64;
     }
+  },
+  created() {
+    var dThis = this;
+    this.remotedb.getSession(function(err, response) {
+      if (err) {
+        //There was an error
+      } else if (response.userCtx.roles.indexOf("_admin") != -1) {
+        dThis.loggedin = true;
+      }
+    });
   }
 };
 </script>

@@ -1,13 +1,13 @@
 <template>
   <div
     v-if="loggedin"
-    class="grid"
+    class="grid grid-shrink"
   >
     <div class="location-centered-small grid-perminant">
       <Error
         v-if="isError"
         class="background=box location-span"
-      >All fields are required!</Error>
+      >{{ errorMessage }}</Error>
       <h2
         v-else
         class="content-centered background-box location-span"
@@ -100,7 +100,7 @@
       <h3
         @click="addUser()"
         class="background-box background-box-hover content-centered"
-        v-bind:class="[this.allFieldsValid() ?  'background-box-hover' : 'background-box-disabled']"
+        v-bind:class="[this.allFieldsValid ?  'background-box-hover' : 'background-box-disabled']"
       >Add</h3>
 
       <h3
@@ -130,12 +130,13 @@ export default {
       password: "",
       confrimPassword: "",
       isError: false,
+      errorMessage: false,
       role: "edit"
     };
   },
   methods: {
     addUser() {
-      if (this.allFieldsValid()) {
+      if (this.allFieldsValid) {
         var dThis = this;
 
         if (this.role === "admin") {
@@ -167,15 +168,8 @@ export default {
         );
       } else {
         this.isError = true;
+        this.errorMessage = "You must be an admin to add users!";
       }
-    },
-    allFieldsValid() {
-      return (
-        this.name != "" &&
-        this.username != "" &&
-        this.password === this.confrimPassword &&
-        this.password != ""
-      );
     },
     goBack() {
       this.$router.push("/admin/");
@@ -191,6 +185,16 @@ export default {
         dThis.loggedin = true;
       }
     });
+  },
+  computed: {
+    allFieldsValid() {
+      return (
+        this.name != "" &&
+        this.username != "" &&
+        this.password === this.confrimPassword &&
+        this.password != ""
+      );
+    }
   }
 };
 </script>
