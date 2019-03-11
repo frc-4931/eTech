@@ -123,9 +123,9 @@ select {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
 }
-@media (max-width: 1200px) {
+@media (max-width: 1300px) {
   .grid-shrink {
-    grid-template-columns: 0px repeat(4, 1fr) 0px;
+    grid-template-columns: 0px repeat(4, 1fr) 0px !important;
   }
 }
 .location-span {

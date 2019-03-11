@@ -10,6 +10,7 @@ import MenuTemplateEditor from "./components/MenuTemplateEditor.vue";
 import MenuUserAdd from "./components/admin/MenuUserAdd.vue";
 import MenuUserEdit from "./components/admin/MenuUserEdit.vue";
 // import MenuAnalytics from "./components/MenuAnalytics.vue";
+import MenuImportTBATeams from "./components/admin/MenuImportTBATeams.vue";
 import PageNotFound from "./components/PageNotFound.vue";
 
 Vue.config.productionTip = false
@@ -25,6 +26,7 @@ const routes = [
   { path: "/admin/user/:username", name: "user-edit", component: MenuUserEdit, props: true },
   { path: "/admin/template", name: "admin-template", component: MenuTemplateEditor, },
   //{ path: "/analytics", name: "analytics", component: MenuAnalytics },
+  { path: "/admin/importteams", name: "import-tba-teams", component: MenuImportTBATeams },
   { path: "*", name: "page-not-found", component: PageNotFound }
 ];
 
