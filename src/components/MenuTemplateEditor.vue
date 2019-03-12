@@ -1,5 +1,8 @@
 <template>
-  <div v-if="isAdmin" id="menu-template-editor">
+  <div
+    v-if="isAdmin"
+    id="menu-template-editor"
+  >
     <div class="grid">
       <div class="mobile-view field-edit done-button-container">
         <div
@@ -32,7 +35,10 @@
         v-else-if="isMessage"
         class="mobile-none-margin-top location-centered background-box content-centered"
       >{{generalMessage}}</Message>
-      <div v-else class="mobile-none-margin-top location-centered background-box content-centered">
+      <div
+        v-else
+        class="mobile-none-margin-top location-centered background-box content-centered"
+      >
         <h2>Template Editor</h2>
       </div>
 
@@ -53,7 +59,10 @@
             id="select-template"
             class="content-input-large"
           >
-            <option value="none" disabled>Select a Scouting Template</option>
+            <option
+              value="none"
+              disabled
+            >Select a Scouting Template</option>
             <option value="TEMPLATE_PITSCOUT">Pit Scout</option>
             <option value="TEMPLATE_MATCHSCOUT">Match Scout</option>
           </select>
@@ -77,15 +86,22 @@
           @move-down="moveDown(index)"
         ></component>
         <!-- beautify ignore:end -->
-        <div class="line"/>
+        <div class="line" />
 
-        <div v-if="curOpen == 'field_add'" id="template-field-add">
+        <div
+          v-if="curOpen == 'field_add'"
+          id="template-field-add"
+        >
           <h3 class="background-box content-centered">Creating New Field</h3>
 
           <div class="field-edit">
             <p class="background-box">Display Name</p>
             <div class="background-box-input">
-              <input type="text" v-model.trim="newFieldTitle" placeholder="Display Name">
+              <input
+                type="text"
+                v-model.trim="newFieldTitle"
+                placeholder="Display Name"
+              >
             </div>
           </div>
           <div class="field-edit">
@@ -101,10 +117,16 @@
             </div>
           </div>
 
-          <div @click="createField()" class="background-box background-box-hover content-centered">
+          <div
+            @click="createField()"
+            class="background-box background-box-hover content-centered"
+          >
             <p>Create</p>
           </div>
-          <div @click="closeField()" class="background-box background-box-hover content-centered">
+          <div
+            @click="closeField()"
+            class="background-box background-box-hover content-centered"
+          >
             <p>Cancel</p>
           </div>
         </div>
@@ -399,7 +421,7 @@ export default {
         this.$router.push("/admin/");
     },
     updateAllTeamPoints() {
-      //Loop through all teams and update there point values
+      //Loop through all teams and update their point values
       var dThis = this;
       this.localdb
         .allDocs({
@@ -411,43 +433,13 @@ export default {
           // Loop through all team docs
           for (var docID in result["rows"]) {
             // Get current team doc
-            doc = result["rows"][docID];
-            var team = docID.replace("TEAM_", "");
+            var doc = result["rows"][docID]["doc"]["_id"];
+            var team = doc.replace("TEAM_", "");
+
+            console.log(team);
 
             dThis.loadScouting(team);
           }
-        });
-    },
-    loadComments: function(team) {
-      //Load all comments from db then shove them into comments
-      //Then check if sum of comment values == team.commentPoints
-      //If not then db.get file modify commentPoints then db.put
-      var dThis = this;
-      this.localdb
-        .allDocs({
-          include_docs: true,
-          startkey: "COMMENT_" + team + "_0",
-          endkey: "COMMENT_" + team + "_\ufff0"
-        })
-        .then(function(docs) {
-          var totalCommentRating = 0;
-
-          for (var docID in docs["rows"]) {
-            var doc = docs["rows"][docID]["doc"];
-            var comment = {
-              comment: doc.comment,
-              rating: parseInt(doc.rating),
-              title: doc.title
-            };
-            totalCommentRating += comment.rating;
-          }
-
-          dThis.localdb.get("TEAM_" + team).then(function(doc) {
-            if (doc.commentPoints != totalCommentRating) {
-              doc.commentPoints = totalCommentRating;
-              dThis.localdb.put(doc);
-            }
-          });
         });
     },
     loadScouting: function(team) {
@@ -515,6 +507,7 @@ export default {
         });
     },
     setScoutingPoints(doc, fields) {
+      var points;
       let totalPoints = 0;
       for (let field of fields) {
         if (field["field"] != undefined) {
@@ -528,23 +521,23 @@ export default {
 
           if (fieldType == "DropdownField") {
             var options = field["options"];
-            inx = options.indexOf(fieldData);
-            var points = fieldPoints[inx];
+            var inx = options.indexOf(fieldData);
+            points = fieldPoints[inx];
 
             totalPoints += points;
             doc[fieldName + "_POINTS"] = points;
           } else if (fieldType == "BooleanField") {
-            var points = fieldData ? fieldPoints[0] : fieldPoints[1];
+            points = fieldData ? fieldPoints[0] : fieldPoints[1];
 
             totalPoints += points;
             doc[fieldName + "_POINTS"] = points;
           } else if (fieldType == "NumberField") {
-            var points = fieldData * fieldPoints;
+            points = fieldData * fieldPoints;
 
             totalPoints += points;
             doc[fieldName + "_POINTS"] = points;
           } else if (fieldType == "NumberFieldInc") {
-            var points = fieldData * fieldPoints;
+            points = fieldData * fieldPoints;
 
             totalPoints += points;
             doc[fieldName + "_POINTS"] = points;

@@ -190,7 +190,7 @@ export default {
             //dThis.removeUserFromFile();
           })
           .catch(function(err) {
-            dThis.console.log(err);
+            console.log(err);
           });
       } else {
         this.remotedb.deleteUser(dThis.username);
