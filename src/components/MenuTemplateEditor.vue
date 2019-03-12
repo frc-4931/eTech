@@ -1,10 +1,6 @@
 <template>
-  <div
-    v-if="isAdmin"
-    id="menu-template-editor"
-  >
+  <div v-if="isAdmin" id="menu-template-editor">
     <div class="grid">
-
       <div class="mobile-view field-edit done-button-container">
         <div
           @click="goBack()"
@@ -36,10 +32,7 @@
         v-else-if="isMessage"
         class="mobile-none-margin-top location-centered background-box content-centered"
       >{{generalMessage}}</Message>
-      <div
-        v-else
-        class="mobile-none-margin-top location-centered background-box content-centered"
-      >
+      <div v-else class="mobile-none-margin-top location-centered background-box content-centered">
         <h2>Template Editor</h2>
       </div>
 
@@ -60,10 +53,7 @@
             id="select-template"
             class="content-input-large"
           >
-            <option
-              value="none"
-              disabled
-            >Select a Scouting Template</option>
+            <option value="none" disabled>Select a Scouting Template</option>
             <option value="TEMPLATE_PITSCOUT">Pit Scout</option>
             <option value="TEMPLATE_MATCHSCOUT">Match Scout</option>
           </select>
@@ -72,7 +62,8 @@
 
       <div class="location-centered-small">
         <!-- beautify ignore:start -->
-        <component v-for="(field, index) in fields"
+        <component
+          v-for="(field, index) in fields"
           :key="field.field || field.title"
           :id="field.field || field.title.replace(/[^a-zA-Z]/g, '')"
           :is="fieldIs(field)"
@@ -83,26 +74,18 @@
           @close="closeField()"
           @delete="deleteField(index)"
           @move-up="moveUp(index)"
-          @move-down="moveDown(index)">
-        </component>
+          @move-down="moveDown(index)"
+        ></component>
         <!-- beautify ignore:end -->
+        <div class="line"/>
 
-        <div class="line" />
-
-        <div
-          v-if="curOpen == 'field_add'"
-          id="template-field-add"
-        >
+        <div v-if="curOpen == 'field_add'" id="template-field-add">
           <h3 class="background-box content-centered">Creating New Field</h3>
 
           <div class="field-edit">
             <p class="background-box">Display Name</p>
             <div class="background-box-input">
-              <input
-                type="text"
-                v-model.trim="newFieldTitle"
-                placeholder="Display Name"
-              >
+              <input type="text" v-model.trim="newFieldTitle" placeholder="Display Name">
             </div>
           </div>
           <div class="field-edit">
@@ -116,19 +99,12 @@
                 <option value="NumberFieldInc">Number Incremential</option>
               </select>
             </div>
-
           </div>
 
-          <div
-            @click="createField()"
-            class="background-box background-box-hover content-centered"
-          >
+          <div @click="createField()" class="background-box background-box-hover content-centered">
             <p>Create</p>
           </div>
-          <div
-            @click="closeField()"
-            class="background-box background-box-hover content-centered"
-          >
+          <div @click="closeField()" class="background-box background-box-hover content-centered">
             <p>Cancel</p>
           </div>
         </div>
@@ -141,7 +117,6 @@
         >
           <h3>Create new field</h3>
         </div>
-
       </div>
     </div>
   </div>
@@ -190,7 +165,8 @@ export default {
       generalMessage: "",
       curTemplate: "none",
       scrollTo: scroller(),
-      isAdmin: true
+      isAdmin: true,
+      unsaved: false
     };
   },
   methods: {
@@ -289,6 +265,7 @@ export default {
         this.fields.push(field);
         this.closeField();
       }
+      this.unsaved = true;
     },
     openFieldAdd() {
       var dThis = this;
@@ -310,6 +287,7 @@ export default {
     },
     saveField(index, fieldData) {
       this.$set(this.fields, index, Object.assign({}, fieldData));
+      this.unsaved = true;
     },
     closeField() {
       this.curOpen = "none";
@@ -319,13 +297,16 @@ export default {
         "You are about to delete '" + this.fields[index].title + "'"
       );
       if (confirmDelete) this.fields.splice(index, 1);
+      this.unsaved = true;
     },
     moveUp(index) {
       if (index > 0) this.arrayMove(this.fields, index, index - 1);
+      this.unsaved = true;
     },
     moveDown(index) {
       if (index < this.fields.length - 1)
         this.arrayMove(this.fields, index, index + 1);
+      this.unsaved = true;
     },
     loadTemplate(template) {
       var dThis = this;
@@ -384,6 +365,8 @@ export default {
           dThis.localdb.put(doc).then(function() {
             dThis.isMessage = true;
             dThis.generalMessage = "Push successful!";
+            dThis.unsaved = false;
+            dThis.updateAllTeamPoints();
           });
         })
         .catch(function(err) {
@@ -396,6 +379,8 @@ export default {
               dThis.localdb.put(doc).then(function() {
                 dThis.isMessage = true;
                 dThis.generalMessage = "Push successful!";
+                dThis.unsaved = false;
+                dThis.updateAllTeamPoints();
               });
             }
           }
@@ -405,7 +390,168 @@ export default {
       arr.splice(newIndex, 0, arr.splice(oldIndex, 1)[0]);
     },
     goBack() {
-      this.$router.push("/admin/");
+      if (!this.unsaved) this.$router.push("/admin/");
+      else if (
+        confirm(
+          "You have unsaved changes.\nAre you sure you want to leave before saving?"
+        )
+      )
+        this.$router.push("/admin/");
+    },
+    updateAllTeamPoints() {
+      //Loop through all teams and update there point values
+      var dThis = this;
+      this.localdb
+        .allDocs({
+          include_docs: true,
+          startkey: "TEAM_0",
+          endkey: "TEAM_\ufff0"
+        })
+        .then(function(result) {
+          // Loop through all team docs
+          for (var docID in result["rows"]) {
+            // Get current team doc
+            doc = result["rows"][docID];
+            var team = docID.replace("TEAM_", "");
+
+            dThis.loadScouting(team);
+          }
+        });
+    },
+    loadComments: function(team) {
+      //Load all comments from db then shove them into comments
+      //Then check if sum of comment values == team.commentPoints
+      //If not then db.get file modify commentPoints then db.put
+      var dThis = this;
+      this.localdb
+        .allDocs({
+          include_docs: true,
+          startkey: "COMMENT_" + team + "_0",
+          endkey: "COMMENT_" + team + "_\ufff0"
+        })
+        .then(function(docs) {
+          var totalCommentRating = 0;
+
+          for (var docID in docs["rows"]) {
+            var doc = docs["rows"][docID]["doc"];
+            var comment = {
+              comment: doc.comment,
+              rating: parseInt(doc.rating),
+              title: doc.title
+            };
+            totalCommentRating += comment.rating;
+          }
+
+          dThis.localdb.get("TEAM_" + team).then(function(doc) {
+            if (doc.commentPoints != totalCommentRating) {
+              doc.commentPoints = totalCommentRating;
+              dThis.localdb.put(doc);
+            }
+          });
+        });
+    },
+    loadScouting: function(team) {
+      var dThis = this;
+      var dPoints = { points: 0 };
+
+      this.localdb
+        .allDocs({
+          include_docs: true,
+          startkey: "PITSCOUT_" + team + "_0",
+          endkey: "PITSCOUT_" + team + "_\ufff0"
+        })
+        .then(function(docs) {
+          return dThis.localdb
+            .get("TEMPLATE_PITSCOUT")
+            .then(function(doc) {
+              return doc["fields"];
+            })
+            .then(function(fields) {
+              let points = 0;
+              let itr = 0;
+              for (var doc of docs["rows"]) {
+                points += dThis.setScoutingPoints(doc, fields);
+                itr++;
+              }
+              points /= itr;
+              dPoints.points += points;
+
+              dThis.localdb.bulkDocs(docs);
+            });
+        })
+        .then(function() {
+          return dThis.localdb.allDocs({
+            include_docs: true,
+            startkey: "MATCHSCOUT_" + team + "_0",
+            endkey: "MATCHSCOUT_" + team + "_\ufff0"
+          });
+        })
+        .then(function(docs) {
+          return dThis.localdb
+            .get("TEMPLATE_MATCHSCOUT")
+            .then(function(doc) {
+              return doc["fields"];
+            })
+            .then(function(fields) {
+              let points = 0;
+              let itr = 0;
+              for (var doc of docs["rows"]) {
+                points += dThis.setScoutingPoints(doc, fields);
+                itr++;
+              }
+              points /= itr;
+              dPoints.points += points;
+
+              dThis.localdb.bulkDocs(docs);
+            });
+        })
+        .then(function() {
+          dThis.localdb.get("TEAM_" + team).then(function(doc) {
+            if (doc.objectivePoints != dPoints.points) {
+              doc.objectivePoints = dPoints.points;
+              dThis.localdb.put(doc);
+            }
+          });
+        });
+    },
+    setScoutingPoints(doc, fields) {
+      let totalPoints = 0;
+      for (let field of fields) {
+        if (field["field"] != undefined) {
+          var fieldData;
+          var fieldType = field["type"];
+          var fieldName = field["field"];
+          var fieldPoints = field["points"];
+
+          if (doc[fieldName] != undefined) fieldData = doc[fieldName];
+          else fieldData = field["default"];
+
+          if (fieldType == "DropdownField") {
+            var options = field["options"];
+            inx = options.indexOf(fieldData);
+            var points = fieldPoints[inx];
+
+            totalPoints += points;
+            doc[fieldName + "_POINTS"] = points;
+          } else if (fieldType == "BooleanField") {
+            var points = fieldData ? fieldPoints[0] : fieldPoints[1];
+
+            totalPoints += points;
+            doc[fieldName + "_POINTS"] = points;
+          } else if (fieldType == "NumberField") {
+            var points = fieldData * fieldPoints;
+
+            totalPoints += points;
+            doc[fieldName + "_POINTS"] = points;
+          } else if (fieldType == "NumberFieldInc") {
+            var points = fieldData * fieldPoints;
+
+            totalPoints += points;
+            doc[fieldName + "_POINTS"] = points;
+          }
+        }
+      }
+      return totalPoints;
     }
   },
   created() {
