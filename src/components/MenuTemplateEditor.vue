@@ -421,7 +421,7 @@ export default {
         this.$router.push("/admin/");
     },
     updateAllTeamPoints() {
-      //Loop through all teams and update there point values
+      //Loop through all teams and update their point values
       var dThis = this;
       this.localdb
         .allDocs({
@@ -437,38 +437,6 @@ export default {
 
             dThis.loadScouting(team);
           }
-        });
-    },
-    loadComments: function(team) {
-      //Load all comments from db then shove them into comments
-      //Then check if sum of comment values == team.commentPoints
-      //If not then db.get file modify commentPoints then db.put
-      var dThis = this;
-      this.localdb
-        .allDocs({
-          include_docs: true,
-          startkey: "COMMENT_" + team + "_0",
-          endkey: "COMMENT_" + team + "_\ufff0"
-        })
-        .then(function(docs) {
-          var totalCommentRating = 0;
-
-          for (var docID in docs["rows"]) {
-            var doc = docs["rows"][docID]["doc"];
-            var comment = {
-              comment: doc.comment,
-              rating: parseInt(doc.rating),
-              title: doc.title
-            };
-            totalCommentRating += comment.rating;
-          }
-
-          dThis.localdb.get("TEAM_" + team).then(function(doc) {
-            if (doc.commentPoints != totalCommentRating) {
-              doc.commentPoints = totalCommentRating;
-              dThis.localdb.put(doc);
-            }
-          });
         });
     },
     loadScouting: function(team) {
@@ -547,6 +515,7 @@ export default {
         });
     },
     setScoutingPoints(doc, fields) {
+      var points;
       let totalPoints = 0;
       for (let field of fields) {
         if (field["field"] != undefined) {

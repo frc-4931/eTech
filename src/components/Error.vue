@@ -4,7 +4,7 @@
     leave-active-class="content-fade-out"
     mode="out-in"
   >
-    <div class="error background-box content-centered">
+    <div class="background-box content-centered">
       <h2>Error</h2>
       <p>
         <slot></slot>

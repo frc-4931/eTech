@@ -27,6 +27,7 @@
           <router-link :to="{name: 'team-add'}">Add Team</router-link><br>
           <router-link :to="{name: 'user-add'}">Add User</router-link><br>
           <router-link :to="{name: 'admin-template'}">Edit Scouting Templates</router-link><br>
+          <router-link :to="{name: 'import-tba-teams'}">Import Teams From TBA</router-link><br>
         </div>
       </div>
 

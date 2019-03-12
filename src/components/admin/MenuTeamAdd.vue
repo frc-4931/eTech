@@ -1,12 +1,15 @@
 <template>
   <div
     v-if="loggedin"
-    class="grid"
+    class="grid grid-shrink"
   >
-    <FieldError v-if="error"></FieldError>
-
     <div class="location-centered-small grid-perminant">
       <h2 class=" background-box location-span content-centered">Add team</h2>
+
+      <Error
+        v-if="isError"
+        class="location-span"
+      >{{ errorMessage }}</Error>
 
       <p class="location-left background-box content-centered">Team Name</p>
 
@@ -39,7 +42,7 @@
         <h3
           @click="submitTeam()"
           class="background-box content-centered"
-          v-bind:class="[this.allFieldsValid() ? 'background-box-hover' : 'background-box-disabled']"
+          v-bind:class="[this.allFieldsValid ? 'background-box-hover' : 'background-box-disabled']"
         >Add</h3>
 
         <h3
@@ -53,13 +56,11 @@
 </template>
 
 <script>
-import FieldError from "../scouting/FieldError.vue";
 import Error from "../Error.vue";
 
 export default {
   name: "MenuTeamAdd",
   components: {
-    FieldError,
     Error
   },
   props: {
@@ -70,14 +71,15 @@ export default {
     return {
       number: "",
       name: "",
-      error: false,
+      isError: false,
+      errorMessage: "Error",
       loggedin: false
     };
   },
   methods: {
     submitTeam: function() {
       var dThis = this;
-      if (this.allFieldsValid()) {
+      if (this.allFieldsValid) {
         var team = {
           name: this.name,
           number: parseInt(this.number),
@@ -86,18 +88,25 @@ export default {
           _id: "TEAM_" + this.number
         };
 
-        this.localdb.put(team).then(function() {
-          dThis.goBack();
-        });
-      } else {
-        this.error = true;
+        this.localdb
+          .put(team)
+          .then(function() {
+            dThis.goBack();
+          })
+          .catch(function(err) {
+            if (err.name === "conflict") {
+              dThis.isError = true;
+              dThis.errorMessage =
+                "There was a conflict when adding team! Maybe the team number is already used?";
+            } else {
+              dThis.isError = true;
+              dThis.errorMessage = "An unknown error occurred";
+            }
+          });
       }
     },
     goBack() {
       this.$router.push("/admin/");
-    },
-    allFieldsValid() {
-      return this.name.length !== 0 && this.number != 0;
     }
   },
   created() {
@@ -109,6 +118,11 @@ export default {
         dThis.loggedin = true;
       }
     });
+  },
+  computed: {
+    allFieldsValid() {
+      return this.name.length !== 0 && this.number != 0;
+    }
   }
 };
 </script>
