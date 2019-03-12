@@ -515,7 +515,6 @@ export default {
         });
     },
     setScoutingPoints(doc, fields) {
-      var points;
       let totalPoints = 0;
       for (let field of fields) {
         if (field["field"] != undefined) {
@@ -523,6 +522,7 @@ export default {
           var fieldType = field["type"];
           var fieldName = field["field"];
           var fieldPoints = field["points"];
+          var points;
 
           if (doc[fieldName] != undefined) fieldData = doc[fieldName];
           else fieldData = field["default"];
@@ -530,12 +530,12 @@ export default {
           if (fieldType == "DropdownField") {
             var options = field["options"];
             var inx = options.indexOf(fieldData);
-            var points = parseInt(fieldPoints[inx]);
+            points = parseInt(fieldPoints[inx]);
 
             totalPoints += points;
             doc[fieldName + "_POINTS"] = points;
           } else if (fieldType == "BooleanField") {
-            var points =
+            points =
               fieldData == true
                 ? parseInt(fieldPoints[0])
                 : parseInt(fieldPoints[1]);
@@ -543,12 +543,12 @@ export default {
             totalPoints += points;
             doc[fieldName + "_POINTS"] = points;
           } else if (fieldType == "NumberField") {
-            var points = parseInt(fieldData) * parseInt(fieldPoints);
+            points = parseInt(fieldData) * parseInt(fieldPoints);
 
             totalPoints += points;
             doc[fieldName + "_POINTS"] = points;
           } else if (fieldType == "NumberFieldInc") {
-            var points = parseInt(fieldData) * parseInt(fieldPoints);
+            points = parseInt(fieldData) * parseInt(fieldPoints);
 
             totalPoints += parseInt(points);
             doc[fieldName + "_POINTS"] = parseInt(points);
