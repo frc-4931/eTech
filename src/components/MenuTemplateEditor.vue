@@ -425,18 +425,15 @@ export default {
       var dThis = this;
       this.localdb
         .allDocs({
-          include_docs: true,
+          include_docs: false,
           startkey: "TEAM_0",
           endkey: "TEAM_\ufff0"
         })
         .then(function(result) {
           // Loop through all team docs
-          for (var docID in result["rows"]) {
+          for (var doc of result["rows"]) {
             // Get current team doc
-            var doc = result["rows"][docID]["doc"]["_id"];
-            var team = doc.replace("TEAM_", "");
-
-            console.log(team);
+            var team = doc["id"].replace("TEAM_", "");
 
             dThis.loadScouting(team);
           }
@@ -444,7 +441,7 @@ export default {
     },
     loadScouting: function(team) {
       var dThis = this;
-      var dPoints = { points: 0 };
+      var dPoints = { points: 0, amount: 0 };
 
       this.localdb
         .allDocs({
@@ -459,16 +456,20 @@ export default {
               return doc["fields"];
             })
             .then(function(fields) {
-              let points = 0;
-              let itr = 0;
-              for (var doc of docs["rows"]) {
+              var points = 0;
+              var itr = 0;
+              var dDocs = docs["rows"];
+              var outDocs = [];
+              for (var doc of dDocs) {
+                doc = doc["doc"];
                 points += dThis.setScoutingPoints(doc, fields);
+                outDocs.push(doc);
                 itr++;
               }
-              points /= itr;
               dPoints.points += points;
+              dPoints.amount += itr;
 
-              dThis.localdb.bulkDocs(docs);
+              dThis.localdb.bulkDocs(outDocs);
             });
         })
         .then(function() {
@@ -485,29 +486,35 @@ export default {
               return doc["fields"];
             })
             .then(function(fields) {
-              let points = 0;
-              let itr = 0;
-              for (var doc of docs["rows"]) {
+              var points = 0;
+              var itr = 0;
+              var dDocs = docs["rows"];
+              var outDocs = [];
+              for (var doc of dDocs) {
+                doc = doc["doc"];
                 points += dThis.setScoutingPoints(doc, fields);
+                outDocs.push(doc);
                 itr++;
               }
-              points /= itr;
               dPoints.points += points;
+              dPoints.amount += itr;
 
-              dThis.localdb.bulkDocs(docs);
+              dThis.localdb.bulkDocs(outDocs);
             });
         })
         .then(function() {
           dThis.localdb.get("TEAM_" + team).then(function(doc) {
-            if (doc.objectivePoints != dPoints.points) {
-              doc.objectivePoints = dPoints.points;
+            var points =
+              dPoints.points / (dPoints.amount > 0 ? dPoints.amount : 1);
+            points = Math.floor(points);
+            if (doc.objectivePoints != points) {
+              doc.objectivePoints = points;
               dThis.localdb.put(doc);
             }
           });
         });
     },
     setScoutingPoints(doc, fields) {
-      var points;
       let totalPoints = 0;
       for (let field of fields) {
         if (field["field"] != undefined) {
@@ -515,6 +522,7 @@ export default {
           var fieldType = field["type"];
           var fieldName = field["field"];
           var fieldPoints = field["points"];
+          var points;
 
           if (doc[fieldName] != undefined) fieldData = doc[fieldName];
           else fieldData = field["default"];
@@ -522,28 +530,32 @@ export default {
           if (fieldType == "DropdownField") {
             var options = field["options"];
             var inx = options.indexOf(fieldData);
-            points = fieldPoints[inx];
+            points = parseInt(fieldPoints[inx]);
 
             totalPoints += points;
             doc[fieldName + "_POINTS"] = points;
           } else if (fieldType == "BooleanField") {
-            points = fieldData ? fieldPoints[0] : fieldPoints[1];
+            points =
+              fieldData == true
+                ? parseInt(fieldPoints[0])
+                : parseInt(fieldPoints[1]);
 
             totalPoints += points;
             doc[fieldName + "_POINTS"] = points;
           } else if (fieldType == "NumberField") {
-            points = fieldData * fieldPoints;
+            points = parseInt(fieldData) * parseInt(fieldPoints);
 
             totalPoints += points;
             doc[fieldName + "_POINTS"] = points;
           } else if (fieldType == "NumberFieldInc") {
-            points = fieldData * fieldPoints;
+            points = parseInt(fieldData) * parseInt(fieldPoints);
 
-            totalPoints += points;
-            doc[fieldName + "_POINTS"] = points;
+            totalPoints += parseInt(points);
+            doc[fieldName + "_POINTS"] = parseInt(points);
           }
         }
       }
+      doc["TOTAL-POINTS"] = totalPoints;
       return totalPoints;
     }
   },
