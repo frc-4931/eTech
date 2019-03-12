@@ -15,7 +15,7 @@
       v-if="hasEdit"
       @click="save()"
       class="location-centered-small background-box background-box-hover content-centered"
-    >Save</h3>
+    >{{ unsaved ? "Save" : "Saved!" }}</h3>
     <h3
       v-if="hasEdit"
       @click="deleteScout()"
@@ -66,7 +66,8 @@ export default {
       template: Array,
       scoutFields: {},
       scoutPoints: {},
-      modifiedFields: {}
+      modifiedFields: {},
+      unsaved: false
     };
   },
   methods: {
@@ -77,6 +78,8 @@ export default {
 
       if (this.modifiedFields[field] == false)
         this.modifiedFields[field] = true;
+
+      this.unsaved = true;
     },
     getInitialScoutData() {
       var dThis = this;
@@ -160,8 +163,10 @@ export default {
           doc[i] = this.scoutFields[i];
           doc[i + "_POINTS"] = this.scoutPoints[i];
         }
+        this.modifiedFields[i] = false;
       }
-      this.modifiedFields = [];
+      this.unsaved = false;
+
       doc["TOTAL-POINTS"] = this.getAllFieldPoints();
       this.localdb.put(doc).then(function() {
         dThis.callback();
