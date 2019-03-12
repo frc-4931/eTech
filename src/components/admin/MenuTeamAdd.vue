@@ -121,7 +121,7 @@ export default {
   },
   computed: {
     allFieldsValid() {
-      return this.name.length !== 0 && this.number != 0;
+      return this.name.length !== 0 && this.number > 0;
     }
   }
 };

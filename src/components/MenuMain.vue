@@ -25,16 +25,16 @@
       </div>
       <div
         v-if="teams.length != 0"
-        class="background-box leaderboard-team"
+        class="background-box leaderboard-team leaderboard-container"
       >
         <p
           v-bind:class="sortedTeamOption === 'name' ? (sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''"
           @click="toggleSorted(true, 'name')"
-        >Team Name</p>
+        >Name</p>
         <p
           v-bind:class="sortedTeamOption === 'number' ? (sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''"
           @click="toggleSorted(true, 'number')"
-        >Team Number</p>
+        >Number</p>
         <p
           v-bind:class="sortedTeamOption === 'objectivePoints' ? (sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''"
           @click="toggleSorted(true, 'objectivePoints')"
@@ -60,6 +60,7 @@
           v-for="(teamData) in teams"
           v-bind:key="teamData['_id']"
           :teamdata="teamData"
+          class="leaderboard-team"
         ></LeaderboardTeam>
       </transition-group>
     </div>
@@ -206,7 +207,7 @@ export default {
       this.localdb
         .allDocs({
           include_docs: true,
-          startkey: "TEAM_0",
+          startkey: "TEAM_",
           endkey: "TEAM_\ufff0"
         })
         .then(function(result) {
@@ -259,9 +260,9 @@ export default {
 </script>
 
 <style>
-.leaderboard-team {
+.leaderboard-container {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: 2fr repeat(4, 1fr);
   text-align: center;
 }
 .sorting-option-selected::after {
@@ -269,7 +270,7 @@ export default {
   content: "";
   width: 0;
   height: 0;
-  margin-left: 15px;
+  margin-left: 5px;
   border-top: 8.66px solid transparent;
   border-bottom: 8.66px solid transparent;
   transition: 0.2s all ease-in-out;
@@ -281,5 +282,10 @@ export default {
 }
 .sorting-option-down::after {
   transform: rotate(90deg);
+}
+@media (max-width: 700px) {
+  .leaderboard-team {
+    font-size: 0.8em;
+  }
 }
 </style>

@@ -1,13 +1,15 @@
 <template>
   <div id="scouting-menu">
-    <component
-      v-for="scField in template"
-      :key="docId+(scField.field || scField.title)"
-      :is="scField.type"
-      :data="scField"
-      :locked="!hasEdit"
-      @valuechange="valueChange(scField.field, ...arguments)"
-    ></component>
+    <div class="scouting-menu-fields">
+      <component
+        v-for="scField in template"
+        :key="docId+(scField.field || scField.title)"
+        :is="scField.type"
+        :data="scField"
+        :locked="!hasEdit"
+        @valuechange="valueChange(scField.field, ...arguments)"
+      ></component>
+    </div>
 
     <div class="line" />
 
@@ -228,12 +230,14 @@ export default {
 </script>
 
 <style>
-.pit-scout-div div,
-.pit-scout-div div .location-left,
-.pit-scout-div div .location-right {
-  margin-bottom: 0px !important;
+.pit-scout-div div {
+  margin: 5px !important;
 }
-.pit-scout-div:nth-child(1) div {
-  margin-top: 10px !important;
+.scouting-menu-fields {
+  padding: 5px;
+  padding-top: 0px;
+}
+.pit-scout-div:first-child {
+  margin-top: 0px;
 }
 </style>
