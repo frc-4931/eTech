@@ -3,15 +3,27 @@
     <h1 class="content-centered location-span background-box">FRC Scouting App</h1>
 
     <div v-bind:class="[loggedin ? 'location-left-small' : 'location-centered-small']">
-      <AccountPanel
-        :remotedb="remotedb"
-        :sync_change="sync_change"
-        :user="user"
-        :reloadSync="reloadSync"
-        @loggedin="loggedIn()"
-        @loggedout="loggedOut()"
-      ></AccountPanel>
+      <div class="grid">
+        <AccountPanel
+          :remotedb="remotedb"
+          :sync_change="sync_change"
+          :user="user"
+          :reloadSync="reloadSync"
+          @loggedin="loggedIn()"
+          @loggedout="loggedOut()"
+          class="location-span"
+        ></AccountPanel>
+
+        <div
+          class="background-box location-span"
+          v-if="loggedIn"
+        >
+          <h2 class="content-centered">Tools</h2>
+          <router-link :to="{name: 'ranking'}">Rankings</router-link><br>
+        </div>
+      </div>
     </div>
+
     <div
       class="location-right-large"
       v-if="loggedin"
@@ -282,10 +294,5 @@ export default {
 }
 .sorting-option-down::after {
   transform: rotate(90deg);
-}
-@media (max-width: 700px) {
-  .leaderboard-team {
-    font-size: 0.8em;
-  }
 }
 </style>

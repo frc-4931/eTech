@@ -244,9 +244,11 @@ if (options.useSsl) {
 var useBA = options.tbaEnabled;
 if (useBA) {
   var tbaDB = new pouchdb(PROXY_TARGET + "/bluealliance");
-  var tbaLogin = options.tbaDbLogin.split(":", 1);
-  tbaDB.logIn(tbaLogin[0], tbaLogin[1]).catch(function () {
-    //Error logging in
+  var tbaLogin = options.tbaDbLogin.split(":", 2);
+  tbaDB.logIn(tbaLogin[0], tbaLogin[1]).catch(function (err) {
+    console.log(chalk.redBright("Error while logging into The Blue Alliance database."));
+    console.log(err)
+    process.exit();
   });
 
   var baKey = "GZSwS1Bx1TPPVjDLogJ9az42js2sehTlA8N3lnCi8LqG8FhOdCwAvfvQzT0mFz65";

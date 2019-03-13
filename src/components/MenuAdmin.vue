@@ -8,7 +8,7 @@
     >
       <div class="done-button-container mobile-view">
         <h3
-          class="location-left-tiny background-box background-box-hover content-centered"
+          class="background-box background-box-hover content-centered"
           @click="goBack()"
         >Back</h3>
       </div>

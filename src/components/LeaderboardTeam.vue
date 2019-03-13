@@ -1,7 +1,7 @@
 <template>
   <div
     @click="teamView()"
-    class="background-box background-box-hover leaderboard-container"
+    class="background-box background-box-hover leaderboard-container mobile-shrink"
   >
     <div
       v-for="(teamEl, teamTitle) in team"

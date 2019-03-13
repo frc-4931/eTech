@@ -269,3 +269,9 @@ textarea {
     -webkit-appearance: none;
   }
 }
+
+@media (max-width: 700px) {
+  .mobile-shrink {
+    font-size: 0.8em;
+  }
+}
