@@ -274,16 +274,22 @@ if (useBA) {
         }
         var data = JSON.parse(body);
 
+        var date = new Date(res.headers["last-modified"]).getTime();
+
         tbaDB
           .get(file)
           .then(function (doc) {
-            doc.json = data;
-            tbaDB.put(doc).catch(function () {
-              // Could not push
-            });
+            if (doc.lastModified === undefined || isNaN(doc.lastModified) || doc.lastModified < date) {
+              doc.json = data;
+              doc.lastModified = date;
+
+              tbaDB.put(doc).catch(function () {
+                // Could not push
+              });
+            }
           })
           .catch(function () {
-            var doc = { _id: file, json: data };
+            var doc = { _id: file, json: data, lastModified: date };
             tbaDB.put(doc).catch(function () {
               // Could not push
             });
@@ -304,6 +310,8 @@ if (useBA) {
 
         let data = JSON.parse(body);
 
+        let date = new Date(res.headers["last-modified"]).getTime();
+
         // Cache basic team info
         for (let team of data) {
           let teamKey = team["key"];
@@ -313,13 +321,17 @@ if (useBA) {
           tbaDB
             .get(id)
             .then(function (doc) {
-              doc.json = team;
-              tbaDB.put(doc).catch(function () {
-                // Could not push
-              });
+              if (doc.lastModified === undefined || isNaN(doc.lastModified) || doc.lastModified < date) {
+                doc.json = team;
+                doc.lastModified = data;
+
+                tbaDB.put(doc).catch(function () {
+                  // Could not push
+                });
+              }
             })
             .catch(function () {
-              let doc = { _id: id, json: team };
+              let doc = { _id: id, json: team, lastModified: date };
               tbaDB.put(doc).catch(function () {
                 // Could not push
               });
@@ -338,18 +350,22 @@ if (useBA) {
             }
 
             let matchData = JSON.parse(body);
+            let date = new Date(res.headers["last-modified"]).getTime();
             let id = "MATCHDATA_" + teamNumber;
 
             tbaDB
               .get(id)
               .then(function (doc) {
-                doc.json = matchData;
-                tbaDB.put(doc).catch(function () {
-                  // Could not push
-                });
+                if (doc.lastModified === undefined || isNaN(doc.lastModified) || doc.lastModified < date) {
+                  doc.json = matchData;
+                  doc.lastModified = date;
+                  tbaDB.put(doc).catch(function () {
+                    // Could not push
+                  });
+                }
               })
               .catch(function () {
-                let doc = { _id: id, json: matchData };
+                let doc = { _id: id, json: matchData, lastModified: date };
                 tbaDB.put(doc).catch(function () {
                   // Could not push
                 });
@@ -368,18 +384,23 @@ if (useBA) {
             }
 
             let matchData = JSON.parse(body);
+            let date = new Date(res.headers["last-modified"]).getTime();
             let id = "STATUS_" + teamNumber;
 
             tbaDB
               .get(id)
               .then(function (doc) {
-                doc.json = matchData;
-                tbaDB.put(doc).catch(function () {
-                  // Could not push
-                });
+                if (doc.lastModified === undefined || isNaN(doc.lastModified) || doc.lastModified < date) {
+                  doc.json = matchData;
+                  doc.lastModified = date;
+
+                  tbaDB.put(doc).catch(function () {
+                    // Could not push
+                  });
+                }
               })
               .catch(function () {
-                let doc = { _id: id, json: matchData };
+                let doc = { _id: id, json: matchData, lastModified: date };
                 tbaDB.put(doc).catch(function () {
                   // Could not push
                 });
