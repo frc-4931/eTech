@@ -5,7 +5,10 @@ const fs = require("fs");
 const commandLineArgs = require("command-line-args");
 const commandLineUsage = require("command-line-usage");
 const chalk = require("chalk");
-const PouchDB = require("pouchdb");
+const pouchdb = require("pouchdb");
+pouchdb.plugin(require("pouchdb-authentication"));
+
+const request = require("request");
 
 const optionDefinitions = [
   {
@@ -59,11 +62,37 @@ const optionDefinitions = [
       "Enable SSL. Read how to use it here: https://github.com/Damian0001/Scouting-App#enable-ssl"
   },
   {
+    name: "tba-enabled",
+    type: Boolean,
+    description: "Enables The Blue Alliance integration."
+  },
+  {
+    name: "tba-db-login",
+    type: String,
+    description: "Your username and password seperated by ':' (Example: 'admin:password')."
+  },
+  {
+    name: "tba-interval",
+    type: Number,
+    defaultValue: 30,
+    description: "Amount of time in seconds between pinging The Blue Alliance for data (Defaults to '30')."
+  },
+  {
+    name: "tba-auth-key",
+    type: String,
+    description: "Your The Blue Alliance auth key."
+  },
+  {
+    name: "tba-event-key",
+    type: String,
+    description: "The Blue Alliance event key for your current competition."
+  },
+  {
     name: "help",
     alias: "h",
     type: Boolean,
     description: "Display this usage guide."
-  }
+  },
 ];
 
 const options = commandLineArgs(optionDefinitions, {
@@ -98,7 +127,7 @@ const PORT = options.port;
 
 const proxy = httpProxy.createProxyServer({});
 
-proxy.on("error", function(err, req, response) {
+proxy.on("error", function (err, req, response) {
   response.writeHead(500, {
     "Content-Type": "text/plain"
   });
@@ -106,7 +135,7 @@ proxy.on("error", function(err, req, response) {
   response.end("Something went wrong. Maybe the database is down?");
 });
 
-const handler = function(request, response) {
+const handler = function (request, response) {
   var url = request.url;
 
   if (url.startsWith(LOCAL_DATABASE)) {
@@ -174,7 +203,7 @@ if (options.useSsl) {
 
     server = https
       .createServer(certificate, handler)
-      .on("error", function(err) {
+      .on("error", function (err) {
         console.log(
           chalk.redBright(
             "Error while creating HTTPS server. Maybe port %s is already in use or you don't have permision to start a server?\nError message: %s"
@@ -198,7 +227,7 @@ if (options.useSsl) {
 } else {
   server = http
     .createServer(handler)
-    .on("error", function(err) {
+    .on("error", function (err) {
       console.log(
         chalk.redBright(
           "Error while creating HTTP server. Maybe port %s is already in use or you don't have permision to start a server?\nError message: %s"
@@ -211,50 +240,50 @@ if (options.useSsl) {
     .listen(PORT);
 }
 
-var baDB = new PouchDB(PROXY_TARGET + "/bluealliance");
-var useBA = true;
-var baKey = "GZSwS1Bx1TPPVjDLogJ9az42js2sehTlA8N3lnCi8LqG8FhOdCwAvfvQzT0mFz65";
-var baEvent = "2019nytr";
+var useBA = options.tbaEnabled;
+if (useBA) {
+  var tbaDB = new pouchdb(PROXY_TARGET + "/bluealliance");
+  var tbaLogin = options.tbaDbLogin.split(":", 1);
+  tbaDB.logIn(tbaLogin[0], tbaLogin[1])
 
-var runBA = function() {
-  if (!runBA) return;
+  var baKey = "GZSwS1Bx1TPPVjDLogJ9az42js2sehTlA8N3lnCi8LqG8FhOdCwAvfvQzT0mFz65";
+  var baEvent = "2019nytr";
 
-  var options = {
-    host: "www.thebluealliance.com",
-    port: 443,
-    path: "/api/v3/event/" + baEvent + "/matches",
-    method: "GET",
-    headers: {
-      "X-TBA-Auth-Key": baKey
-    }
-  };
+  var runBA = function () {
+    if (!runBA) return;
 
-  options.path = "/api/v3/event/" + baEvent + "/matches";
-  https.request(options, function(res) {
-    var data;
+    var options = {
+      url: "https://www.thebluealliance.com/api/v3/event/" + baEvent + "/matches",
+      method: "GET",
+      headers: {
+        "X-TBA-Auth-Key": baKey
+      }
+    };
 
-    res.setEncoding("utf8");
-    res.on("data", function(chunk) {
-      data = JSON.parse(chunk);
-    });
+    request(options, function (err, res, body) {
+      if (err) {
+        console.log("Error pulling")
+      }
 
-    res.on("end", function() {
+
+      var data = JSON.parse(body);
+
       baDB
         .get("MATCHES")
-        .then(function(doc) {
+        .then(function (doc) {
           doc.json = data;
           baDB.put(doc);
         })
-        .catch(function() {
+        .catch(function (err) {
           var doc = { _id: "MATCHES", json: data };
           baDB.put(doc);
         });
     });
-  });
-};
+  };
 
-var intervalTime = 30 * 1000;
-setInterval(runBA, intervalTime);
+  var intervalTime = options.tbaInterval * 1000;
+  setInterval(runBA, intervalTime);
+}
 
 console.log(
   chalk.cyan(
@@ -272,3 +301,4 @@ if (options.logDbRequests)
     chalk.cyan(" - Logging database requests to the console is enabled")
   );
 if (options.useSsl) console.log(chalk.cyan(" - SSL is enabled"));
+if (options.tbaEnabled) console.log(" - The Blue Alliance integration is enabled")
