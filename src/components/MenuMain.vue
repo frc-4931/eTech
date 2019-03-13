@@ -16,7 +16,7 @@
 
         <div
           class="background-box location-span"
-          v-if="loggedIn"
+          v-if="loggedin"
         >
           <h2 class="content-centered">Tools</h2>
           <router-link :to="{name: 'ranking'}">Rankings</router-link><br>
