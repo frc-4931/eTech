@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const http = require("http");
 const https = require("https");
 const httpProxy = require("http-proxy");
@@ -201,7 +202,7 @@ if (options.useSsl) {
       ca: fs.readFileSync("certs/ca-crt.pem")
     };
 
-    server = https
+    https
       .createServer(certificate, handler)
       .on("error", function (err) {
         console.log(
@@ -225,7 +226,7 @@ if (options.useSsl) {
     process.exit();
   }
 } else {
-  server = http
+  http
     .createServer(handler)
     .on("error", function (err) {
       console.log(
@@ -244,7 +245,9 @@ var useBA = options.tbaEnabled;
 if (useBA) {
   var tbaDB = new pouchdb(PROXY_TARGET + "/bluealliance");
   var tbaLogin = options.tbaDbLogin.split(":", 1);
-  tbaDB.logIn(tbaLogin[0], tbaLogin[1])
+  tbaDB.logIn(tbaLogin[0], tbaLogin[1]).catch(function () {
+    //Error logging in
+  });
 
   var baKey = "GZSwS1Bx1TPPVjDLogJ9az42js2sehTlA8N3lnCi8LqG8FhOdCwAvfvQzT0mFz65";
   var baEvent = "2019nytr";
@@ -253,32 +256,143 @@ if (useBA) {
     if (!runBA) return;
 
     var options = {
-      url: "https://www.thebluealliance.com/api/v3/event/" + baEvent + "/matches",
+      url: "https://www.thebluealliance.com/api/v3/",
       method: "GET",
       headers: {
         "X-TBA-Auth-Key": baKey
       }
     };
 
-    request(options, function (err, res, body) {
-      if (err) {
-        console.log("Error pulling")
-      }
+    var cacheToFile = function (url, file) {
+      var opt = {};
+      Object.assign(opt, options);
+      opt.url += url;
+
+      request(opt, function (err, res, body) {
+        if (err) {
+          console.log("Error pulling")
+        }
+        var data = JSON.parse(body);
+
+        tbaDB
+          .get(file)
+          .then(function (doc) {
+            doc.json = data;
+            tbaDB.put(doc).catch(function () {
+              // Could not push
+            });
+          })
+          .catch(function () {
+            var doc = { _id: file, json: data };
+            tbaDB.put(doc).catch(function () {
+              // Could not push
+            });
+          });
+      });
+    }
+
+    var cacheTeamsToFiles = function () {
+      let opt = {};
+      Object.assign(opt, options);
+      opt.url += "event/" + baEvent + "/teams";
+
+      request(opt, function (err, res, body) {
+        if (err) {
+          console.log("Error pulling")
+          return;
+        }
+
+        let data = JSON.parse(body);
+
+        // Cache basic team info
+        for (let team of data) {
+          let teamKey = team["key"];
+          let teamNumber = team["team_number"];
+          let id = "TEAM_" + teamNumber;
+
+          tbaDB
+            .get(id)
+            .then(function (doc) {
+              doc.json = team;
+              tbaDB.put(doc).catch(function () {
+                // Could not push
+              });
+            })
+            .catch(function () {
+              let doc = { _id: id, json: team };
+              tbaDB.put(doc).catch(function () {
+                // Could not push
+              });
+            });
 
 
-      var data = JSON.parse(body);
+          // Get all match info for team and cache it
+          let opts = {};
+          Object.assign(opts, options);
+          opts.url += "team/" + teamKey + "/event/" + baEvent + "/matches";
 
-      baDB
-        .get("MATCHES")
-        .then(function (doc) {
-          doc.json = data;
-          baDB.put(doc);
-        })
-        .catch(function (err) {
-          var doc = { _id: "MATCHES", json: data };
-          baDB.put(doc);
-        });
-    });
+          request(opts, function (err, res, body) {
+            if (err) {
+              console.log("Error pulling")
+              return;
+            }
+
+            let matchData = JSON.parse(body);
+            let id = "MATCHDATA_" + teamNumber;
+
+            tbaDB
+              .get(id)
+              .then(function (doc) {
+                doc.json = matchData;
+                tbaDB.put(doc).catch(function () {
+                  // Could not push
+                });
+              })
+              .catch(function () {
+                let doc = { _id: id, json: matchData };
+                tbaDB.put(doc).catch(function () {
+                  // Could not push
+                });
+              });
+          });
+
+          // Cache match status for team (ie team rank and record)
+          opts = {};
+          Object.assign(opts, options);
+          opts.url += "team/" + teamKey + "/event/" + baEvent + "/status";
+
+          request(opts, function (err, res, body) {
+            if (err) {
+              console.log("Error pulling")
+              return;
+            }
+
+            let matchData = JSON.parse(body);
+            let id = "STATUS_" + teamNumber;
+
+            tbaDB
+              .get(id)
+              .then(function (doc) {
+                doc.json = matchData;
+                tbaDB.put(doc).catch(function () {
+                  // Could not push
+                });
+              })
+              .catch(function () {
+                let doc = { _id: id, json: matchData };
+                tbaDB.put(doc).catch(function () {
+                  // Could not push
+                });
+              });
+          });
+        }
+      });
+    }
+
+    cacheToFile("event/" + baEvent + "/matches", "MATCHES");
+    cacheToFile("event/" + baEvent + "/rankings", "RANKINGS");
+    cacheTeamsToFiles();
+
   };
 
   var intervalTime = options.tbaInterval * 1000;
