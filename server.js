@@ -81,11 +81,13 @@ const optionDefinitions = [
   {
     name: "tba-auth-key",
     type: String,
+    defaultValue: "GZSwS1Bx1TPPVjDLogJ9az42js2sehTlA8N3lnCi8LqG8FhOdCwAvfvQzT0mFz65", //FIXME remove default value
     description: "Your The Blue Alliance auth key."
   },
   {
     name: "tba-event-key",
     type: String,
+    defaultValue: "2019nytr", // FIXME Remove default value  
     description: "The Blue Alliance event key for your current competition."
   },
   {
@@ -244,18 +246,37 @@ if (options.useSsl) {
 var useBA = options.tbaEnabled;
 if (useBA) {
   var tbaDB = new pouchdb(PROXY_TARGET + "/bluealliance");
-  var tbaLogin = options.tbaDbLogin.split(":", 2);
+  try {
+    var tbaLogin = options.tbaDbLogin.split(":", 2);
+  } catch (exept) {
+    console.log(chalk.redBright("Error while trying to prase databse loggin credentials."));
+    process.exit();
+  }
   tbaDB.logIn(tbaLogin[0], tbaLogin[1]).catch(function (err) {
     console.log(chalk.redBright("Error while logging into The Blue Alliance database."));
     console.log(err)
     process.exit();
   });
 
-  var baKey = "GZSwS1Bx1TPPVjDLogJ9az42js2sehTlA8N3lnCi8LqG8FhOdCwAvfvQzT0mFz65";
-  var baEvent = "2019nytr";
+  var baKey;
+  var baEvent;
+
+  if (options.tbaAuthKey) {
+    baKey = options.tbaAuthKey;
+  } else {
+    console.log(chalk.redBright("Error: You must supply a The Blue Alliance authentication key when TBA integration is enabled."));
+    process.exit();
+  }
+
+  if (options.tbaEventKey) {
+    baEvent = options.tbaEventKey;
+  } else {
+    console.log(chalk.redBright("Error: You must supply a The Blue Alliance event key when TBA integration is enabled."));
+    process.exit();
+  }
 
   var runBA = function () {
-    if (!runBA) return;
+    if (!useBA) return;
 
     var options = {
       url: "https://www.thebluealliance.com/api/v3/",
