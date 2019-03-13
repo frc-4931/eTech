@@ -433,9 +433,9 @@ if (useBA) {
       });
     }
 
-    cacheToFile("event/" + baEvent + "/matches", "MATCHES");
+    //cacheToFile("event/" + baEvent + "/matches", "MATCHES");
     cacheToFile("event/" + baEvent + "/rankings", "RANKINGS");
-    cacheTeamsToFiles();
+    //cacheTeamsToFiles();
 
   };
 
