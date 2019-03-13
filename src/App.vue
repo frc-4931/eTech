@@ -8,6 +8,7 @@
       <router-view
         :localdb="localdb"
         :remotedb="remotedb"
+        :bluealliancedb="bluealliancedb"
         :sync_change="sync_change"
         :user="user"
         :reloadSync="reloadSync"
@@ -27,7 +28,7 @@ var url = "";
 var setup = {};
 var protocol = location.protocol == "https:" ? "https://" : "http://";
 if (window.webpackHotUpdate) {
-  url = protocol + window.location.hostname + ":5984/scouting/";
+  url = protocol + window.location.hostname + ":5984/";
   setup = {
     skip_setup: true,
     fetch(url, opts) {
@@ -36,7 +37,7 @@ if (window.webpackHotUpdate) {
     }
   };
 } else {
-  url = protocol + window.location.host + "/database/scouting";
+  url = protocol + window.location.host + "/database/";
   setup = {
     skip_setup: true
   };
@@ -51,18 +52,21 @@ export default {
     return {
       isConnectionError: false,
       localdb: new PouchDB("localdb"),
-      remotedb: new PouchDB(url, setup),
+      remotedb: new PouchDB(url + "scouting", setup),
+      bluealliancedb: new PouchDB(url + "bluealliance", setup),
       sync: {},
       user: { username: null, role: null },
-      sync_change: { onChange: function() {}, onPaused: function() {} }
+      sync_change: {
+        onChange: function() {},
+        onBlueAllianceDbChange: function() {},
+        onPaused: function() {}
+      }
     };
   },
   methods: {
     reloadSync() {
       //console.log("Reloading sync");
       var dThis = this;
-
-      this.sync.cancel();
 
       dThis.sync = dThis.localdb
         .sync(dThis.remotedb, {
@@ -118,6 +122,19 @@ export default {
       })
       .on("paused", function() {
         dThis.sync_change.onPaused();
+      });
+
+    this.bluealliancedb
+      .changes({
+        since: "now",
+        live: true,
+        include_docs: true
+      })
+      .on("change", function(change) {
+        dThis.sync_change.onBlueAllianceDbChange(change);
+      })
+      .on("error", function(err) {
+        console.log(err);
       });
   }
 };
