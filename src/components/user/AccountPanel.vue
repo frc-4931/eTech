@@ -72,7 +72,17 @@
         </div>
 
         <div
-          v-else-if="loggedin && !isAdmin"
+          v-else-if="loggedin && !isAdmin && isViewOnly"
+          class="grid-perminant content-centered"
+        >
+          <a
+            @click="logOut()"
+            class="location-centered"
+          >Logout</a>
+        </div>
+
+        <div
+          v-else-if="loggedin && !isAdmin && !isViewOnly"
           class="grid-perminant content-centered"
         >
           <a
@@ -134,7 +144,8 @@ export default {
   data: function() {
     return {
       loggedin: false,
-      isAdmin: true,
+      isAdmin: false,
+      isViewOnly: true,
       username: "",
       password: "",
       confirmPassword: "",
@@ -155,6 +166,7 @@ export default {
         if (err) {
           dThis.loggedin = false;
           dThis.isAdmin = false;
+          dThis.isViewOnly = true;
           dThis.user.username = null;
 
           if (err.name === "unauthorized" || err.name === "forbidden") {
@@ -173,16 +185,18 @@ export default {
     },
     logOut() {
       var dThis = this;
-      this.remotedb.logOut(function(err) {
-        if (err) {
-          dThis.isError = true;
-          dThis.errorMessage = "Error, please try again.";
-        } else {
-          dThis.user.username = null;
-          dThis.user.role = null;
-          dThis.getLoggedIn();
-        }
-      });
+      if (confirm("Are you sure you would like to log out?")) {
+        this.remotedb.logOut(function(err) {
+          if (err) {
+            dThis.isError = true;
+            dThis.errorMessage = "Error, please try again.";
+          } else {
+            dThis.user.username = null;
+            dThis.user.role = null;
+            dThis.getLoggedIn();
+          }
+        });
+      }
     },
     getLoggedIn() {
       var dThis = this;
@@ -201,6 +215,7 @@ export default {
           dThis.networkError = false;
           dThis.loggedin = false;
           dThis.isAdmin = false;
+          dThis.isViewOnly = true;
           dThis.password = "";
           dThis.confirmPassword = "";
           dThis.username = "";
@@ -215,14 +230,17 @@ export default {
           dThis.username = response.userCtx.name;
           dThis.user.username = response.userCtx.name;
           dThis.isAdmin = false;
+          dThis.isViewOnly = true;
           dThis.user.role = null;
 
           var roles = response.userCtx.roles;
           if (roles.indexOf("_admin") !== -1) {
             dThis.isAdmin = true;
+            dThis.isViewOnly = false;
             dThis.user.role = "_admin";
           } else if (roles.indexOf("edit") !== -1) {
             dThis.user.role = "edit";
+            dThis.isViewOnly = false;
           } else if (roles.indexOf("view") !== -1) {
             dThis.user.role = "view";
           }
