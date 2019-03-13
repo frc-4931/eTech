@@ -26,7 +26,7 @@
           v-for="team in teams"
           :key="team.team_key"
           :teamData="team"
-          :bluealliancedb="bluealliancedb"
+          :localtbadb="localtbadb"
         />
       </transition-group>
     </div>
@@ -48,14 +48,14 @@ export default {
     };
   },
   props: {
-    bluealliancedb: Object,
+    localtbadb: Object,
     sync_change: Object
   },
   methods: {
     reloadTeams() {
       var dThis = this;
 
-      this.bluealliancedb.get("RANKINGS").then(function(doc) {
+      this.localtbadb.get("RANKINGS").then(function(doc) {
         dThis.teams = doc.json.rankings;
       });
     },

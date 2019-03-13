@@ -16,7 +16,7 @@ export default {
   name: "RankingTeam",
   props: {
     teamData: Object,
-    bluealliancedb: Object
+    localtbadb: Object
   },
   data: function() {
     return {
@@ -40,7 +40,7 @@ export default {
   created: function() {
     var dThis = this;
 
-    this.bluealliancedb.get("TEAM_" + this.teamNumber).then(function(doc) {
+    this.localtbadb.get("TEAM_" + this.teamNumber).then(function(doc) {
       dThis.teamName = doc.json.nickname;
     });
   }
