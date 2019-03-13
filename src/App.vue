@@ -8,6 +8,7 @@
       <router-view
         :localdb="localdb"
         :remotedb="remotedb"
+        :localtbadb="localtbadb"
         :bluealliancedb="bluealliancedb"
         :sync_change="sync_change"
         :user="user"
@@ -54,12 +55,15 @@ export default {
       localdb: new PouchDB("localdb"),
       remotedb: new PouchDB(url + "scouting", setup),
       bluealliancedb: new PouchDB(url + "bluealliance", setup),
+      localtbadb: new PouchDB("localtbadb"),
       sync: {},
+      tbasync: {},
       user: { username: null, role: null },
       sync_change: {
         onChange: function() {},
+        onPaused: function() {},
         onBlueAllianceDbChange: function() {},
-        onPaused: function() {}
+        onBlueAllianceDbPaused: function() {}
       }
     };
   },
@@ -81,6 +85,21 @@ export default {
         })
         .on("paused", function() {
           dThis.sync_change.onPaused();
+        });
+
+      dThis.tbasync = dThis.localtbadb
+        .sync(dThis.bluealliancedb, {
+          live: true,
+          retry: true
+        })
+        .on("error", function(err) {
+          console.log(err);
+        })
+        .on("change", function(change) {
+          dThis.sync_change.onBlueAllianceDbChange(change);
+        })
+        .on("paused", function() {
+          dThis.sync_change.onBlueAllianceDbPaused();
         });
     }
   },
@@ -109,33 +128,7 @@ export default {
       }
     });
 
-    this.sync = this.localdb
-      .sync(this.remotedb, {
-        live: true,
-        retry: true
-      })
-      .on("error", function(err) {
-        console.log(err);
-      })
-      .on("change", function(change) {
-        dThis.sync_change.onChange(change);
-      })
-      .on("paused", function() {
-        dThis.sync_change.onPaused();
-      });
-
-    this.bluealliancedb
-      .changes({
-        since: "now",
-        live: true,
-        include_docs: true
-      })
-      .on("change", function(change) {
-        dThis.sync_change.onBlueAllianceDbChange(change);
-      })
-      .on("error", function(err) {
-        console.log(err);
-      });
+    this.reloadSync();
   }
 };
 </script>
