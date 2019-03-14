@@ -1,58 +1,60 @@
 <template>
-  <div
-    v-if="loggedin"
-    class="grid grid-shrink"
-  >
-    <div class="location-centered-small grid-perminant">
-      <h2 class=" background-box location-span content-centered">Add team</h2>
+  <div>
+    <Error v-show="user.role != '_admin'">You must be logged in as an admin to view this page!</Error>
+    <div
+      v-show="user.role == '_admin'"
+      class="grid grid-shrink"
+    >
+      <div class="location-centered-small grid-perminant">
+        <h2 class=" background-box location-span content-centered">Add team</h2>
 
-      <Error
-        v-if="isError"
-        class="location-span"
-      >{{ errorMessage }}</Error>
+        <Error
+          v-if="isError"
+          class="location-span"
+        >{{ errorMessage }}</Error>
 
-      <p class="location-left background-box content-centered">Team Name</p>
+        <p class="location-left background-box content-centered">Team Name</p>
 
-      <div class="location-right background-box-input">
-        <input
-          v-model.trim="name"
-          type="text"
-          name="team-name"
-          placeholder="Team Name"
-          class="content-centered"
-        >
-      </div>
+        <div class="location-right background-box-input">
+          <input
+            v-model.trim="name"
+            type="text"
+            name="team-name"
+            placeholder="Team Name"
+            class="content-centered"
+          >
+        </div>
 
-      <p class="location-left background-box content-centered">Team Number</p>
+        <p class="location-left background-box content-centered">Team Number</p>
 
-      <div class="location-right background-box-input">
-        <input
-          v-model.number="number"
-          type="number"
-          pattern="[0-9]*"
-          max="9999"
-          min="1"
-          name="team-number"
-          placeholder="Team Number"
-          class="content-centered"
-        >
-      </div>
+        <div class="location-right background-box-input">
+          <input
+            v-model.number="number"
+            type="number"
+            pattern="[0-9]*"
+            max="9999"
+            min="1"
+            name="team-number"
+            placeholder="Team Number"
+            class="content-centered"
+          >
+        </div>
 
-      <div class="location-span">
-        <h3
-          @click="submitTeam()"
-          class="background-box content-centered"
-          v-bind:class="[this.allFieldsValid ? 'background-box-hover' : 'background-box-disabled']"
-        >Add</h3>
+        <div class="location-span">
+          <h3
+            @click="submitTeam()"
+            class="background-box content-centered"
+            v-bind:class="[this.allFieldsValid ? 'background-box-hover' : 'background-box-disabled']"
+          >Add</h3>
 
-        <h3
-          @click="goBack()"
-          class="background-box background-box-hover content-centered"
-        >Cancel</h3>
+          <h3
+            @click="goBack()"
+            class="background-box background-box-hover content-centered"
+          >Cancel</h3>
+        </div>
       </div>
     </div>
   </div>
-  <Error v-else>You must be logged in as an admin to view this page!</Error>
 </template>
 
 <script>
@@ -65,15 +67,15 @@ export default {
   },
   props: {
     localdb: Object,
-    remotedb: Object
+    remotedb: Object,
+    user: Object
   },
   data: function() {
     return {
       number: "",
       name: "",
       isError: false,
-      errorMessage: "Error",
-      loggedin: false
+      errorMessage: "Error"
     };
   },
   methods: {
@@ -108,16 +110,6 @@ export default {
     goBack() {
       this.$router.push("/admin/");
     }
-  },
-  created() {
-    var dThis = this;
-    this.remotedb.getSession(function(err, response) {
-      if (err) {
-        //There was an error
-      } else if (response.userCtx.roles.indexOf("_admin") != -1) {
-        dThis.loggedin = true;
-      }
-    });
   },
   computed: {
     allFieldsValid() {
