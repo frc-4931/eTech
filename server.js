@@ -258,13 +258,6 @@ if (useBA) {
     process.exit();
   });
 
-  if (options.tbaAuthKey == undefined) {
-    baKey = options.tbaAuthKey;
-  } else {
-    console.log(chalk.redBright("Error: You must supply a The Blue Alliance authentication key when TBA integration is enabled."));
-    process.exit();
-  }
-
   var baKey = options.tbaAuthKey;
   var baEvent = options.tbaEventKey;
 
