@@ -27,6 +27,7 @@
           :key="team.team_key"
           :teamData="team"
           :localtbadb="localtbadb"
+          :localdb="localdb"
         />
       </transition-group>
     </div>
@@ -49,6 +50,7 @@ export default {
   },
   props: {
     localtbadb: Object,
+    localdb: Object,
     sync_change: Object
   },
   methods: {

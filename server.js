@@ -306,15 +306,15 @@ if (useBA) {
               doc.json = data;
               doc.lastModified = date;
 
-              tbaDB.put(doc).catch(function () {
-                // Could not push
+              tbaDB.put(doc).catch(function (err) {
+                console.log(err)
               });
             }
           })
           .catch(function () {
             var doc = { _id: file, json: data, lastModified: date };
-            tbaDB.put(doc).catch(function () {
-              // Could not push
+            tbaDB.put(doc).catch(function (err) {
+              console.log(err)
             });
           });
       });
@@ -433,7 +433,7 @@ if (useBA) {
       });
     }
 
-    //cacheToFile("event/" + baEvent + "/matches", "MATCHES");
+    cacheToFile("event/" + baEvent + "/matches", "MATCHES");
     cacheToFile("event/" + baEvent + "/rankings", "RANKINGS");
     //cacheTeamsToFiles();
 
@@ -459,4 +459,4 @@ if (options.logDbRequests)
     chalk.cyan(" - Logging database requests to the console is enabled")
   );
 if (options.useSsl) console.log(chalk.cyan(" - SSL is enabled"));
-if (options.tbaEnabled) console.log(" - The Blue Alliance integration is enabled")
+if (options.tbaEnabled) console.log(chalk.cyan(" - The Blue Alliance integration is enabled"))

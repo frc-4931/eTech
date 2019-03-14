@@ -58,7 +58,7 @@ export default {
       localtbadb: new PouchDB("localtbadb"),
       sync: {},
       tbasync: {},
-      user: { username: null, role: null },
+      user: { username: null, role: "view" },
       sync_change: {
         onChange: function() {},
         onPaused: function() {},

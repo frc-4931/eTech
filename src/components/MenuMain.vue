@@ -37,28 +37,28 @@
       </div>
       <div
         v-if="teams.length != 0"
-        class="background-box leaderboard-team leaderboard-container"
+        class="background-box leaderboard-team leaderboard-container mobile-shrink"
       >
-        <p
+        <h3
           v-bind:class="sortedTeamOption === 'name' ? (sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''"
           @click="toggleSorted(true, 'name')"
-        >Name</p>
-        <p
+        >Name</h3>
+        <h3
           v-bind:class="sortedTeamOption === 'number' ? (sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''"
           @click="toggleSorted(true, 'number')"
-        >Number</p>
-        <p
+        >Number</h3>
+        <h3
           v-bind:class="sortedTeamOption === 'objectivePoints' ? (sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''"
           @click="toggleSorted(true, 'objectivePoints')"
-        >Objective Points</p>
-        <p
+        >Objective Points</h3>
+        <h3
           v-bind:class="sortedTeamOption === 'commentPoints' ? (sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''"
           @click="toggleSorted(true, 'commentPoints')"
-        >Comment Points</p>
-        <p
+        >Comment Points</h3>
+        <h3
           v-bind:class="sortedTeamOption === 'totalPoints' ? (sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''"
           @click="toggleSorted(true, 'totalPoints')"
-        >Total Points</p>
+        >Total Points</h3>
       </div>
       <p
         v-else
