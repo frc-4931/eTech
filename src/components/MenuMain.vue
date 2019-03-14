@@ -19,7 +19,16 @@
           v-if="loggedin"
         >
           <h2 class="content-centered">Tools</h2>
-          <router-link :to="{name: 'ranking'}">Rankings</router-link><br>
+          <div class="grid-perminant">
+            <router-link
+              class="location-left content-centered"
+              :to="{name: 'ranking'}"
+            >Rankings</router-link>
+            <router-link
+              class="location-right content-centered"
+              :to="{name: 'schedule'}"
+            >Schedule</router-link>
+          </div>
         </div>
       </div>
     </div>

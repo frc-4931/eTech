@@ -1,21 +1,21 @@
 <template>
   <div class="background-box mobile-shrink schedule-match">
-    <p>{{ matchData.match_number}}</p>
-    <p class="schedule-match-blue">{{ matchData.alliances.blue.team_keys[0] }}</p>
-    <p class="schedule-match-blue">{{ matchData.alliances.blue.team_keys[1] }}</p>
-    <p class="schedule-match-blue">{{ matchData.alliances.blue.team_keys[2] }}</p>
-    <p class="schedule-match-red">{{ matchData.alliances.red.team_keys[0] }}</p>
-    <p class="schedule-match-red">{{ matchData.alliances.red.team_keys[1] }}</p>
-    <p class="schedule-match-red">{{ matchData.alliances.red.team_keys[2] }}</p>
-    <p>{{ matchData.score_breakdown.blue.totalPoints }}</p>
-    <p>{{ matchData.score_breakdown.red.totalPoints }}</p>
+    <p>{{ match }}</p>
+    <p :class="blueClass">{{ matchData.alliances.blue.team_keys[0].replace("frc", "") }}</p>
+    <p :class="blueClass">{{ matchData.alliances.blue.team_keys[1].replace("frc", "") }}</p>
+    <p :class="blueClass">{{ matchData.alliances.blue.team_keys[2].replace("frc", "") }}</p>
+    <p :class="redClass">{{ matchData.alliances.red.team_keys[0].replace("frc", "") }}</p>
+    <p :class="redClass">{{ matchData.alliances.red.team_keys[1].replace("frc", "") }}</p>
+    <p :class="redClass">{{ matchData.alliances.red.team_keys[2].replace("frc", "") }}</p>
+    <p>{{ matchData.alliances.blue.score }}</p>
+    <p>{{ matchData.alliances.red.score }}</p>
     <p>{{ scheduledTime }}</p>
   </div>
 </template>
 
 <script>
 export default {
-  name: "RankingTeam",
+  name: "ScheduleMatch",
   props: {
     matchData: Object,
     localtbadb: Object,
@@ -23,7 +23,33 @@ export default {
   },
   computed: {
     scheduledTime: function() {
-      return new Date(this.matchData.time).toLocaleTimeString();
+      var d = new Date(0);
+      d.setUTCSeconds(this.matchData.time);
+      return d.toLocaleString([], {
+        weekday: "short",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    },
+    match: function() {
+      var comp = "Qual ";
+      if (this.matchData.comp_level == "f") comp = "Final ";
+      else if (this.matchData.comp_level == "sf")
+        comp = "SF " + this.matchData.set_number + " - ";
+      else if (this.matchData.comp_level == "qf")
+        comp = "QF " + this.matchData.set_number + " - ";
+
+      return comp + this.matchData.match_number;
+    },
+    redClass: function() {
+      return this.matchData.winning_alliance == "red"
+        ? "schedule-match-red"
+        : "";
+    },
+    blueClass: function() {
+      return this.matchData.winning_alliance == "blue"
+        ? "schedule-match-blue"
+        : "";
     }
   }
 };

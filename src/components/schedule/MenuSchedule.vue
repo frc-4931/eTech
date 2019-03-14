@@ -26,7 +26,7 @@
         <transition-group>
           <ScheduleMatch
             v-for="match in matches"
-            :key="match.match_number"
+            :key="match.set_number + match.comp_level + match.match_number"
             :matchData="match"
           />
         </transition-group>
@@ -38,10 +38,11 @@
 
 <script>
 import Error from "../Error.vue";
+import orderBy from "lodash.orderby";
 import ScheduleMatch from "./ScheduleMatch.vue";
 
 export default {
-  name: "MenuRanking",
+  name: "MenuSchedule",
   components: {
     ScheduleMatch,
     Error
@@ -63,7 +64,17 @@ export default {
       this.localtbadb.get("MATCHES").then(function(doc) {
         dThis.matches = doc.json;
 
-        console.log(dThis.matches);
+        dThis.matches = orderBy(
+          dThis.matches,
+          [
+            function(match) {
+              return match.time;
+            }
+          ],
+          ["asc"]
+        );
+
+        //console.log(dThis.matches);
       });
     },
     goBack() {
@@ -71,11 +82,16 @@ export default {
     }
   },
   created: function() {
+    var dThis = this;
     this.reloadMatches();
 
     this.sync_change.onBlueAllianceDbChange = function(change) {
-      if (change["id"] === "MATCHES") {
-        this.reloadMatches();
+      if (change["direction"] == "pull") {
+        for (var doc of change["change"]["docs"]) {
+          if (doc["_id"] === "MATCHES") {
+            dThis.reloadMatches();
+          }
+        }
       }
     };
   }

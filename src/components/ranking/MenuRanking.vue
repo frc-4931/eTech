@@ -66,11 +66,16 @@ export default {
     }
   },
   created: function() {
+    var dThis = this;
     this.reloadTeams();
 
     this.sync_change.onBlueAllianceDbChange = function(change) {
-      if (change["id"] === "RANKINGS") {
-        this.reloadTeams();
+      if (change["direction"] == "pull") {
+        for (var doc of change["change"]["docs"]) {
+          if (doc["_id"] === "RANKINGS") {
+            dThis.reloadTeams();
+          }
+        }
       }
     };
   }
