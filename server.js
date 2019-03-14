@@ -258,22 +258,8 @@ if (useBA) {
     process.exit();
   });
 
-  var baKey;
-  var baEvent;
-
-  if (options.tbaAuthKey) {
-    baKey = options.tbaAuthKey;
-  } else {
-    console.log(chalk.redBright("Error: You must supply a The Blue Alliance authentication key when TBA integration is enabled."));
-    process.exit();
-  }
-
-  if (options.tbaEventKey) {
-    baEvent = options.tbaEventKey;
-  } else {
-    console.log(chalk.redBright("Error: You must supply a The Blue Alliance event key when TBA integration is enabled."));
-    process.exit();
-  }
+  var baKey = options.tbaAuthKey;
+  var baEvent = options.tbaEventKey;
 
   var runBA = function () {
     if (!useBA) return;
