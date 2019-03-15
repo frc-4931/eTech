@@ -1,12 +1,30 @@
 <template>
   <div class="background-box mobile-shrink schedule-match">
     <p>{{ match }}</p>
-    <p :class="blueClass">{{ matchData.alliances.blue.team_keys[0].replace("frc", "") }}</p>
-    <p :class="blueClass">{{ matchData.alliances.blue.team_keys[1].replace("frc", "") }}</p>
-    <p :class="blueClass">{{ matchData.alliances.blue.team_keys[2].replace("frc", "") }}</p>
-    <p :class="redClass">{{ matchData.alliances.red.team_keys[0].replace("frc", "") }}</p>
-    <p :class="redClass">{{ matchData.alliances.red.team_keys[1].replace("frc", "") }}</p>
-    <p :class="redClass">{{ matchData.alliances.red.team_keys[2].replace("frc", "") }}</p>
+    <p
+      :class="blueClass"
+      @click="viewTeam(matchData.alliances.blue.team_keys[0])"
+    >{{ matchData.alliances.blue.team_keys[0].replace("frc", "") }}</p>
+    <p
+      @click="viewTeam(matchData.alliances.blue.team_keys[1])"
+      :class="blueClass"
+    >{{ matchData.alliances.blue.team_keys[1].replace("frc", "") }}</p>
+    <p
+      @click="viewTeam(matchData.alliances.blue.team_keys[2])"
+      :class="blueClass"
+    >{{ matchData.alliances.blue.team_keys[2].replace("frc", "") }}</p>
+    <p
+      @click="viewTeam(matchData.alliances.red.team_keys[0])"
+      :class="redClass"
+    >{{ matchData.alliances.red.team_keys[0].replace("frc", "") }}</p>
+    <p
+      @click="viewTeam(matchData.alliances.red.team_keys[1])"
+      :class="redClass"
+    >{{ matchData.alliances.red.team_keys[1].replace("frc", "") }}</p>
+    <p
+      @click="viewTeam(matchData.alliances.red.team_keys[2])"
+      :class="redClass"
+    >{{ matchData.alliances.red.team_keys[2].replace("frc", "") }}</p>
     <p>{{ matchData.alliances.blue.score }}</p>
     <p>{{ matchData.alliances.red.score }}</p>
     <p>{{ scheduledTime }}</p>
@@ -20,6 +38,14 @@ export default {
     matchData: Object,
     localtbadb: Object,
     localdb: Object
+  },
+  methods: {
+    viewTeam: function(number) {
+      this.$router.push({
+        name: "team",
+        params: { number: number.replace("frc", "") }
+      });
+    }
   },
   computed: {
     scheduledTime: function() {
@@ -60,11 +86,17 @@ export default {
   display: grid;
   grid-template-columns: 3fr repeat(6, 1fr) repeat(2, 1.5fr) 3fr;
   text-align: center;
+  padding: 0px !important;
+  padding: 0px !important;
+}
+.schedule-match p {
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 .schedule-match-blue {
-  background-color: blue;
+  background-color: #2196f3;
 }
 .schedule-match-red {
-  background-color: red;
+  background-color: #f44335;
 }
 </style>
