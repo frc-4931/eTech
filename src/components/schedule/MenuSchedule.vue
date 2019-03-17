@@ -23,7 +23,7 @@
           <h3>Time</h3>
         </div>
 
-        <transition-group>
+        <transition-group name="trans-group">
           <ScheduleMatch
             v-for="match in matches"
             :key="match.set_number + match.comp_level + match.match_number"

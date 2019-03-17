@@ -278,3 +278,13 @@ textarea {
     font-size: 0.8em;
   }
 }
+
+.trans-group-item {
+  transition: all 0.5s;
+}
+.trans-group-enter, .trans-group-leave-to {
+  opacity: 0;
+}
+.trans-group-leave-active {
+  position: absolute;
+}

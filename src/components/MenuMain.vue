@@ -18,7 +18,7 @@
           class="background-box location-span"
           v-if="loggedin"
         >
-          <h2 class="content-centered">Tools</h2>
+          <h2 class="content-centered">The Blue Alliance</h2>
           <div class="grid-perminant">
             <router-link
               class="location-left content-centered"
@@ -76,7 +76,7 @@
         <br>Ask an admin to add teams.
       </p>
 
-      <transition-group>
+      <transition-group name="trans-group">
         <LeaderboardTeam
           v-for="(teamData) in teams"
           v-bind:key="teamData['_id']"

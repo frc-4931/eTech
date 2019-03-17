@@ -86,8 +86,8 @@
       </div>
       <div class="location-right-padded">
         <h3 class="content-centered background-box">Total Comment Points: {{team.commentPoints}}</h3>
-        <!-- <transition-group name="comment-menu"> -->
-        <!-- beautify ignore:start -->
+        <transition-group name="trans-group">
+          <!-- beautify ignore:start -->
           <component v-for="(comment, id) in comments"
             :locked="!hasEdit"
             :is="commentIs(id)"
@@ -101,7 +101,7 @@
             :callback="commentModified">
           </component>
           <!-- beautify ignore:end -->
-        <!-- </transition-group> -->
+        </transition-group>
 
         <div v-if="hasEdit">
           <h3
@@ -453,13 +453,5 @@ export default {
 }
 .content-long-fade-out {
   animation: fade-out 0.1s ease;
-}
-.comment-menu-enter {
-  transition: 0.5s;
-  opacity: 0;
-}
-.comment-menu-leave-to {
-  transition: 0s;
-  opacity: 0;
 }
 </style>

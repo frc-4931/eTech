@@ -51,7 +51,7 @@
           <router-link :to="{name: 'team-add'}">Add a team here.</router-link>
         </div>
 
-        <transition-group>
+        <transition-group name="trans-group">
           <AdminTeam
             v-for="(teamData) in teams"
             v-bind:key="teamData['_id']"
@@ -82,7 +82,7 @@
           <router-link :to="{name: 'user-add'}">Add a user here.</router-link>
         </div>
 
-        <transition-group>
+        <transition-group name="trans-group">
           <AdminUser
             v-for="user in users"
             :key="user.username"

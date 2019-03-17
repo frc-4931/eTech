@@ -21,7 +21,7 @@
         <h3>Ranking Points</h3>
       </div>
 
-      <transition-group>
+      <transition-group name="trans-group">
         <RankingTeam
           v-for="team in teams"
           :key="team.team_key"
