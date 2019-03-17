@@ -60,7 +60,7 @@ const optionDefinitions = [
     alias: "s",
     type: Boolean,
     description:
-      "Enable SSL. Read how to use it here: https://github.com/Damian0001/Scouting-App#enable-ssl"
+      "Enable SSL. Read how to use it here: https://github.com/Damian0001/etech#enable-ssl"
   },
   {
     name: "tba-enabled",
@@ -106,9 +106,9 @@ const options = commandLineArgs(optionDefinitions, {
 if (options.help) {
   const usage = commandLineUsage([
     {
-      header: "Scouting App - Server",
+      header: "eTech: Scouting Done Right - Server",
       content:
-        "A web app made with Vue and PouchDB specifically for FRC scouting."
+        "eTech is an all-in-one web application that allows users to continue scouting when offline, and when the user revives their connection the information is automatically synced to all other devices, and their screens are updated in real time."
     },
     {
       header: "Launch options",
@@ -116,7 +116,7 @@ if (options.help) {
     },
     {
       content:
-        "Read more at: {underline https://github.com/Damian0001/Scouting-App/blob/master/README.md}"
+        "Read more at: {underline https://github.com/Damian0001/etech/blob/master/README.md}"
     }
   ]);
   console.log(usage);

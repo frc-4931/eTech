@@ -1,6 +1,6 @@
 <template>
   <div class="grid">
-    <h1 class="content-centered location-span background-box">FRC Scouting App</h1>
+    <h1 class="content-centered location-span background-box">eTech: Scouting Done Right</h1>
 
     <div v-bind:class="[loggedin ? 'location-left-small' : 'location-centered-small']">
       <div class="grid">

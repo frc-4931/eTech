@@ -24,7 +24,7 @@ Create a database named "scouting".
 
 Install [NPM](https://www.npmjs.com/get-npm).
 
-Clone this repository using `git clone https://github.com/Damian0001/Scouting-App.git`.
+Clone this repository using `git clone https://github.com/Damian0001/eTech.git`.
 
 Move inside the cloned repositiory with `cd scouting-app`.
 
