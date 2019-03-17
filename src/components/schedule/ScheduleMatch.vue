@@ -94,9 +94,9 @@ export default {
   padding-bottom: 10px;
 }
 .schedule-match-blue {
-  background-color: #2196f3;
+  background-color: var(--tba-alliance-blue);
 }
 .schedule-match-red {
-  background-color: #f44335;
+  background-color: var(--tba-alliance-red);
 }
 </style>

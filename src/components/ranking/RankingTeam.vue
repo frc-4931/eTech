@@ -1,5 +1,8 @@
 <template>
-  <div class="background-box ranking-team-container mobile-shrink">
+  <div
+    @click="viewTeam()"
+    class="background-box background-box-hover ranking-team-container mobile-shrink"
+  >
     <p>{{ teamData.rank}}</p>
     <p>{{ teamName }}</p>
     <p>{{ teamNumber }}</p>
@@ -23,6 +26,14 @@ export default {
     return {
       teamName: "Loading..."
     };
+  },
+  methods: {
+    viewTeam: function() {
+      this.$router.push({
+        name: "team",
+        params: { number: this.teamNumber }
+      });
+    }
   },
   computed: {
     teamNumber: function() {
