@@ -1,4 +1,5 @@
-# Scouting App
+# eTech
+eTech is an all-in-one web application that allows users to continue scouting when offline, and when the user revives their connection the information is automatically synced to all other devices, and their screens are updated in real time.
 
 ## Supported Browsers
 Desktop Browsers
@@ -33,7 +34,7 @@ Run `npm run build`.
 
 Run `node server.js`.
 
-### Launch Options
+## Launch Options
 
 ```-d, --directory string          The location of the directory to stream content from. (Defaults to "dist")
 -p, --port number               Port on which to run the server. (Defaults to "80")
@@ -46,11 +47,20 @@ Run `node server.js`.
                                 App#enable-ssl
 ```
 
-# Enable SSL
-Create a folder in the same directory as server.js and call it "certs"
+## Recommendations
 
-Inside this folder create 3 files coresponding to their respective purposes
+### Prevent caching of database
+At our first competition using eTech we had some minor little errors with loading old data that were at the time unexplainable and didn't make sense. After the competition however, we figured out Cloudflare was caching database responses.
+
+To fix this, add a cache bypass for any request to `/database/*`. For example, `etech.example.com/database/*` should bypass cache.
+
+## Enable SSL
+Create a folder in the same directory as server.js and call it `certs`
+
+Inside this folder add these 3 certificates coresponding to their respective purposes
 
 - server-key.pem
 - server-crt.pem
 - ca-crt.pem
+
+Add `--use-ssl` or `-s` to your launch options. I recommend changing the listening port to 443 by using `--port 443` or `-p 443` in your launch options
