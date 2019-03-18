@@ -196,6 +196,8 @@ export default {
           endkey: "org.couchdb.user\ufff0"
         })
         .then(function(docs) {
+          dThis.users = [];
+
           for (var i in docs["rows"]) {
             var doc = docs["rows"][i]["doc"];
 
@@ -235,6 +237,19 @@ export default {
             if (shouldLoadTeams) dThis.loadTeams();
           }
         };
+
+        dThis.usersdb
+          .changes({
+            since: "now",
+            live: true,
+            include_docs: true
+          })
+          .on("change", function(change) {
+            if (change["id"].startsWith("org.couchdb.user")) dThis.loadUsers();
+          })
+          .on("error", function(err) {
+            console.log(err);
+          });
       } else {
         // You must be logged in as an admin
         dThis.isAdmin = false;
