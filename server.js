@@ -421,6 +421,7 @@ if (useBA) {
 
     cacheToFile("event/" + baEvent + "/matches", "MATCHES");
     cacheToFile("event/" + baEvent + "/rankings", "RANKINGS");
+    cacheToFile("event/" + baEvent + "/alliances", "ALLIANCES");
     //cacheTeamsToFiles();
 
   };

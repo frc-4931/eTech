@@ -35,9 +35,7 @@
 export default {
   name: "ScheduleMatch",
   props: {
-    matchData: Object,
-    localtbadb: Object,
-    localdb: Object
+    matchData: Object
   },
   methods: {
     viewTeam: function(number) {

@@ -2,164 +2,272 @@
   <div class="grid">
     <div class="location-centered bracket-container">
       <div class="bracket-qf bracket-sub-container">
-        <div>
-          <div class="bracket-alliance" />
-        </div>
-        <div>
-          <div class="bracket-hor-line" />
-        </div>
+        <BracketSlot
+          :level="'qf'"
+          :location="'0'"
+          :bracketData="bracketData"
+        />
+        <BracketConnectorLine />
 
-        <div>
-          <div class="bracket-alliance" />
-        </div>
-        <div>
-          <div class="bracket-hor-line" />
-        </div>
+        <BracketSlot
+          :level="'qf'"
+          :location="'1'"
+          :bracketData="bracketData"
+        />
+        <BracketConnectorLine />
 
-        <div>
-          <div class="bracket-alliance" />
-        </div>
-        <div>
-          <div class="bracket-hor-line" />
-        </div>
+        <BracketSlot
+          :level="'qf'"
+          :location="'2'"
+          :bracketData="bracketData"
+        />
+        <BracketConnectorLine />
 
-        <div>
-          <div class="bracket-alliance" />
-        </div>
-        <div>
-          <div class="bracket-hor-line" />
-        </div>
+        <BracketSlot
+          :level="'qf'"
+          :location="'3'"
+          :bracketData="bracketData"
+        />
+        <BracketConnectorLine />
 
-        <div>
-          <div class="bracket-alliance" />
-        </div>
-        <div>
-          <div class="bracket-hor-line" />
-        </div>
+        <BracketSlot
+          :level="'qf'"
+          :location="'4'"
+          :bracketData="bracketData"
+        />
+        <BracketConnectorLine />
 
-        <div>
-          <div class="bracket-alliance" />
-        </div>
-        <div>
-          <div class="bracket-hor-line" />
-        </div>
+        <BracketSlot
+          :level="'qf'"
+          :location="'5'"
+          :bracketData="bracketData"
+        />
+        <BracketConnectorLine />
 
-        <div>
-          <div class="bracket-alliance" />
-        </div>
-        <div>
-          <div class="bracket-hor-line" />
-        </div>
+        <BracketSlot
+          :level="'qf'"
+          :location="'6'"
+          :bracketData="bracketData"
+        />
+        <BracketConnectorLine />
 
-        <div>
-          <div class="bracket-alliance" />
-        </div>
-        <div>
-          <div class="bracket-hor-line" />
-        </div>
+        <BracketSlot
+          :level="'qf'"
+          :location="'7'"
+          :bracketData="bracketData"
+        />
+        <BracketConnectorLine />
+
       </div>
-
       <div class="bracket-sf bracket-sub-container">
-        <div>
-          <div class="bracket-hor-line" />
-        </div>
-        <div>
-          <div class="bracket-alliance" />
-        </div>
-        <div>
-          <div class="bracket-hor-line" />
-        </div>
+        <BracketConnectorLine />
+        <BracketSlot
+          :level="'sf'"
+          :location="'0'"
+          :bracketData="bracketData"
+        />
+        <BracketConnectorLine />
 
-        <div>
-          <div class="bracket-hor-line" />
-        </div>
-        <div>
-          <div class="bracket-alliance" />
-        </div>
-        <div>
-          <div class="bracket-hor-line" />
-        </div>
+        <BracketConnectorLine />
+        <BracketSlot
+          :level="'sf'"
+          :location="'1'"
+          :bracketData="bracketData"
+        />
+        <BracketConnectorLine />
 
-        <div>
-          <div class="bracket-hor-line" />
-        </div>
-        <div>
-          <div class="bracket-alliance" />
-        </div>
-        <div>
-          <div class="bracket-hor-line" />
-        </div>
+        <BracketConnectorLine />
+        <BracketSlot
+          :level="'sf'"
+          :location="'2'"
+          :bracketData="bracketData"
+        />
+        <BracketConnectorLine />
 
-        <div>
-          <div class="bracket-hor-line" />
-        </div>
-        <div>
-          <div class="bracket-alliance" />
-        </div>
-        <div>
-          <div class="bracket-hor-line" />
-        </div>
+        <BracketConnectorLine />
+        <BracketSlot
+          :level="'sf'"
+          :location="'3'"
+          :bracketData="bracketData"
+        />
+        <BracketConnectorLine />
       </div>
-
       <div class="bracket-f bracket-sub-container">
-        <div>
-          <div class="bracket-hor-line" />
-        </div>
-        <div>
-          <div class="bracket-alliance" />
-        </div>
-        <div>
-          <div class="bracket-hor-line" />
-        </div>
+        <BracketConnectorLine />
+        <BracketSlot
+          :level="'f'"
+          :location="'0'"
+          :bracketData="bracketData"
+        />
+        <BracketConnectorLine />
 
-        <div>
-          <div class="bracket-hor-line" />
-        </div>
-        <div>
-          <div class="bracket-alliance" />
-        </div>
-        <div>
-          <div class="bracket-hor-line" />
-        </div>
+        <BracketConnectorLine />
+        <BracketSlot
+          :level="'f'"
+          :location="'1'"
+          :bracketData="bracketData"
+        />
+        <BracketConnectorLine />
+
       </div>
-
       <div class="bracket-winner bracket-sub-container">
-        <div>
-          <div class="bracket-hor-line" />
-        </div>
-        <div>
-          <div class="bracket-alliance" />
-        </div>
+        <BracketConnectorLine />
+        <BracketSlot
+          :level="'w'"
+          :location="'0'"
+          :bracketData="bracketData"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import BracketSlot from "./BracketSlot.vue";
+import BracketConnectorLine from "./BracketConnectorLine.vue";
+
 export default {
-  name: "MenuBracket"
+  name: "MenuBracket",
+  components: {
+    BracketSlot,
+    BracketConnectorLine
+  },
+  data: function() {
+    return {
+      alliances: [],
+      bracketData: {
+        qf: [
+          {
+            alliance: "1",
+            teams: ["4931", "4931", "4931"],
+            status: "winner"
+          },
+          {
+            alliance: "2",
+            teams: ["4931", "4931", "4931"],
+            status: "loser"
+          },
+          {
+            alliance: "3",
+            teams: ["4931", "4931", "4931"],
+            status: "winner"
+          },
+          {
+            alliance: "4",
+            teams: ["4931", "4931", "4931"],
+            status: "loser"
+          },
+          {
+            alliance: "5",
+            teams: ["4931", "4931", "4931"],
+            status: "winner"
+          },
+          {
+            alliance: "6",
+            teams: ["4931", "4931", "4931"],
+            status: "loser"
+          },
+          {
+            alliance: "7",
+            teams: ["4931", "4931", "4931"],
+            status: "winner"
+          },
+          {
+            alliance: "8",
+            teams: ["4931", "4931", "4931"],
+            status: "loser"
+          }
+        ],
+        sf: [
+          {
+            alliance: "1",
+            teams: ["4931", "4931", "4931"],
+            status: "winner"
+          },
+          {
+            alliance: "3",
+            teams: ["4931", "4931", "4931"],
+            status: "loser"
+          },
+          {
+            alliance: "5",
+            teams: ["4931", "4931", "4931"],
+            status: "winner"
+          },
+          {
+            alliance: "7",
+            teams: ["4931", "4931", "4931"],
+            status: "loser"
+          }
+        ],
+        f: [
+          {
+            alliance: "1",
+            teams: ["4931", "4931", "4931"],
+            status: "winner"
+          },
+          {
+            alliance: "5",
+            teams: ["4931", "4931", "4931"],
+            status: "loser"
+          }
+        ],
+        w: [
+          {
+            alliance: "1",
+            teams: ["4931", "4931", "4931"],
+            status: "winner"
+          }
+        ]
+      }
+    };
+  },
+  props: {
+    localtbadb: Object,
+    sync_change: Object
+  },
+  methods: {
+    reloadAlliances() {
+      var dThis = this;
+
+      this.localtbadb.get("ALLIANCES").then(function(doc) {
+        dThis.alliances = doc.json;
+      });
+    }
+  },
+  created: function() {
+    this.sync_change.onBlueAllianceDbChange = function(change) {
+      if (change["direction"] == "pull") {
+        for (var doc of change["change"]["docs"]) {
+          if (doc["_id"] === "ALLIANCES") {
+            dThis.reloadAlliances();
+          }
+        }
+      }
+    };
+  }
 };
 </script>
 
 <style>
 .bracket-container {
-  display: grid;
-  --a-width: 150px;
+  --a-width: 200px;
   --l-width: 15px;
+
+  display: grid;
   grid-template-columns:
     calc(var(--a-width) + var(--l-width)) repeat(
       2,
       calc(var(--l-width) + var(--a-width) + var(--l-width))
     )
     calc(var(--a-width) + var(--l-width));
+
+  overflow-x: scroll;
+  padding-right: 10px;
+  padding-left: 10px;
 }
 .bracket-sub-container {
   display: grid;
-}
-.bracket-sub-container div {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
 }
 .bracket-qf {
   grid-template-columns: var(--a-width) var(--l-width);
@@ -176,37 +284,5 @@ export default {
 .bracket-winner {
   grid-template-columns: var(--l-width) var(--a-width);
   grid-template-rows: repeat(1, 1fr);
-}
-.bracket-alliance {
-  background-color: var(--box-color);
-  box-shadow: var(--shadow);
-
-  margin-top: 10px;
-  margin-bottom: 10px;
-  padding: 10px;
-}
-.bracket-hor-line {
-  background: linear-gradient(
-    180deg,
-    rgba(0, 0, 0, 0) calc(50% - 1px),
-    var(--neutral) calc(50%),
-    rgba(0, 0, 0, 0) calc(50% + 1px)
-  );
-
-  padding-top: 10px;
-  padding-bottom: 10px;
-}
-.bracket-vert-line {
-  background: linear-gradient(
-    90deg,
-    rgba(0, 0, 0, 0) calc(50% - 1px),
-    var(--neutral) calc(50%),
-    rgba(0, 0, 0, 0) calc(50% + 1px)
-  );
-
-  padding-left: 5px;
-  padding-bottom: 5px;
-  margin-bottom: 50%;
-  margin-top: 0px;
 }
 </style>
