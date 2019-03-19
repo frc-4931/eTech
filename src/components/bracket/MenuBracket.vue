@@ -137,85 +137,85 @@ export default {
       bracketData: {
         qf: [
           {
-            alliance: "1",
-            teams: ["4931", "4931", "4931"],
-            status: "winner"
+            alliance: "?",
+            teams: ["???", "???", "???"],
+            status: "undefined"
           },
           {
-            alliance: "8",
-            teams: ["4931", "4931", "4931"],
-            status: "loser"
+            alliance: "?",
+            teams: ["???", "???", "???"],
+            status: "undefined"
           },
           {
-            alliance: "4",
-            teams: ["4931", "4931", "4931"],
-            status: "loser"
+            alliance: "?",
+            teams: ["???", "???", "???"],
+            status: "undefined"
           },
           {
-            alliance: "5",
-            teams: ["4931", "4931", "4931"],
-            status: "winner"
+            alliance: "?",
+            teams: ["???", "???", "???"],
+            status: "undefined"
           },
           {
-            alliance: "3",
-            teams: ["4931", "4931", "4931"],
-            status: "winner"
+            alliance: "?",
+            teams: ["???", "???", "???"],
+            status: "undefined"
           },
           {
-            alliance: "6",
-            teams: ["4931", "4931", "4931"],
-            status: "loser"
+            alliance: "?",
+            teams: ["???", "???", "???"],
+            status: "undefined"
           },
           {
-            alliance: "2",
-            teams: ["4931", "4931", "4931"],
-            status: "winner"
+            alliance: "?",
+            teams: ["???", "???", "???"],
+            status: "undefined"
           },
           {
-            alliance: "7",
-            teams: ["4931", "4931", "4931"],
-            status: "loser"
+            alliance: "?",
+            teams: ["???", "???", "???"],
+            status: "undefined"
           }
         ],
         sf: [
           {
-            alliance: "1",
-            teams: ["4931", "4931", "4931"],
-            status: "loser"
+            alliance: "?",
+            teams: ["???", "???", "???"],
+            status: "undefined"
           },
           {
-            alliance: "5",
-            teams: ["4931", "4931", "4931"],
-            status: "winner"
+            alliance: "?",
+            teams: ["???", "???", "???"],
+            status: "undefined"
           },
           {
-            alliance: "3",
-            teams: ["4931", "4931", "4931"],
-            status: "winner"
+            alliance: "?",
+            teams: ["???", "???", "???"],
+            status: "undefined"
           },
           {
-            alliance: "2",
-            teams: ["4931", "4931", "4931"],
-            status: "loser"
+            alliance: "?",
+            teams: ["???", "???", "???"],
+            status: "undefined"
           }
         ],
         f: [
           {
-            alliance: "5",
-            teams: ["4931", "4931", "4931"],
-            status: "winner"
+            alliance: "?",
+            teams: ["???", "???", "???"],
+            status: "undefined"
           },
           {
-            alliance: "3",
-            teams: ["4931", "4931", "4931"],
-            status: "loser"
+            alliance: "?",
+            teams: ["???", "???", "???"],
+            status: "undefined"
           }
         ],
         w: [
           {
-            alliance: "5",
-            teams: ["4931", "4931", "4931"],
-            status: "winner"
+            alliance: "?",
+            teams: ["???", "???", "???"],
+            status: "undefined"
           }
         ]
       }
@@ -226,47 +226,73 @@ export default {
     sync_change: Object
   },
   methods: {
-    addToBracketData(level, alliance, teams, status) {
-      var pos = 0;
-      var location = 0;
+    addToBracketData(level, eliminatedLevel, location, alliance, teams) {
+      var status = "loser";
 
-      switch (level) {
-        case "qf":
-          pos = 8;
-        case "sf":
-          pos = 4;
-        case "f":
-          pos = 2;
-        case "w":
-          pos = 1;
+      if (level != eliminatedLevel) {
+        status = "winner";
+
+        var l = "";
+
+        switch (level) {
+          case "qf":
+            l = "sf";
+            break;
+          case "sf":
+            l = "f";
+            break;
+          case "f":
+            l = "w";
+            break;
+        }
+
+        this.addToBracketData(
+          l,
+          eliminatedLevel,
+          Math.floor(location / 2),
+          alliance,
+          teams
+        );
+      } else if (level == "w") {
+        status = "winner";
       }
 
-      // this.bracketData[level][location] = {
-      //   alliance: alliance,
-      //   teams: teams,
-      //   status: status
-      // };
+      this.bracketData[level][location].alliance = alliance;
+      this.bracketData[level][location].teams = teams;
+      this.bracketData[level][location].status = status;
     },
     reloadAlliances() {
       var dThis = this;
 
       this.localtbadb.get("ALLIANCES").then(function(doc) {
-        // dThis.bracketData = [];
-
-        console.log(doc);
-
-        // var data = [];
-
         for (var alliance in doc.json) {
           var allianceData = doc.json[alliance];
 
-          var level = allianceData.level;
+          var eliminatedLevel = allianceData.status.level;
           var status = allianceData.status.status;
+          var alliance = parseInt(allianceData.name.split(" ")[1]);
+          var location;
           var teams = [];
 
-          if (level == "f" && status == "won") level = "w";
+          allianceData.picks.forEach(function(team) {
+            teams.push(team.replace("frc", ""));
+          });
 
-          dThis.addToBracketData(level, allianceData.picks, status);
+          if (eliminatedLevel == "f" && status == "won") eliminatedLevel = "w";
+
+          if (alliance > 4) {
+            location = (9 - alliance) * 2 - 1;
+          } else {
+            location = alliance * 2 - 2;
+          }
+
+          dThis.addToBracketData(
+            "qf",
+            eliminatedLevel,
+            location,
+            alliance,
+            teams
+          );
         }
       });
     }
