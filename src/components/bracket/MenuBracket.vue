@@ -134,7 +134,6 @@ export default {
   },
   data: function() {
     return {
-      alliances: [],
       bracketData: {
         qf: [
           {
@@ -143,14 +142,9 @@ export default {
             status: "winner"
           },
           {
-            alliance: "2",
+            alliance: "8",
             teams: ["4931", "4931", "4931"],
             status: "loser"
-          },
-          {
-            alliance: "3",
-            teams: ["4931", "4931", "4931"],
-            status: "winner"
           },
           {
             alliance: "4",
@@ -163,17 +157,22 @@ export default {
             status: "winner"
           },
           {
+            alliance: "3",
+            teams: ["4931", "4931", "4931"],
+            status: "winner"
+          },
+          {
             alliance: "6",
             teams: ["4931", "4931", "4931"],
             status: "loser"
           },
           {
-            alliance: "7",
+            alliance: "2",
             teams: ["4931", "4931", "4931"],
             status: "winner"
           },
           {
-            alliance: "8",
+            alliance: "7",
             teams: ["4931", "4931", "4931"],
             status: "loser"
           }
@@ -182,11 +181,6 @@ export default {
           {
             alliance: "1",
             teams: ["4931", "4931", "4931"],
-            status: "winner"
-          },
-          {
-            alliance: "3",
-            teams: ["4931", "4931", "4931"],
             status: "loser"
           },
           {
@@ -195,26 +189,31 @@ export default {
             status: "winner"
           },
           {
-            alliance: "7",
+            alliance: "3",
+            teams: ["4931", "4931", "4931"],
+            status: "winner"
+          },
+          {
+            alliance: "2",
             teams: ["4931", "4931", "4931"],
             status: "loser"
           }
         ],
         f: [
           {
-            alliance: "1",
+            alliance: "5",
             teams: ["4931", "4931", "4931"],
             status: "winner"
           },
           {
-            alliance: "5",
+            alliance: "3",
             teams: ["4931", "4931", "4931"],
             status: "loser"
           }
         ],
         w: [
           {
-            alliance: "1",
+            alliance: "5",
             teams: ["4931", "4931", "4931"],
             status: "winner"
           }
@@ -227,15 +226,54 @@ export default {
     sync_change: Object
   },
   methods: {
+    addToBracketData(level, alliance, teams, status) {
+      var pos = 0;
+      var location = 0;
+
+      switch (level) {
+        case "qf":
+          pos = 8;
+        case "sf":
+          pos = 4;
+        case "f":
+          pos = 2;
+        case "w":
+          pos = 1;
+      }
+
+      // this.bracketData[level][location] = {
+      //   alliance: alliance,
+      //   teams: teams,
+      //   status: status
+      // };
+    },
     reloadAlliances() {
       var dThis = this;
 
       this.localtbadb.get("ALLIANCES").then(function(doc) {
-        dThis.alliances = doc.json;
+        // dThis.bracketData = [];
+
+        console.log(doc);
+
+        // var data = [];
+
+        for (var alliance in doc.json) {
+          var allianceData = doc.json[alliance];
+
+          var level = allianceData.level;
+          var status = allianceData.status.status;
+          var teams = [];
+
+          if (level == "f" && status == "won") level = "w";
+
+          dThis.addToBracketData(level, allianceData.picks, status);
+        }
       });
     }
   },
   created: function() {
+    this.reloadAlliances();
+
     this.sync_change.onBlueAllianceDbChange = function(change) {
       if (change["direction"] == "pull") {
         for (var doc of change["change"]["docs"]) {
