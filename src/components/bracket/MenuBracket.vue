@@ -13,6 +13,7 @@
           :level="'qf'"
           :location="'1'"
           :bracketData="bracketData"
+          class="bracket-slot-small-top"
         />
         <BracketConnectorLine />
 
@@ -27,6 +28,7 @@
           :level="'qf'"
           :location="'3'"
           :bracketData="bracketData"
+          class="bracket-slot-small-top"
         />
         <BracketConnectorLine />
 
@@ -41,6 +43,7 @@
           :level="'qf'"
           :location="'5'"
           :bracketData="bracketData"
+          class="bracket-slot-small-top"
         />
         <BracketConnectorLine />
 
@@ -55,6 +58,7 @@
           :level="'qf'"
           :location="'7'"
           :bracketData="bracketData"
+          class="bracket-slot-small-top"
         />
         <BracketConnectorLine />
 
@@ -73,6 +77,7 @@
           :level="'sf'"
           :location="'1'"
           :bracketData="bracketData"
+          class="bracket-slot-small-top"
         />
         <BracketConnectorLine />
 
@@ -89,6 +94,7 @@
           :level="'sf'"
           :location="'3'"
           :bracketData="bracketData"
+          class="bracket-slot-small-top"
         />
         <BracketConnectorLine />
       </div>
@@ -269,22 +275,28 @@ export default {
           var allianceData = doc.json[alliance];
 
           var eliminatedLevel = allianceData.status.level;
-          var status = allianceData.status.status;
           var alliance = parseInt(allianceData.name.split(" ")[1]);
-          var location;
           var teams = [];
 
           allianceData.picks.forEach(function(team) {
             teams.push(team.replace("frc", ""));
           });
 
-          if (eliminatedLevel == "f" && status == "won") eliminatedLevel = "w";
+          if (eliminatedLevel == "f" && allianceData.status.status == "won")
+            eliminatedLevel = "w";
 
-          if (alliance > 4) {
-            location = (9 - alliance) * 2 - 1;
-          } else {
-            location = alliance * 2 - 2;
-          }
+          var locations = {
+            alliance1: 0,
+            alliance8: 1,
+            alliance4: 2,
+            alliance5: 3,
+            alliance3: 4,
+            alliance6: 5,
+            alliance2: 6,
+            alliance7: 7
+          };
+
+          var location = locations["alliance" + alliance];
 
           dThis.addToBracketData(
             "qf",
@@ -315,7 +327,7 @@ export default {
 
 <style>
 .bracket-container {
-  --a-width: 200px;
+  --a-width: 220px;
   --l-width: 15px;
 
   display: grid;
@@ -348,5 +360,8 @@ export default {
 .bracket-winner {
   grid-template-columns: var(--l-width) var(--a-width);
   grid-template-rows: repeat(1, 1fr);
+}
+.bracket-slot-small-top .bracket-slot {
+  margin-top: 0px;
 }
 </style>

@@ -275,7 +275,7 @@ textarea {
 
 @media (max-width: 700px) {
   .mobile-shrink {
-    font-size: 0.8em;
+    font-size: 0.75em;
   }
 }
 

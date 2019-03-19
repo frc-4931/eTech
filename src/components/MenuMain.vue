@@ -283,8 +283,11 @@ export default {
 <style>
 .leaderboard-container {
   display: grid;
-  grid-template-columns: 2fr repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   text-align: center;
+}
+.sorting-option-selected {
+  font-weight: bold;
 }
 .sorting-option-selected::after {
   position: absolute;
