@@ -6,19 +6,9 @@
       v-else
       class="grid"
     >
-      <div class="done-button-container mobile-view">
-        <h3
-          class="background-box background-box-hover content-centered"
-          @click="goBack()"
-        >Back</h3>
-      </div>
+      <BackButton :pushuri="'/'" />
 
-      <h3
-        class="location-left-tiny background-box background-box-hover content-centered desktop-view"
-        @click="goBack()"
-      >Back</h3>
-
-      <h2 class="location-centered background-box content-centered">Admin Tools</h2>
+      <h2 class="location-span background-box content-centered">Admin Tools</h2>
 
       <div class="location-left-small">
         <h2 class="content-centered background-box">Tools</h2>
@@ -97,6 +87,7 @@
 <script>
 import AdminTeam from "./admin/AdminTeam.vue";
 import AdminUser from "./admin/AdminUser.vue";
+import BackButton from "./BackButton.vue";
 import orderBy from "lodash.orderby";
 import Error from "./Error.vue";
 import PouchDB from "pouchdb";
@@ -123,6 +114,7 @@ export default {
   components: {
     AdminTeam,
     AdminUser,
+    BackButton,
     Error
   },
   props: {
@@ -182,9 +174,6 @@ export default {
           });
         });
       }
-    },
-    goBack() {
-      this.$router.push("/");
     },
     loadUsers() {
       var dThis = this;

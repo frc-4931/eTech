@@ -5,12 +5,7 @@
       v-else
       class="grid"
     >
-      <div class="location-centered-small done-button-container">
-        <h3
-          @click="goBack()"
-          class="background-box background-box-hover content-centered"
-        >Back</h3>
-      </div>
+      <BackButton />
 
       <div class="location-span">
         <h1 class="background-box content-centered">Schedule</h1>
@@ -38,6 +33,7 @@
 
 <script>
 import Error from "../Error.vue";
+import BackButton from "../BackButton.vue";
 import orderBy from "lodash.orderby";
 import ScheduleMatch from "./ScheduleMatch.vue";
 
@@ -45,6 +41,7 @@ export default {
   name: "MenuSchedule",
   components: {
     ScheduleMatch,
+    BackButton,
     Error
   },
   data: function() {
@@ -76,9 +73,6 @@ export default {
 
         //console.log(dThis.matches);
       });
-    },
-    goBack() {
-      this.$router.push("/");
     }
   },
   created: function() {

@@ -104,7 +104,7 @@
       <div class="location-centered-small">
         <h3
           @click="addUser()"
-          class="background-box background-box-hover content-centered"
+          class="background-box content-centered"
           v-bind:class="[this.allFieldsValid ?  'background-box-hover' : 'background-box-disabled']"
         >Add</h3>
 

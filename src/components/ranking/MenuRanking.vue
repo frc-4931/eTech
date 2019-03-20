@@ -1,11 +1,6 @@
 <template>
   <div class="grid">
-    <div class="location-centered-small done-button-container">
-      <h3
-        @click="goBack()"
-        class="background-box background-box-hover content-centered"
-      >Back</h3>
-    </div>
+    <BackButton />
 
     <div class="location-span">
       <h1 class="background-box content-centered">Rankings</h1>
@@ -37,10 +32,12 @@
 
 <script>
 import RankingTeam from "./RankingTeam.vue";
+import BackButton from "../BackButton.vue";
 
 export default {
   name: "MenuRanking",
   components: {
+    BackButton,
     RankingTeam
   },
   data: function() {
@@ -60,9 +57,6 @@ export default {
       this.localtbadb.get("RANKINGS").then(function(doc) {
         dThis.teams = doc.json.rankings;
       });
-    },
-    goBack() {
-      this.$router.push("/");
     }
   },
   created: function() {

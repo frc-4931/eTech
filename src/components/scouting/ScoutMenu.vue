@@ -236,7 +236,7 @@ export default {
 
 <style>
 .pit-scout-div div {
-  margin: 5px !important;
+  margin: 5px;
 }
 .scouting-menu-fields {
   padding: 5px;
