@@ -16,6 +16,9 @@ Mobile Browsers
 
 
 ## Installation
+
+<b>IN THE FUTURE WE WILL MOVE TO A DIFFERENT DISTRIBUTION SYSTEM SUCH AS DOCKER</b>
+
 Install [CouchDB](https://docs.couchdb.org/en/stable/install/index.html). (Or [pouchdb-server](https://github.com/pouchdb/pouchdb-server) for testing. Not recommended for production)
 
 Create an admin account at `http://localhost:5984/_utils/`. This account will be what you'll use to login and create user accounts with for the first time. (Note: The username MUST be all lowercase)
@@ -24,9 +27,9 @@ Create a database named "scouting".
 
 Install [NPM](https://www.npmjs.com/get-npm).
 
-Clone this repository using `git clone https://github.com/Damian0001/eTech.git`.
+Clone this repository using `git clone https://github.com/frc-4931/eTech.git`.
 
-Move inside the cloned repositiory with `cd scouting-app`.
+Move inside the cloned repositiory with `cd eTech`.
 
 Run `npm install`.
 
