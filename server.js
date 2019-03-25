@@ -415,8 +415,8 @@ if (useBA) {
 
     for (let teamKey of teamKeys) {
       cacheToFile("team/" + teamKey + "/event/" + baEvent + "/status", "TEAMSTATUS_" + teamKey)
-      cacheToFile("team/" + teamKey + "/event/" + baEvent + "/matches", "TEAMMATCHES_" + teamKey)
-      cacheToFile("team/" + teamKey + "years_participated", "TEAMYEARS_" + teamKey)
+      cacheToFile("team/" + teamKey + "/event/" + baEvent + "/matches/keys", "TEAMMATCHES_" + teamKey)
+      cacheToFile("team/" + teamKey + "/years_participated", "TEAMYEARS_" + teamKey)
       cacheToFile("team/" + teamKey, "TEAMINFO_" + teamKey)
       cacheToFile("team/" + teamKey + "/event/" + baEvent + "/awards", "TEAMAWARDS_" + teamKey)
     }
