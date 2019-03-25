@@ -39,15 +39,24 @@ Run `node server.js`.
 
 ## Launch Options
 
-```-d, --directory string          The location of the directory to stream content from. (Defaults to "dist")
--p, --port number               Port on which to run the server. (Defaults to "80")
--a, --database-address string   Address on which the server redirects database requests to. (Defaults to
-                                "http://localhost")
--o, --database-port number      Port on which the server redirects database requests to. (Defaults to "5984")
--r, --log-file-requests         Enable logging requests to the server for files.
--l, --log-db-requests           Enable logging requests for the database.
--s, --use-ssl                   Enable SSL. Read how to use it here: https://github.com/Damian0001/Scouting-
-                                App#enable-ssl
+```
+  -d, --directory string          The location of the directory to stream content from. (Defaults to "dist")
+  -p, --port number               Port on which to run the server. (Defaults to "80")
+  -a, --database-address string   Address on which the server redirects database requests to. (Defaults to
+                                  "http://localhost")
+  -o, --database-port number      Port on which the server redirects database requests to. (Defaults to "5984")
+  -r, --log-file-requests         Enable logging requests to the server for files.
+  -l, --log-db-requests           Enable logging requests for the database.
+  -s, --use-ssl                   Enable SSL. Read how to use it here:
+                                  https://github.com/frc-4931/eTech#enable-ssl
+  --tba-enabled                   Enables The Blue Alliance integration.
+  --tba-log                       Enables logging requests for The Blue Alliance.
+  --tba-db-login string           Your username and password seperated by ':' (Example: 'admin:password').
+  --tba-interval number           Amount of time in seconds between pinging The Blue Alliance for data
+                                  (Defaults to '30').
+  --tba-auth-key string           Your The Blue Alliance auth key.
+  --tba-event-key string          The Blue Alliance event key for your current competition.
+  -h, --help                      Display this usage guide.
 ```
 
 ## Recommendations
