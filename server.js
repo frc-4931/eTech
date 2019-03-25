@@ -60,7 +60,7 @@ const optionDefinitions = [
     alias: "s",
     type: Boolean,
     description:
-      "Enable SSL. Read how to use it here: https://github.com/Damian0001/etech#enable-ssl"
+      "Enable SSL. Read how to use it here: https://github.com/frc-4931/eTech#enable-ssl"
   },
   {
     name: "tba-enabled",
@@ -86,13 +86,11 @@ const optionDefinitions = [
   {
     name: "tba-auth-key",
     type: String,
-    defaultValue: "GZSwS1Bx1TPPVjDLogJ9az42js2sehTlA8N3lnCi8LqG8FhOdCwAvfvQzT0mFz65", //FIXME remove default value
     description: "Your The Blue Alliance auth key."
   },
   {
     name: "tba-event-key",
     type: String,
-    defaultValue: "2019mosl", // FIXME Remove default value  
     description: "The Blue Alliance event key for your current competition."
   },
   {
