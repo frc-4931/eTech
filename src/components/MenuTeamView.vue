@@ -235,53 +235,6 @@ export default {
           });
         });
     },
-    loadScouting: function() {
-      var dThis = this;
-      this.scoutingLoaded = 0;
-      this.localdb
-        .allDocs({
-          include_docs: false,
-          startkey: "PITSCOUT_" + dThis.teamNumber + "_0",
-          endkey: "PITSCOUT_" + dThis.teamNumber + "_\ufff0"
-        })
-        .then(function(docs) {
-          dThis.pitScouts.splice(0, dThis.pitScouts.length);
-          for (var doc of docs["rows"]) {
-            dThis.pitScouts.push(doc.id);
-          }
-
-          return;
-        })
-        .then(function() {
-          dThis.scoutingLoaded++;
-          if (dThis.scoutingLoaded === 2) {
-            //If both scouting types have loaded
-            dThis.loadObjectivePoints();
-          }
-        });
-
-      this.localdb
-        .allDocs({
-          include_docs: false,
-          startkey: "MATCHSCOUT_" + dThis.teamNumber + "_0",
-          endkey: "MATCHSCOUT_" + dThis.teamNumber + "_\ufff0"
-        })
-        .then(function(docs) {
-          dThis.matchScouts.splice(0, dThis.matchScouts.length);
-          for (var doc of docs["rows"]) {
-            dThis.matchScouts.push(doc.id);
-          }
-
-          return;
-        })
-        .then(function() {
-          dThis.scoutingLoaded++;
-          if (dThis.scoutingLoaded === 2) {
-            //If both scouting types have loaded
-            dThis.loadObjectivePoints();
-          }
-        });
-    },
     openCommentAddMenu() {
       var dThis = this;
       this.commentAddMenu = true;
@@ -322,7 +275,7 @@ export default {
       this.loadScouting();
     },
     teamModified() {
-      this.loadObjectivePoints();
+      this.loadScouting();
     },
     teamClose() {
       this.scoutingSelect = "none";
@@ -334,33 +287,76 @@ export default {
     updatedScoutMenu() {
       this.shouldUpdateScoutMenu = false;
     },
-    loadObjectivePoints() {
+    loadScouting: function() {
       var dThis = this;
-      var allScoutingIds = this.matchScouts.concat(this.pitScouts);
+      var dPoints = { pPoints: 0, pAmount: 0, mPoints: 0, mAmount: 0 };
+      var team = dThis.teamNumber;
 
       this.localdb
         .allDocs({
           include_docs: true,
-          keys: allScoutingIds
+          startkey: "PITSCOUT_" + team + "_0",
+          endkey: "PITSCOUT_" + team + "_\ufff0"
         })
         .then(function(docs) {
-          if (docs["rows"].length === 0) return;
+          var points = 0;
+          var itr = 0;
+          var dDocs = docs["rows"];
 
-          var totalObjectiveRating = 0;
-
-          for (var doc of docs["rows"]) {
-            totalObjectiveRating += doc["doc"]["TOTAL-POINTS"] || 0; //Maybe make a function to return total objective points. If sperate function make a file that has a function (doc) -> {for (i in field) put(doc.field_points = calc_points); return rating}.
+          dThis.pitScouts.splice(0, dThis.pitScouts.length);
+          for (var doc of dDocs) {
+            dThis.pitScouts.push(doc.id);
+            doc = doc["doc"];
+            points += doc["TOTAL-POINTS"];
+            itr++;
           }
+          dPoints.pPoints += points;
+          dPoints.pAmount += itr;
 
-          var avgerageObjectiveRating =
-            totalObjectiveRating / docs["rows"].length;
-          avgerageObjectiveRating = Math.floor(avgerageObjectiveRating);
+          return;
+        })
+        .then(function() {
+          return dThis.localdb.allDocs({
+            include_docs: true,
+            startkey: "MATCHSCOUT_" + team + "_0",
+            endkey: "MATCHSCOUT_" + team + "_\ufff0"
+          });
+        })
+        .then(function(docs) {
+          var points = 0;
+          var itr = 0;
+          var dDocs = docs["rows"];
+          var outDocs = [];
 
-          dThis.$set(dThis.team, "objectivePoints", avgerageObjectiveRating);
+          dThis.matchScouts.splice(0, dThis.pitScouts.length);
+          for (var doc of dDocs) {
+            dThis.matchScouts.push(doc.id);
+            doc = doc["doc"];
+            points += doc["TOTAL-POINTS"];
+            outDocs.push(doc);
+            itr++;
+          }
+          dPoints.mPoints += points;
+          dPoints.mAmount += itr;
 
-          dThis.localdb.get("TEAM_" + dThis.teamNumber).then(function(doc) {
-            if (doc.objectivePoints != avgerageObjectiveRating) {
-              doc.objectivePoints = avgerageObjectiveRating;
+          return;
+        })
+        .then(function() {
+          dThis.localdb.get("TEAM_" + team).then(function(doc) {
+            var matchPoints =
+              dPoints.mPoints / (dPoints.mAmount > 0 ? dPoints.mAmount : 1);
+
+            var pitPoints =
+              dPoints.pPoints / (dPoints.pAmount > 0 ? dPoints.pAmount : 1);
+
+            var points = matchPoints + pitPoints;
+
+            points = Math.floor(points);
+
+            dThis.$set(dThis.team, "objectivePoints", points);
+
+            if (doc.objectivePoints != points) {
+              doc.objectivePoints = points;
               dThis.localdb.put(doc);
             }
           });
