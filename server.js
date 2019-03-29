@@ -259,7 +259,7 @@ if (useBA) {
   try {
     var tbaLogin = options.tbaDbLogin.split(":", 2);
   } catch (exept) {
-    console.log(chalk.redBright("Error while trying to prase databse loggin credentials."));
+    console.log(chalk.redBright("Error while trying to prase database loggin credentials."));
     process.exit();
   }
   tbaDB.logIn(tbaLogin[0], tbaLogin[1]).catch(function (err) {
