@@ -60,12 +60,17 @@ const optionDefinitions = [
     alias: "s",
     type: Boolean,
     description:
-      "Enable SSL. Read how to use it here: https://github.com/Damian0001/etech#enable-ssl"
+      "Enable SSL. Read how to use it here: https://github.com/frc-4931/eTech#enable-ssl"
   },
   {
     name: "tba-enabled",
     type: Boolean,
     description: "Enables The Blue Alliance integration."
+  },
+  {
+    name: "tba-log",
+    type: Boolean,
+    description: "Enables logging requests for The Blue Alliance."
   },
   {
     name: "tba-db-login",
@@ -81,13 +86,11 @@ const optionDefinitions = [
   {
     name: "tba-auth-key",
     type: String,
-    defaultValue: "GZSwS1Bx1TPPVjDLogJ9az42js2sehTlA8N3lnCi8LqG8FhOdCwAvfvQzT0mFz65", //FIXME remove default value
     description: "Your The Blue Alliance auth key."
   },
   {
     name: "tba-event-key",
     type: String,
-    defaultValue: "2019nytr", // FIXME Remove default value  
     description: "The Blue Alliance event key for your current competition."
   },
   {
@@ -130,6 +133,10 @@ const PORT = options.port;
 
 const proxy = httpProxy.createProxyServer({});
 
+var getTime = function () {
+  return chalk.white(new Date().toLocaleString([], { hour12: false })) + "   ";
+}
+
 proxy.on("error", function (err, req, response) {
   response.writeHead(500, {
     "Content-Type": "text/plain"
@@ -147,7 +154,7 @@ const handler = function (request, response) {
 
     if (options.logDbRequests)
       console.log(
-        chalk.gray(
+        getTime() + chalk.gray(
           request.connection.remoteAddress + ": " + modifiedRequest.url
         )
       );
@@ -177,13 +184,13 @@ const handler = function (request, response) {
 
     if (options.logFileRequests)
       console.log(
-        chalk.gray(request.connection.remoteAddress + ": " + url + " > " + file)
+        getTime() + chalk.gray(request.connection.remoteAddress + ": " + url + " > " + file)
       );
 
     fs.readFile(DIRECTORY + file, (err, content) => {
       var responseCode = 200;
       if (err) {
-        if (options.logFileRequests) console.log("We cannot open file.");
+        if (options.logFileRequests) console.log(getTime() + "We cannot open file.");
         responseCode = 404;
       }
 
@@ -243,7 +250,10 @@ if (options.useSsl) {
     .listen(PORT);
 }
 
+// The Blue Alliance Intigration
 var useBA = options.tbaEnabled;
+var teamKeys = [];
+var matchKeys = [];
 if (useBA) {
   var tbaDB = new pouchdb(PROXY_TARGET + "/bluealliance");
   try {
@@ -258,9 +268,24 @@ if (useBA) {
     process.exit();
   });
 
-  var baKey = options.tbaAuthKey;
-  var baEvent = options.tbaEventKey;
+  var baKey;
+  var baEvent;
 
+  if (options.tbaAuthKey) {
+    baKey = options.tbaAuthKey;
+  } else {
+    console.log(chalk.redBright("Error: You must supply a The Blue Alliance authentication key when TBA integration is enabled."));
+    process.exit();
+  }
+
+  if (options.tbaEventKey) {
+    baEvent = options.tbaEventKey;
+  } else {
+    console.log(chalk.redBright("Error: You must supply a The Blue Alliance event key when TBA integration is enabled."));
+    process.exit();
+  }
+
+  let argOptions = options;
   var runBA = function () {
     if (!useBA) return;
 
@@ -272,16 +297,85 @@ if (useBA) {
       }
     };
 
+    var getMatchKeys = function () {
+      var opt = {};
+      Object.assign(opt, options);
+      var url = "event/" + baEvent + "/matches/keys";
+      opt.url += url;
+
+      if (argOptions.tbaLog)
+        console.log(
+          getTime() + chalk.blue("Caching match keys: ") + chalk.gray(url)
+        );
+
+      request(opt, function (err, res, body) {
+        if (err) {
+          console.log(getTime() + chalk.redBright("Error pulling data (" + url + ") from The Blue Alliance."))
+          return;
+        }
+
+        var data = JSON.parse(body);
+
+        if (data.Error) {
+          console.log(getTime() + chalk.redBright("Error: '" + data.Error + "' when pulling data (" + url + ") from The Blue Alliance."))
+          return;
+        }
+
+        matchKeys = data;
+      });
+    }
+
+    var getTeamKeys = function () {
+      var opt = {};
+      Object.assign(opt, options);
+      var url = "event/" + baEvent + "/teams/keys";
+      opt.url += url;
+
+      if (argOptions.tbaLog)
+        console.log(
+          getTime() + chalk.blue("Caching team keys: ") + chalk.gray(url)
+        );
+
+      request(opt, function (err, res, body) {
+        if (err) {
+          console.log(getTime() + chalk.redBright("Error pulling data (" + url + ") from The Blue Alliance."))
+          return;
+        }
+
+        var data = JSON.parse(body);
+
+        if (data.Error) {
+          console.log(getTime() + chalk.redBright("Error: '" + data.Error + "' when pulling data (" + url + ") from The Blue Alliance."))
+          return;
+        }
+
+        teamKeys = data;
+      });
+    }
+
     var cacheToFile = function (url, file) {
       var opt = {};
       Object.assign(opt, options);
       opt.url += url;
 
+      if (argOptions.tbaLog)
+        console.log(
+          getTime() + chalk.blue("Saving to file: ") + chalk.gray(url + " > " + file)
+        );
+
       request(opt, function (err, res, body) {
+
         if (err) {
-          console.log("Error pulling")
+          console.log(getTime() + chalk.redBright("Error pulling data (" + url + ") from The Blue Alliance."))
+          return;
         }
+
         var data = JSON.parse(body);
+
+        if (data.Error) {
+          console.log(getTime() + chalk.redBright("Error: '" + data.Error + "' when pulling data (" + url + ") from The Blue Alliance."))
+          return;
+        }
 
         var date = new Date(res.headers["last-modified"]).getTime();
 
@@ -306,124 +400,29 @@ if (useBA) {
       });
     }
 
-    var cacheTeamsToFiles = function () {
-      let opt = {};
-      Object.assign(opt, options);
-      opt.url += "event/" + baEvent + "/teams";
+    if (teamKeys.length == 0)
+      getTeamKeys();
+    if (matchKeys.length == 0)
+      getMatchKeys();
 
-      request(opt, function (err, res, body) {
-        if (err) {
-          console.log("Error pulling")
-          return;
-        }
+    //cacheToFile("event/" + baEvent + "/matches/simple", "MATCHES"); // Leaving original API in until fully removed from client
 
-        let data = JSON.parse(body);
-
-        let date = new Date(res.headers["last-modified"]).getTime();
-
-        // Cache basic team info
-        for (let team of data) {
-          let teamKey = team["key"];
-          let teamNumber = team["team_number"];
-          let id = "TEAM_" + teamNumber;
-
-          tbaDB
-            .get(id)
-            .then(function (doc) {
-              if (doc.lastModified === undefined || isNaN(doc.lastModified) || doc.lastModified < date) {
-                doc.json = team;
-                doc.lastModified = data;
-
-                tbaDB.put(doc).catch(function () {
-                  // Could not push
-                });
-              }
-            })
-            .catch(function () {
-              let doc = { _id: id, json: team, lastModified: date };
-              tbaDB.put(doc).catch(function () {
-                // Could not push
-              });
-            });
-
-
-          // Get all match info for team and cache it
-          let opts = {};
-          Object.assign(opts, options);
-          opts.url += "team/" + teamKey + "/event/" + baEvent + "/matches";
-
-          request(opts, function (err, res, body) {
-            if (err) {
-              console.log("Error pulling")
-              return;
-            }
-
-            let matchData = JSON.parse(body);
-            let date = new Date(res.headers["last-modified"]).getTime();
-            let id = "MATCHDATA_" + teamNumber;
-
-            tbaDB
-              .get(id)
-              .then(function (doc) {
-                if (doc.lastModified === undefined || isNaN(doc.lastModified) || doc.lastModified < date) {
-                  doc.json = matchData;
-                  doc.lastModified = date;
-                  tbaDB.put(doc).catch(function () {
-                    // Could not push
-                  });
-                }
-              })
-              .catch(function () {
-                let doc = { _id: id, json: matchData, lastModified: date };
-                tbaDB.put(doc).catch(function () {
-                  // Could not push
-                });
-              });
-          });
-
-          // Cache match status for team (ie team rank and record)
-          opts = {};
-          Object.assign(opts, options);
-          opts.url += "team/" + teamKey + "/event/" + baEvent + "/status";
-
-          request(opts, function (err, res, body) {
-            if (err) {
-              console.log("Error pulling")
-              return;
-            }
-
-            let matchData = JSON.parse(body);
-            let date = new Date(res.headers["last-modified"]).getTime();
-            let id = "STATUS_" + teamNumber;
-
-            tbaDB
-              .get(id)
-              .then(function (doc) {
-                if (doc.lastModified === undefined || isNaN(doc.lastModified) || doc.lastModified < date) {
-                  doc.json = matchData;
-                  doc.lastModified = date;
-
-                  tbaDB.put(doc).catch(function () {
-                    // Could not push
-                  });
-                }
-              })
-              .catch(function () {
-                let doc = { _id: id, json: matchData, lastModified: date };
-                tbaDB.put(doc).catch(function () {
-                  // Could not push
-                });
-              });
-          });
-        }
-      });
+    //Change to individual files to reduce amount of data downloaded at a time. Will also reduce loading times.
+    for (let matchKey of matchKeys) {
+      cacheToFile("match/" + matchKey, "MATCH_" + matchKey) // Full match breakdown
+      cacheToFile("match/" + matchKey + "/simple", "MATCHSIMPLE_" + matchKey) // No full match breakdown
     }
 
-    cacheToFile("event/" + baEvent + "/matches", "MATCHES");
+    for (let teamKey of teamKeys) {
+      cacheToFile("team/" + teamKey + "/event/" + baEvent + "/status", "TEAMSTATUS_" + teamKey)
+      cacheToFile("team/" + teamKey + "/event/" + baEvent + "/matches/keys", "TEAMMATCHES_" + teamKey)
+      cacheToFile("team/" + teamKey + "/years_participated", "TEAMYEARS_" + teamKey)
+      cacheToFile("team/" + teamKey, "TEAMINFO_" + teamKey)
+      cacheToFile("team/" + teamKey + "/event/" + baEvent + "/awards", "TEAMAWARDS_" + teamKey)
+    }
+
     cacheToFile("event/" + baEvent + "/rankings", "RANKINGS");
     cacheToFile("event/" + baEvent + "/alliances", "ALLIANCES");
-    //cacheTeamsToFiles();
-
   };
 
   var intervalTime = options.tbaInterval * 1000;
@@ -447,3 +446,7 @@ if (options.logDbRequests)
   );
 if (options.useSsl) console.log(chalk.cyan(" - SSL is enabled"));
 if (options.tbaEnabled) console.log(chalk.cyan(" - The Blue Alliance integration is enabled"))
+if (options.tbaLog)
+  console.log(
+    chalk.cyan(" - Logging The blue Alliance requests to the console is enabled")
+  );

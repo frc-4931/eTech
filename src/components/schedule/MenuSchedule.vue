@@ -58,21 +58,30 @@ export default {
     reloadMatches() {
       var dThis = this;
 
-      this.localtbadb.get("MATCHES").then(function(doc) {
-        dThis.matches = doc.json;
+      this.localtbadb
+        .allDocs({
+          include_docs: true,
+          startkey: "MATCHSIMPLE_",
+          endkey: "MATCHSIMPLE_\ufff0"
+        })
+        .then(function(result) {
+          dThis.matches = [];
+          for (let doc of result.rows) {
+            dThis.matches.push(doc.doc.json);
+          }
 
-        dThis.matches = orderBy(
-          dThis.matches,
-          [
-            function(match) {
-              return match.time;
-            }
-          ],
-          ["asc"]
-        );
+          dThis.matches = orderBy(
+            dThis.matches,
+            [
+              function(match) {
+                return match.time;
+              }
+            ],
+            ["asc"]
+          );
 
-        //console.log(dThis.matches);
-      });
+          //console.log(dThis.matches);
+        });
     }
   },
   created: function() {

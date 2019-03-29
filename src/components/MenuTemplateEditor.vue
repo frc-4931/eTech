@@ -154,6 +154,9 @@ import TemplateEditDropdown from "./admin/template/TemplateEditDropdown.vue";
 import TemplateEditNumber from "./admin/template/TemplateEditNumber.vue";
 import TemplateEditNumberInc from "./admin/template/TemplateEditNumberInc.vue";
 
+import PitTemplate from "../assets/pitscout.js";
+import MatchTemplate from "../assets/matchscout.js";
+
 import Error from "@/components/Error.vue";
 import Message from "@/components/Message.vue";
 
@@ -441,7 +444,7 @@ export default {
     },
     loadScouting: function(team) {
       var dThis = this;
-      var dPoints = { points: 0, amount: 0 };
+      var dPoints = { pPoints: 0, pAmount: 0, mPoints: 0, mAmount: 0 };
 
       this.localdb
         .allDocs({
@@ -455,6 +458,9 @@ export default {
             .then(function(doc) {
               return doc["fields"];
             })
+            .catch(function() {
+              return PitTemplate.fields;
+            })
             .then(function(fields) {
               var points = 0;
               var itr = 0;
@@ -466,8 +472,8 @@ export default {
                 outDocs.push(doc);
                 itr++;
               }
-              dPoints.points += points;
-              dPoints.amount += itr;
+              dPoints.pPoints += points;
+              dPoints.pAmount += itr;
 
               dThis.localdb.bulkDocs(outDocs);
             });
@@ -485,6 +491,9 @@ export default {
             .then(function(doc) {
               return doc["fields"];
             })
+            .catch(function() {
+              return MatchTemplate.fields;
+            })
             .then(function(fields) {
               var points = 0;
               var itr = 0;
@@ -496,17 +505,24 @@ export default {
                 outDocs.push(doc);
                 itr++;
               }
-              dPoints.points += points;
-              dPoints.amount += itr;
+              dPoints.mPoints += points;
+              dPoints.mAmount += itr;
 
               dThis.localdb.bulkDocs(outDocs);
             });
         })
         .then(function() {
           dThis.localdb.get("TEAM_" + team).then(function(doc) {
-            var points =
-              dPoints.points / (dPoints.amount > 0 ? dPoints.amount : 1);
+            var matchPoints =
+              dPoints.mPoints / (dPoints.mAmount > 0 ? dPoints.mAmount : 1);
+
+            var pitPoints =
+              dPoints.pPoints / (dPoints.pAmount > 0 ? dPoints.pAmount : 1);
+
+            var points = matchPoints + pitPoints;
+
             points = Math.floor(points);
+
             if (doc.objectivePoints != points) {
               doc.objectivePoints = points;
               dThis.localdb.put(doc);
