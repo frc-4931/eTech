@@ -91,7 +91,7 @@ export default {
     this.sync_change.onBlueAllianceDbChange = function(change) {
       if (change["direction"] == "pull") {
         for (var doc of change["change"]["docs"]) {
-          if (doc["_id"] === "MATCHES") {
+          if (doc["_id"].startWith("MATCHSIMPLE_")) {
             dThis.reloadMatches();
           }
         }

@@ -126,7 +126,8 @@ if (options.help) {
   process.exit();
 }
 
-const LOCAL_DATABASE = "/database";
+const DATABASE_URN = "/database";
+const API_URN = "/api";
 const PROXY_TARGET = options.databaseAddress + ":" + options.databasePort;
 const DIRECTORY = options.directory;
 const PORT = options.port;
@@ -148,9 +149,9 @@ proxy.on("error", function (err, req, response) {
 const handler = function (request, response) {
   var url = request.url;
 
-  if (url.startsWith(LOCAL_DATABASE)) {
+  if (url.startsWith(DATABASE_URN)) {
     var modifiedRequest = request;
-    modifiedRequest.url = request.url.replace(LOCAL_DATABASE, "");
+    modifiedRequest.url = request.url.replace(DATABASE_URN, "");
 
     if (options.logDbRequests)
       console.log(
@@ -162,6 +163,25 @@ const handler = function (request, response) {
     proxy.web(modifiedRequest, response, {
       target: PROXY_TARGET
     });
+  } else if (url.startsWith(API_URN)) {
+    var responseCode = 200;
+    var content = new Object();
+
+    if (url == API_URN + "/status") {
+      content["use_ssl"] = options.useSsl == undefined ? false : true;
+
+      content["tba_enabled"] = options.tbaEnabled == undefined ? false : true;
+      content["tba_event_key"] = options.tbaEventKey;
+      content["tba_interval"] = options.tbaEnabled ? options.tbaInterval : undefined;
+    } else {
+      var responseCode = 404;
+    }
+
+    response.writeHead(responseCode, {
+      "Content-Type": "application/json"
+    });
+
+    response.end(JSON.stringify(content));
   } else {
     var file;
     var type = "text/html";
@@ -259,7 +279,7 @@ if (useBA) {
   try {
     var tbaLogin = options.tbaDbLogin.split(":", 2);
   } catch (exept) {
-    console.log(chalk.redBright("Error while trying to prase database loggin credentials."));
+    console.log(chalk.redBright("Error while trying to parse database loggin credentials."));
     process.exit();
   }
   tbaDB.logIn(tbaLogin[0], tbaLogin[1]).catch(function (err) {
