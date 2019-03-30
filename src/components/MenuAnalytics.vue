@@ -1,26 +1,16 @@
 <template>
-  <div
-    v-if="loggedin"
-    class="grid"
-  >
-    <BackButton />
+  <div v-if="loggedin" class="grid">
+    <BackButton/>
 
     <h1 class="location-span background-box content-centered">Analytics</h1>
 
     <div class="location-right-large">
-      <div
-        id="analytics-sorting-options"
-        class="background-box content-centered"
-      >
+      <div id="analytics-sorting-options" class="background-box content-centered">
         <div>
           <h3>Scouting Type</h3>
           <div class="background-box-input">
             <select v-model="scoutingType">
-              <option
-                value="select"
-                selected
-                disabled
-              >Select</option>
+              <option value="select" selected disabled>Select</option>
               <option value="match">Match Scouting</option>
               <option value="pit">Pit Scouting</option>
             </select>
@@ -38,8 +28,7 @@
 
         <div>
           <h3>Sorting Method</h3>
-          <div class="
-          background-box-input">
+          <div class="background-box-input">
             <select v-model="sortingMethod">
               <option value="average">Average</option>
               <option value="highest">Highest</option>
@@ -49,7 +38,6 @@
         </div>
       </div>
     </div>
-
   </div>
   <Error v-else>You must be logged in to view this page!</Error>
 </template>

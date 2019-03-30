@@ -2,32 +2,17 @@
   <div v-if="loggedin">
     <div class="background-box grid-perminant">
       <label class="location-left content-padding-left">
-        <input
-          class="radio-button"
-          v-model="seleted"
-          value="PitScout"
-          type="radio"
-          name="r_scout_select"
-        >
+        <input class="radio-button" v-model="seleted" value="PitScout" type="radio" name="r_scout_select">
         Pit Scout
       </label>
 
       <label class="location-right content-right content-padding-right">
-        <input
-          class="radio-button"
-          v-model="seleted"
-          value="MatchScout"
-          type="radio"
-          name="r_scout_select"
-        >
+        <input class="radio-button" v-model="seleted" value="MatchScout" type="radio" name="r_scout_select">
         Match Scout
       </label>
     </div>
 
-    <h3
-      @click="createScout()"
-      class="location-centered-small background-box background-box-hover content-centered"
-    >Create</h3>
+    <h3 @click="createScout()" class="location-centered-small background-box background-box-hover content-centered">Create</h3>
   </div>
   <Error v-else>You must be logged in to create a new scout!</Error>
 </template>

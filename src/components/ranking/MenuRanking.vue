@@ -1,6 +1,6 @@
 <template>
   <div class="grid">
-    <BackButton />
+    <BackButton/>
 
     <h1 class="background-box content-centered location-span">Rankings</h1>
 
@@ -17,13 +17,7 @@
       </div>
 
       <transition-group name="trans-group">
-        <RankingTeam
-          v-for="team in teams"
-          :key="team.team_key"
-          :teamData="team"
-          :localtbadb="localtbadb"
-          :localdb="localdb"
-        />
+        <RankingTeam v-for="team in teams" :key="team.team_key" :teamData="team" :localtbadb="localtbadb" :localdb="localdb"/>
       </transition-group>
     </div>
   </div>

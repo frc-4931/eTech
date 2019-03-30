@@ -1,22 +1,10 @@
 <template>
   <div id="app">
-    <transition
-      enter-active-class="content-fade-in"
-      leave-active-class="content-fade-out"
-      mode="out-in"
-    >
-      <router-view
-        :localdb="localdb"
-        :remotedb="remotedb"
-        :localtbadb="localtbadb"
-        :bluealliancedb="bluealliancedb"
-        :sync_change="sync_change"
-        :user="user"
-        :reloadSync="reloadSync"
-      ></router-view>
-    </transition>
+    <ConnectionError v-if="isConnectionError"/>
 
-    <ConnectionError v-if="isConnectionError"></ConnectionError>
+    <transition enter-active-class="content-fade-in" leave-active-class="content-fade-out" mode="out-in">
+      <router-view :localdb="localdb" :remotedb="remotedb" :localtbadb="localtbadb" :bluealliancedb="bluealliancedb" :sync_change="sync_change" :user="user" :reloadSync="reloadSync"></router-view>
+    </transition>
   </div>
 </template>
 

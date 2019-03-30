@@ -1,140 +1,78 @@
 <template>
   <div class="grid">
+    <BackButton/>
+
+    <h1 class="background-box location-span content-centered">Bracket</h1>
+
     <div class="location-centered bracket-container">
       <div class="bracket-qf bracket-sub-container">
-        <BracketSlot
-          :level="'qf'"
-          :location="'0'"
-          :bracketData="bracketData"
-        />
-        <BracketConnectorLine />
+        <BracketSlot :level="'qf'" :location="'0'" :bracketData="bracketData"/>
+        <BracketConnectorLine/>
 
-        <BracketSlot
-          :level="'qf'"
-          :location="'1'"
-          :bracketData="bracketData"
-          class="bracket-slot-small-top"
-        />
-        <BracketConnectorLine />
+        <BracketSlot :level="'qf'" :location="'1'" :bracketData="bracketData" class="bracket-slot-small-top"/>
+        <BracketConnectorLine/>
 
-        <BracketSlot
-          :level="'qf'"
-          :location="'2'"
-          :bracketData="bracketData"
-        />
-        <BracketConnectorLine />
+        <BracketSlot :level="'qf'" :location="'2'" :bracketData="bracketData"/>
+        <BracketConnectorLine/>
 
-        <BracketSlot
-          :level="'qf'"
-          :location="'3'"
-          :bracketData="bracketData"
-          class="bracket-slot-small-top"
-        />
-        <BracketConnectorLine />
+        <BracketSlot :level="'qf'" :location="'3'" :bracketData="bracketData" class="bracket-slot-small-top"/>
+        <BracketConnectorLine/>
 
-        <BracketSlot
-          :level="'qf'"
-          :location="'4'"
-          :bracketData="bracketData"
-        />
-        <BracketConnectorLine />
+        <BracketSlot :level="'qf'" :location="'4'" :bracketData="bracketData"/>
+        <BracketConnectorLine/>
 
-        <BracketSlot
-          :level="'qf'"
-          :location="'5'"
-          :bracketData="bracketData"
-          class="bracket-slot-small-top"
-        />
-        <BracketConnectorLine />
+        <BracketSlot :level="'qf'" :location="'5'" :bracketData="bracketData" class="bracket-slot-small-top"/>
+        <BracketConnectorLine/>
 
-        <BracketSlot
-          :level="'qf'"
-          :location="'6'"
-          :bracketData="bracketData"
-        />
-        <BracketConnectorLine />
+        <BracketSlot :level="'qf'" :location="'6'" :bracketData="bracketData"/>
+        <BracketConnectorLine/>
 
-        <BracketSlot
-          :level="'qf'"
-          :location="'7'"
-          :bracketData="bracketData"
-          class="bracket-slot-small-top"
-        />
-        <BracketConnectorLine />
-
+        <BracketSlot :level="'qf'" :location="'7'" :bracketData="bracketData" class="bracket-slot-small-top"/>
+        <BracketConnectorLine/>
       </div>
       <div class="bracket-sf bracket-sub-container">
-        <BracketConnectorLine />
-        <BracketSlot
-          :level="'sf'"
-          :location="'0'"
-          :bracketData="bracketData"
-        />
-        <BracketConnectorLine />
+        <BracketConnectorLine/>
+        <BracketSlot :level="'sf'" :location="'0'" :bracketData="bracketData"/>
+        <BracketConnectorLine/>
 
-        <BracketConnectorLine />
-        <BracketSlot
-          :level="'sf'"
-          :location="'1'"
-          :bracketData="bracketData"
-          class="bracket-slot-small-top"
-        />
-        <BracketConnectorLine />
+        <BracketConnectorLine/>
+        <BracketSlot :level="'sf'" :location="'1'" :bracketData="bracketData" class="bracket-slot-small-top"/>
+        <BracketConnectorLine/>
 
-        <BracketConnectorLine />
-        <BracketSlot
-          :level="'sf'"
-          :location="'2'"
-          :bracketData="bracketData"
-        />
-        <BracketConnectorLine />
+        <BracketConnectorLine/>
+        <BracketSlot :level="'sf'" :location="'2'" :bracketData="bracketData"/>
+        <BracketConnectorLine/>
 
-        <BracketConnectorLine />
-        <BracketSlot
-          :level="'sf'"
-          :location="'3'"
-          :bracketData="bracketData"
-          class="bracket-slot-small-top"
-        />
-        <BracketConnectorLine />
+        <BracketConnectorLine/>
+        <BracketSlot :level="'sf'" :location="'3'" :bracketData="bracketData" class="bracket-slot-small-top"/>
+        <BracketConnectorLine/>
       </div>
       <div class="bracket-f bracket-sub-container">
-        <BracketConnectorLine />
-        <BracketSlot
-          :level="'f'"
-          :location="'0'"
-          :bracketData="bracketData"
-        />
-        <BracketConnectorLine />
+        <BracketConnectorLine/>
+        <BracketSlot :level="'f'" :location="'0'" :bracketData="bracketData"/>
+        <BracketConnectorLine/>
 
-        <BracketConnectorLine />
-        <BracketSlot
-          :level="'f'"
-          :location="'1'"
-          :bracketData="bracketData"
-        />
-        <BracketConnectorLine />
-
+        <BracketConnectorLine/>
+        <BracketSlot :level="'f'" :location="'1'" :bracketData="bracketData"/>
+        <BracketConnectorLine/>
       </div>
       <div class="bracket-winner bracket-sub-container">
-        <BracketConnectorLine />
-        <BracketSlot
-          :level="'w'"
-          :location="'0'"
-          :bracketData="bracketData"
-        />
+        <BracketConnectorLine/>
+        <BracketSlot :level="'w'" :location="'0'" :bracketData="bracketData"/>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import BackButton from "../BackButton.vue";
 import BracketSlot from "./BracketSlot.vue";
 import BracketConnectorLine from "./BracketConnectorLine.vue";
 
 export default {
   name: "MenuBracket",
   components: {
+    BackButton,
     BracketSlot,
     BracketConnectorLine
   },

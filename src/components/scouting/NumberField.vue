@@ -5,16 +5,7 @@
     </div>
 
     <div class="background-box-input location-right">
-      <input
-        v-model.number="data.value"
-        @input="changed()"
-        type="number"
-        pattern="[0-9]*"
-        :max="max"
-        :min="min"
-        placeholder="Value"
-        :disabled="locked"
-      >
+      <input v-model.number="data.value" @input="changed()" type="number" pattern="[0-9]*" :max="max" :min="min" placeholder="Value" :disabled="locked">
     </div>
   </div>
 </template>

@@ -1,8 +1,5 @@
 <template>
-  <h3
-    @click="goBack()"
-    class="background-box background-box-hover content-centered location-centered-small done-button-container"
-  >Back</h3>
+  <h3 @click="goBack()" class="background-box background-box-hover content-centered location-centered-small done-button-container">Back</h3>
 </template>
 
 <script>

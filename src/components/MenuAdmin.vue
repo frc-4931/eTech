@@ -2,11 +2,8 @@
   <div id="menu-admin">
     <Error v-if="!isAdmin">You must be logged in as an admin to view this page!</Error>
 
-    <div
-      v-else
-      class="grid"
-    >
-      <BackButton :pushuri="'/'" />
+    <div v-else class="grid">
+      <BackButton :pushuri="'/'"/>
 
       <h2 class="location-span background-box content-centered">Admin Tools</h2>
 
@@ -14,70 +11,53 @@
         <h2 class="content-centered background-box">Tools</h2>
 
         <div class="background-box">
-          <router-link :to="{name: 'team-add'}">Add Team</router-link><br>
-          <router-link :to="{name: 'user-add'}">Add User</router-link><br>
-          <router-link :to="{name: 'admin-template'}">Edit Scouting Templates</router-link><br>
-          <router-link :to="{name: 'import-tba-teams'}">Import Teams From TBA</router-link><br>
+          <router-link :to="{name: 'team-add'}">Add Team</router-link>
+          <br>
+          <router-link :to="{name: 'user-add'}">Add User</router-link>
+          <br>
+          <router-link :to="{name: 'admin-template'}">Edit Scouting Templates</router-link>
+          <br>
+          <router-link :to="{name: 'import-tba-teams'}">Import Teams From TBA</router-link>
+          <br>
         </div>
       </div>
 
       <div class="location-centered-small">
         <h2 class="background-box content-centered">Teams</h2>
 
-        <div
-          v-if="teams.length != 0"
-          class="background-box admin-team"
-        >
+        <div v-if="teams.length != 0" class="background-box admin-team">
           <p>Team Number</p>
           <p>Team Name</p>
           <p>Remove Team</p>
         </div>
 
-        <div
-          v-else
-          class="location-centered background-box content-centered"
-        >
+        <div v-else class="location-centered background-box content-centered">
           <p>There aren't any teams to display yet.</p>
           <router-link :to="{name: 'team-add'}">Add a team here.</router-link>
         </div>
 
         <transition-group name="trans-group">
-          <AdminTeam
-            v-for="(teamData) in teams"
-            v-bind:key="teamData['_id']"
-            :teamdata="teamData"
-            :removeteam="removeTeam"
-          />
+          <AdminTeam v-for="(teamData) in teams" v-bind:key="teamData['_id']" :teamdata="teamData" :removeteam="removeTeam"/>
         </transition-group>
       </div>
 
       <div class="location-right-small">
         <h2 class="background-box content-centered">Members</h2>
 
-        <div
-          v-if="users.length != 0"
-          class="background-box admin-user"
-        >
+        <div v-if="users.length != 0" class="background-box admin-user">
           <p>Name</p>
           <p>Username</p>
           <p>Role</p>
           <p>Edit User</p>
         </div>
 
-        <div
-          v-else
-          class="background-box content-centered"
-        >
+        <div v-else class="background-box content-centered">
           <p>There aren't any users to display yet.</p>
           <router-link :to="{name: 'user-add'}">Add a user here.</router-link>
         </div>
 
         <transition-group name="trans-group">
-          <AdminUser
-            v-for="user in users"
-            :key="user.username"
-            :userdata="user"
-          ></AdminUser>
+          <AdminUser v-for="user in users" :key="user.username" :userdata="user"></AdminUser>
         </transition-group>
       </div>
     </div>
