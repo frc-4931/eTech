@@ -7,9 +7,9 @@
     >
       <BackButton />
 
-      <div class="location-span">
-        <h1 class="background-box content-centered">Schedule</h1>
+      <h1 class="background-box content-centered location-span">Schedule</h1>
 
+      <div class="location-span">
         <div class="background-box ranking-team-container mobile-shrink schedule-match-description">
           <h3>Match</h3>
           <h3>Blue</h3>

@@ -47,7 +47,7 @@
             v-bind:key="teamData['_id']"
             :teamdata="teamData"
             :removeteam="removeTeam"
-          ></AdminTeam>
+          />
         </transition-group>
       </div>
 

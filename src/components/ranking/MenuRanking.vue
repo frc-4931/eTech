@@ -2,9 +2,9 @@
   <div class="grid">
     <BackButton />
 
-    <div class="location-span">
-      <h1 class="background-box content-centered">Rankings</h1>
+    <h1 class="background-box content-centered location-span">Rankings</h1>
 
+    <div class="location-span">
       <div class="background-box ranking-team-container mobile-shrink">
         <h3>Ranking</h3>
         <h3>Name</h3>

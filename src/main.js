@@ -9,11 +9,12 @@ import MenuAdmin from "./components/MenuAdmin.vue";
 import MenuTemplateEditor from "./components/MenuTemplateEditor.vue";
 import MenuUserAdd from "./components/admin/MenuUserAdd.vue";
 import MenuUserEdit from "./components/admin/MenuUserEdit.vue";
-// import MenuAnalytics from "./components/MenuAnalytics.vue";
+import MenuAnalytics from "./components/MenuAnalytics.vue";
 import MenuImportTBATeams from "./components/admin/MenuImportTBATeams.vue";
 import MenuRanking from "./components/ranking/MenuRanking.vue";
 import MenuSchedule from "./components/schedule/MenuSchedule.vue";
 import MenuBracket from "./components/bracket/MenuBracket.vue";
+import MenuAwards from "./components/awards/MenuAwards.vue";
 import PageNotFound from "./components/PageNotFound.vue";
 
 Vue.config.productionTip = false
@@ -29,10 +30,11 @@ const routes = [
   { path: "/admin/user/add", name: "user-add", component: MenuUserAdd },
   { path: "/admin/user/:username", name: "user-edit", component: MenuUserEdit, props: true },
   { path: "/admin/template", name: "admin-template", component: MenuTemplateEditor, },
-  //{ path: "/analytics", name: "analytics", component: MenuAnalytics },
+  { path: "/analytics", name: "analytics", component: MenuAnalytics },
   { path: "/tba/ranking", name: "ranking", component: MenuRanking },
   { path: "/tba/schedule", name: "schedule", component: MenuSchedule },
   { path: "/tba/bracket", name: "bracket", component: MenuBracket },
+  { path: "/tba/awards", name: "awards", component: MenuAwards },
   { path: "*", name: "page-not-found", component: PageNotFound }
 ];
 

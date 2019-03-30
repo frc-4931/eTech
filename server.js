@@ -443,6 +443,7 @@ if (useBA) {
 
     cacheToFile("event/" + baEvent + "/rankings", "RANKINGS");
     cacheToFile("event/" + baEvent + "/alliances", "ALLIANCES");
+    cacheToFile("event/" + baEvent + "/awards", "AWARDS");
   };
 
   var intervalTime = options.tbaInterval * 1000;

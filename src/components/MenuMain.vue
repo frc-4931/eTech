@@ -19,15 +19,19 @@
           v-if="loggedin"
         >
           <h2 class="content-centered">The Blue Alliance</h2>
-          <div class="grid-perminant">
+          <div class="grid-perminant content-centered">
             <router-link
-              class="location-left content-centered"
+              class="location-left-small"
               :to="{name: 'ranking'}"
             >Rankings</router-link>
             <router-link
-              class="location-right content-centered"
+              class="location-centered-small"
               :to="{name: 'schedule'}"
             >Schedule</router-link>
+            <router-link
+              class="location-right-small"
+              :to="{name: 'awards'}"
+            >Awards</router-link>
           </div>
         </div>
       </div>

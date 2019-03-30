@@ -3,12 +3,7 @@
     v-if="loggedin"
     class="grid"
   >
-    <div class="location-centered-small done-button-container">
-      <h3
-        @click="goBack()"
-        class="background-box background-box-hover content-centered"
-      >Back</h3>
-    </div>
+    <BackButton />
 
     <h1 class="location-span background-box content-centered">Analytics</h1>
 
@@ -18,26 +13,13 @@
         class="background-box content-centered"
       >
         <div>
-          <h3>Analytics type</h3>
-          <div class="background-box-input">
-            <select v-model="analyticsType">
-              <option
-                disabled
-                value=""
-              >Select</option>
-              <option value="scouting">Scouting</option>
-              <option value="comments">Comments</option>
-            </select>
-          </div>
-        </div>
-
-        <div v-show="analyticsType === 'scouting'">
           <h3>Scouting Type</h3>
           <div class="background-box-input">
             <select v-model="scoutingType">
               <option
+                value="select"
+                selected
                 disabled
-                value=""
               >Select</option>
               <option value="match">Match Scouting</option>
               <option value="pit">Pit Scouting</option>
@@ -45,28 +27,23 @@
           </div>
         </div>
 
-        <div v-show="scoutingType !== ''">
+        <div>
           <h3>Scouting Question</h3>
           <div class="background-box-input">
             <select v-model="scoutingQuestion">
-              <option
-                disabled
-                value=""
-              >Select</option>
               <option value="d">v-for</option>
-              <option value="dfadfa">Sort by Comments</option>
             </select>
           </div>
         </div>
 
-        <div v-show="analyticsType === 'comments' || scoutingQuestion !== ''">
+        <div>
           <h3>Sorting Method</h3>
           <div class="
           background-box-input">
             <select v-model="sortingMethod">
-              <option value="">Average</option>
-              <option value="">Highest</option>
-              <option value="">Lowest</option>
+              <option value="average">Average</option>
+              <option value="highest">Highest</option>
+              <option value="lowest">Lowest</option>
             </select>
           </div>
         </div>
@@ -79,11 +56,13 @@
 
 <script>
 import Error from "./Error.vue";
+import BackButton from "./BackButton.vue";
 
 export default {
   name: "MenuAnalytics",
   components: {
-    Error
+    Error,
+    BackButton
   },
   props: {
     localdb: Object,
@@ -94,19 +73,14 @@ export default {
   },
   data() {
     return {
-      analyticsType: "",
-      scoutingType: "",
+      scoutingType: "select",
       scoutingQuestion: "",
-      sortingMethod: "",
+      sortingMethod: "average",
       teams: [],
       loggedin: true
     };
   },
-  methods: {
-    goBack() {
-      this.$router.push("/");
-    }
-  },
+  methods: {},
   watch: {
     user: {
       handler: function(newValue) {
@@ -134,7 +108,7 @@ export default {
 @media (min-width: 1200px) {
   #analytics-sorting-options {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 </style>
