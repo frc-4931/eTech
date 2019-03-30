@@ -17,7 +17,7 @@ export default {
     saveCallback: Function
   },
   methods: {
-    onClick() {
+    onClick: function() {
       if (this.unsavedChanges) this.saveCallback();
     }
   }

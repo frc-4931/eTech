@@ -3,12 +3,10 @@
     @click="teamView()"
     class="background-box background-box-hover leaderboard-container mobile-shrink"
   >
-    <div
+    <p
       v-for="(teamEl, teamTitle) in team"
       v-bind:key="teamTitle"
-    >
-      <p>{{ teamEl }}</p>
-    </div>
+    >{{ teamEl }}</p>
 
     <p>{{ totalPoints }}</p>
   </div>
