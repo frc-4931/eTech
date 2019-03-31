@@ -1,5 +1,7 @@
 <template>
-  <div class="grid">
+  <Error v-if="user.role == null">You must be logged in to view this page!</Error>
+
+  <div v-else class="grid">
     <BackButton/>
 
     <h1 class="background-box location-span content-centered">Bracket</h1>
@@ -65,6 +67,7 @@
 </template>
 
 <script>
+import Error from "../Error.vue";
 import BackButton from "../BackButton.vue";
 import BracketSlot from "./BracketSlot.vue";
 import BracketConnectorLine from "./BracketConnectorLine.vue";
@@ -72,6 +75,7 @@ import BracketConnectorLine from "./BracketConnectorLine.vue";
 export default {
   name: "MenuBracket",
   components: {
+    Error,
     BackButton,
     BracketSlot,
     BracketConnectorLine
@@ -167,7 +171,8 @@ export default {
   },
   props: {
     localtbadb: Object,
-    sync_change: Object
+    sync_change: Object,
+    user: Object
   },
   methods: {
     addToBracketData(level, eliminatedLevel, location, alliance, teams) {
@@ -213,7 +218,7 @@ export default {
           var allianceData = doc.json[alliance];
 
           var eliminatedLevel = allianceData.status.level;
-          var alliance = parseInt(allianceData.name.split(" ")[1]);
+          var allianceId = parseInt(allianceData.name.split(" ")[1]);
           var teams = [];
 
           allianceData.picks.forEach(function(team) {
@@ -240,7 +245,7 @@ export default {
             "qf",
             eliminatedLevel,
             location,
-            alliance,
+            allianceId,
             teams
           );
         }
@@ -249,6 +254,8 @@ export default {
   },
   created: function() {
     this.reloadAlliances();
+
+    var dThis = this;
 
     this.sync_change.onBlueAllianceDbChange = function(change) {
       if (change["direction"] == "pull") {

@@ -174,7 +174,7 @@ const handler = function (request, response) {
       content["tba_event_key"] = options.tbaEventKey;
       content["tba_interval"] = options.tbaEnabled ? options.tbaInterval : undefined;
     } else {
-      var responseCode = 404;
+      responseCode = 404;
     }
 
     response.writeHead(responseCode, {

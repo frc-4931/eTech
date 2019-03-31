@@ -2,10 +2,12 @@
   <div>
     <div v-on:click="fullComment = !fullComment" class="background-box">
       <h2 class="content-centered">{{title}}</h2>
+
       <div v-if="fullComment">
         <pre>{{this.comment}}</pre>
         <h3 v-if="getTruncatedMessage.length < this.comment.length" class="content-centered toggle-view-more">Show less</h3>
       </div>
+
       <div v-else>
         <pre>{{getTruncatedMessage + (this.comment.length > this.maxTruncatedLength ? "..." : "")}}</pre>
         <h3 v-if="getTruncatedMessage.length < this.comment.length" class="content-centered toggle-view-more">Show more</h3>

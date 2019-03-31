@@ -1,8 +1,6 @@
 <template>
   <div class="grid-perminant pit-scout-div">
-    <div class="background-box location-left">
-      <p>{{ data.title }}</p>
-    </div>
+    <p class="background-box location-left">{{ data.title }}</p>
 
     <div class="background-box-input location-right">
       <select @change="changed()" v-model="data.value" :value="data.value" :disabled="locked">

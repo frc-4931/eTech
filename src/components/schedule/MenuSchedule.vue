@@ -1,6 +1,7 @@
 <template>
   <div>
-    <Error v-if="user.role == null">You must be logged in as an admin to view this page!</Error>
+    <Error v-if="user.role == null">You must be logged in to view this page!</Error>
+
     <div v-else class="grid">
       <BackButton/>
 

@@ -1,8 +1,6 @@
 <template>
   <div class="grid-perminant pit-scout-div">
-    <div class="location-left background-box">
-      <p>{{ data.title }}</p>
-    </div>
+    <p class="location-left background-box">{{ data.title }}</p>
 
     <div v-if="!locked" @click="increment()" class="noselect background-box content-centered background-box-hover">
       <p>+</p>

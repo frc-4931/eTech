@@ -1,5 +1,7 @@
 <template>
-  <div class="grid">
+  <Error v-if="user.role == null">You must be logged in to view this page!</Error>
+
+  <div v-else class="grid">
     <BackButton/>
 
     <h1 class="background-box content-centered location-span">Rankings</h1>
@@ -25,12 +27,14 @@
 
 
 <script>
+import Error from "../Error.vue";
 import RankingTeam from "./RankingTeam.vue";
 import BackButton from "../BackButton.vue";
 
 export default {
   name: "MenuRanking",
   components: {
+    Error,
     BackButton,
     RankingTeam
   },
@@ -42,7 +46,8 @@ export default {
   props: {
     localtbadb: Object,
     localdb: Object,
-    sync_change: Object
+    sync_change: Object,
+    user: Object
   },
   methods: {
     reloadTeams() {

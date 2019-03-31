@@ -1,8 +1,6 @@
 <template>
   <form onsubmit="return false;" class="grid-perminant pit-scout-div">
-    <div class="background-box location-left">
-      <p>{{ data.title }}</p>
-    </div>
+    <p class="background-box location-left">{{ data.title }}</p>
 
     <div class="location-right background-box grid-perminant">
       <label class="location-left">
