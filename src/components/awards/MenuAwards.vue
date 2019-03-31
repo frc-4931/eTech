@@ -3,6 +3,7 @@
 
   <div v-else class="grid grid-shrink">
     <BackButton/>
+
     <h1 class="location-centered background-box content-centered">Awards</h1>
 
     <div v-if="awards.length > 0" class="location-centered">
