@@ -21,7 +21,7 @@
         </div>
 
         <div class="location-span">
-          <h3 @click="submitTeam()" class="background-box content-centered" v-bind:class="[this.allFieldsValid ? 'background-box-hover' : 'background-box-disabled']">Add</h3>
+          <h3 @click="submitTeam()" class="background-box content-centered" :class="[this.allFieldsValid ? 'background-box-hover' : 'background-box-disabled']">Add</h3>
 
           <h3 @click="goBack()" class="background-box background-box-hover content-centered">Cancel</h3>
         </div>

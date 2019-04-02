@@ -1,57 +1,42 @@
 <template>
   <div id="menu-team-comment-modify">
     <div class="line"/>
-    <FieldError v-if="error"></FieldError>
-    <div v-else class="background-box">
-      <h2 class="content-centered">Modify comment</h2>
+
+    <h2 class="content-centered background-box">Modify comment</h2>
+
+    <div class="background-box">
+      <input v-model.trim="title" type="text" name="comment-title" placeholder="Comment Title" required>
     </div>
-    <div>
-      <div class="background-box">
-        <input v-model="title" type="text" name="comment-title" placeholder="Comment Title" required>
-      </div>
-      <div class="background-box">
-        <textarea v-model="comment" rows="10" type="text" name="comment-content" placeholder="Comment" required></textarea>
-      </div>
-      <div class="background-box">
-        <select v-model="rating" name="comment-points" required>
-          <option value="Invalid" selected="selected" disabled>Select Point Value for Comment</option>
-          <option value="5">+5</option>
-          <option value="4">+4</option>
-          <option value="3">+3</option>
-          <option value="2">+2</option>
-          <option value="1">+1</option>
-          <option value="0">Neutral</option>
-          <option value="-1">-1</option>
-          <option value="-2">-2</option>
-          <option value="-3">-3</option>
-          <option value="-4">-4</option>
-          <option value="-5">-5</option>
-        </select>
-      </div>
+    <div class="background-box">
+      <textarea v-model.trim="comment" rows="10" type="text" name="comment-content" placeholder="Comment" required></textarea>
     </div>
-    <div>
-      <div @click="submitComment()" class="location-centered-small background-box background-box-hover content-centered">
-        <h3>Save</h3>
-      </div>
-      <div @click="deleteComment()" class="location-centered-small background-box background-box-hover content-centered">
-        <h3>Delete</h3>
-      </div>
+    <div class="background-box">
+      <select v-model="rating" name="comment-points" required>
+        <option value="5">+5</option>
+        <option value="4">+4</option>
+        <option value="3">+3</option>
+        <option value="2">+2</option>
+        <option value="1">+1</option>
+        <option value="0">Neutral</option>
+        <option value="-1">-1</option>
+        <option value="-2">-2</option>
+        <option value="-3">-3</option>
+        <option value="-4">-4</option>
+        <option value="-5">-5</option>
+      </select>
     </div>
-    <div @click="callback()" class="location-centered-small background-box background-box-hover content-centered">
-      <h3>Cancel</h3>
-    </div>
+
+    <h3 @click="submitComment()" class="location-centered-small background-box content-centered" :class="[this.allFieldsValid ? 'background-box-hover' : 'background-box-disabled']">Save</h3>
+    <h3 @click="deleteComment()" class="location-centered-small background-box background-box-hover content-centered">Delete</h3>
+    <h3 @click="callback()" class="location-centered-small background-box background-box-hover content-centered">Cancel</h3>
+
     <div class="line"/>
   </div>
 </template>
 
 <script>
-import FieldError from "./scouting/FieldError.vue";
-
 export default {
   name: "MenuTeamCommentModify",
-  components: {
-    FieldError
-  },
   props: {
     callback: Function,
     localdb: Object,
@@ -63,14 +48,13 @@ export default {
       comment: "",
       rating: "Invalid",
       name: String,
-      commentNumber: 0,
-      error: false
+      commentNumber: 0
     };
   },
   methods: {
     submitComment: function() {
       var dThis = this;
-      if (this.title != "" && this.comment != "") {
+      if (this.allFieldsValid) {
         this.localdb.get(this.docId).then(function(doc) {
           doc.title = dThis.title;
           doc.comment = dThis.comment;
@@ -80,8 +64,6 @@ export default {
             dThis.callback();
           });
         });
-      } else {
-        this.error = true;
       }
     },
     deleteComment: function() {
@@ -101,6 +83,9 @@ export default {
   computed: {
     number: function() {
       return parseInt(this.docId.replace("COMMENT_", "").slice(0, -2));
+    },
+    allFieldsValid: function() {
+      return this.title != "" && this.comment != "";
     }
   },
   created() {

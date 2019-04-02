@@ -2,60 +2,43 @@
   <div id="menu-team-comment-add">
     <div class="line"/>
 
-    <Error v-if="isError">{{ errorMessage }}</Error>
+    <h2 class="content-centered background-box">Add comment</h2>
 
-    <div v-else class="background-box">
-      <h2 class="content-centered">Add comment</h2>
+    <div class="background-box">
+      <input v-model.trim="title" type="text" name="comment-title" placeholder="Comment Title" required>
     </div>
 
-    <div>
-      <div class="background-box">
-        <input v-model="title" type="text" name="comment-title" placeholder="Comment Title" required>
-      </div>
-
-      <div class="background-box">
-        <textarea v-model="comment" rows="10" type="text" name="comment-content" placeholder="Comment" required></textarea>
-      </div>
-
-      <div class="background-box">
-        <select v-model="rating" name="comment-points" required>
-          <option value="Invalid" selected="selected" disabled>Select Point Value for Comment</option>
-          <option value="5">+5</option>
-          <option value="4">+4</option>
-          <option value="3">+3</option>
-          <option value="2">+2</option>
-          <option value="1">+1</option>
-          <option value="0">Neutral</option>
-          <option value="-1">-1</option>
-          <option value="-2">-2</option>
-          <option value="-3">-3</option>
-          <option value="-4">-4</option>
-          <option value="-5">-5</option>
-        </select>
-      </div>
+    <div class="background-box">
+      <textarea v-model.trim="comment" rows="10" type="text" name="comment-content" placeholder="Comment" required></textarea>
     </div>
 
-    <div>
-      <div @click="submitComment()" class="location-centered-small background-box background-box-hover content-centered">
-        <h3>Add</h3>
-      </div>
-      <div @click="callback" class="location-centered-small background-box background-box-hover content-centered">
-        <h3>Cancel</h3>
-      </div>
+    <div class="background-box">
+      <select v-model="rating" name="comment-points" required>
+        <option value="Invalid" selected="selected" disabled>Select Point Value for Comment</option>
+        <option value="5">+5</option>
+        <option value="4">+4</option>
+        <option value="3">+3</option>
+        <option value="2">+2</option>
+        <option value="1">+1</option>
+        <option value="0">Neutral</option>
+        <option value="-1">-1</option>
+        <option value="-2">-2</option>
+        <option value="-3">-3</option>
+        <option value="-4">-4</option>
+        <option value="-5">-5</option>
+      </select>
     </div>
+
+    <h3 @click="submitComment()" class="location-centered-small background-box content-centered" :class="[this.allFieldsValid ? 'background-box-hover' : 'background-box-disabled']">Add</h3>
+    <h3 @click="callback" class="location-centered-small background-box background-box-hover content-centered">Cancel</h3>
 
     <div class="line"/>
   </div>
 </template>
 
 <script>
-import Error from "./Error.vue";
-
 export default {
   name: "MenuTeamCommentAdd",
-  components: {
-    Error
-  },
   props: {
     callback: Function,
     localdb: Object,
@@ -67,9 +50,7 @@ export default {
       title: "",
       comment: "",
       rating: "Invalid",
-      commentNumber: 0,
-      isError: false,
-      errorMessage: ""
+      commentNumber: 0
     };
   },
   methods: {
@@ -77,11 +58,7 @@ export default {
       if (this.user.username != null) {
         //Check if user is logged in
         var dThis = this;
-        if (
-          this.title != "" &&
-          this.comment != "" &&
-          this.rating != "Invalid"
-        ) {
+        if (this.allFieldsValid) {
           var comment = {
             comment: this.comment,
             rating: parseInt(this.rating),
@@ -97,15 +74,13 @@ export default {
           this.localdb.put(comment).then(function() {
             dThis.callback();
           });
-        } else {
-          this.isError = true;
-          this.errorMessage = "All fields are required!";
         }
-      } else {
-        //If user if not logged in throw error you must be logged in
-        this.isError = true;
-        this.errorMessage = "You must be logged in to create a new comment!";
       }
+    }
+  },
+  computed: {
+    allFieldsValid: function() {
+      return this.title != "" && this.comment != "" && this.rating != "Invalid";
     }
   },
   created() {

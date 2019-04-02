@@ -3,16 +3,16 @@
     <div class="accountpanel-contents">
       <h2 class="content-centered">Account</h2>
 
-      <Message v-if="networkError && loggedin">
+      <p v-if="networkError && loggedin" class="content-centered">
         Could not connect to server.
         <br>You are working offline.
-      </Message>
-      <Message v-else-if="networkError">
+      </p>
+      <p v-else-if="networkError" class="content-centered">
         Could not connect to server.
         <br>You must be online to login.
-      </Message>
+      </p>
       <div v-else>
-        <Message v-if="isError">{{ errorMessage }}</Message>
+        <p class="content-centered" v-if="isError">{{ errorMessage }}</p>
         <p v-else-if="loggedin" class="content-centered">Logged in as: {{username}}</p>
         <p v-else class="content-centered">Not logged in</p>
 
@@ -64,11 +64,8 @@
 </template>
 
 <script>
-import Message from "../Message.vue";
-
 export default {
   name: "AccountPanel",
-  components: { Message },
   props: {
     remotedb: Object,
     sync_change: Object,

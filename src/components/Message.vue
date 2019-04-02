@@ -1,5 +1,5 @@
 <template>
-  <div class="error content-centered">
+  <div class="content-centered">
     <p>
       <slot></slot>
     </p>

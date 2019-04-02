@@ -4,10 +4,11 @@
       <component v-for="scField in template" :key="docId+(scField.field || scField.title)" :is="scField.type" :data="scField" :locked="!hasEdit" @valuechange="valueChange(scField.field, ...arguments)"></component>
     </div>
 
-    <div class="line"/>
-
-    <SaveButton v-if="hasEdit" :unsavedChanges="unsaved" :saveCallback="save"/>
-    <h3 v-if="hasEdit" @click="deleteScout()" class="location-centered-small background-box background-box-hover content-centered">Delete</h3>
+    <div v-if="hasEdit">
+      <div class="line"/>
+      <SaveButton :unsavedChanges="unsaved" :saveCallback="save"/>
+      <h3 @click="deleteScout()" class="location-centered-small background-box background-box-hover content-centered">Delete</h3>
+    </div>
   </div>
 </template>
 
@@ -23,7 +24,7 @@ import PitTemplate from "../../assets/pitscout.js";
 import MatchTemplate from "../../assets/matchscout.js";
 
 export default {
-  name: "PitScout",
+  name: "ScoutMenu",
   components: {
     NumberFieldInc,
     NumberField,
@@ -231,5 +232,9 @@ export default {
 }
 .pit-scout-div:first-child {
   margin-top: 0px;
+}
+.pitscout-label {
+  display: flex;
+  justify-content: center;
 }
 </style>

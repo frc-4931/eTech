@@ -17,7 +17,7 @@ export default {
   },
   methods: {
     goBack() {
-      if (this.goBackCallback != null) {
+      if (this.goBackCallback == null) {
         if (this.pushuri == undefined) {
           this.$router.go(-1);
         } else {
