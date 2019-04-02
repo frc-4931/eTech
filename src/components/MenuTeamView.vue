@@ -1,5 +1,5 @@
 <template>
-  <div v-if="loggedin && teamExists" id="menu-team-view">
+  <div v-if="loggedin && teamExists">
     <div class="grid grid-shrink">
       <BackButton/>
 
