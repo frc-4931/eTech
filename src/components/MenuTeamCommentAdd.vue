@@ -1,50 +1,25 @@
 <template>
   <div id="menu-team-comment-add">
-
-    <div class="line" />
+    <div class="line"/>
 
     <Error v-if="isError">{{ errorMessage }}</Error>
 
-    <div
-      v-else
-      class="background-box"
-    >
+    <div v-else class="background-box">
       <h2 class="content-centered">Add comment</h2>
     </div>
 
     <div>
       <div class="background-box">
-        <input
-          v-model="title"
-          type="text"
-          name="comment-title"
-          placeholder="Comment Title"
-          required
-        >
+        <input v-model="title" type="text" name="comment-title" placeholder="Comment Title" required>
       </div>
 
       <div class="background-box">
-        <textarea
-          v-model="comment"
-          rows="10"
-          type="text"
-          name="comment-content"
-          placeholder="Comment"
-          required
-        ></textarea>
+        <textarea v-model="comment" rows="10" type="text" name="comment-content" placeholder="Comment" required></textarea>
       </div>
 
       <div class="background-box">
-        <select
-          v-model="rating"
-          name="comment-points"
-          required
-        >
-          <option
-            value="Invalid"
-            selected="selected"
-            disabled
-          >Select Point Value for Comment</option>
+        <select v-model="rating" name="comment-points" required>
+          <option value="Invalid" selected="selected" disabled>Select Point Value for Comment</option>
           <option value="5">+5</option>
           <option value="4">+4</option>
           <option value="3">+3</option>
@@ -61,21 +36,15 @@
     </div>
 
     <div>
-      <div
-        @click="submitComment()"
-        class="location-centered-small background-box background-box-hover content-centered"
-      >
+      <div @click="submitComment()" class="location-centered-small background-box background-box-hover content-centered">
         <h3>Add</h3>
       </div>
-      <div
-        @click="callback"
-        class="location-centered-small background-box background-box-hover content-centered"
-      >
+      <div @click="callback" class="location-centered-small background-box background-box-hover content-centered">
         <h3>Cancel</h3>
       </div>
     </div>
 
-    <div class="line" />
+    <div class="line"/>
   </div>
 </template>
 

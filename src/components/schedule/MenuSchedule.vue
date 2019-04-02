@@ -1,15 +1,13 @@
 <template>
   <div>
-    <Error v-if="user.role == null">You must be logged in as an admin to view this page!</Error>
-    <div
-      v-else
-      class="grid"
-    >
-      <BackButton />
+    <Error v-if="user.role == null">You must be logged in to view this page!</Error>
+
+    <div v-else class="grid">
+      <BackButton/>
+
+      <h1 class="background-box content-centered location-span">Schedule</h1>
 
       <div class="location-span">
-        <h1 class="background-box content-centered">Schedule</h1>
-
         <div class="background-box ranking-team-container mobile-shrink schedule-match-description">
           <h3>Match</h3>
           <h3>Blue</h3>
@@ -19,11 +17,7 @@
         </div>
 
         <transition-group name="trans-group">
-          <ScheduleMatch
-            v-for="match in matches"
-            :key="match.set_number + match.comp_level + match.match_number"
-            :matchData="match"
-          />
+          <ScheduleMatch v-for="match in matches" :key="match.set_number + match.comp_level + match.match_number" :matchData="match"/>
         </transition-group>
       </div>
     </div>
@@ -91,7 +85,7 @@ export default {
     this.sync_change.onBlueAllianceDbChange = function(change) {
       if (change["direction"] == "pull") {
         for (var doc of change["change"]["docs"]) {
-          if (doc["_id"] === "MATCHES") {
+          if (doc["_id"].startWith("MATCHSIMPLE_")) {
             dThis.reloadMatches();
           }
         }

@@ -1,10 +1,12 @@
 <template>
-  <div class="grid">
-    <BackButton />
+  <Error v-if="user.role == null">You must be logged in to view this page!</Error>
+
+  <div v-else class="grid">
+    <BackButton/>
+
+    <h1 class="background-box content-centered location-span">Rankings</h1>
 
     <div class="location-span">
-      <h1 class="background-box content-centered">Rankings</h1>
-
       <div class="background-box ranking-team-container mobile-shrink">
         <h3>Ranking</h3>
         <h3>Name</h3>
@@ -17,13 +19,7 @@
       </div>
 
       <transition-group name="trans-group">
-        <RankingTeam
-          v-for="team in teams"
-          :key="team.team_key"
-          :teamData="team"
-          :localtbadb="localtbadb"
-          :localdb="localdb"
-        />
+        <RankingTeam v-for="team in teams" :key="team.team_key" :teamData="team" :localtbadb="localtbadb" :localdb="localdb"/>
       </transition-group>
     </div>
   </div>
@@ -31,12 +27,14 @@
 
 
 <script>
+import Error from "../Error.vue";
 import RankingTeam from "./RankingTeam.vue";
 import BackButton from "../BackButton.vue";
 
 export default {
   name: "MenuRanking",
   components: {
+    Error,
     BackButton,
     RankingTeam
   },
@@ -48,7 +46,8 @@ export default {
   props: {
     localtbadb: Object,
     localdb: Object,
-    sync_change: Object
+    sync_change: Object,
+    user: Object
   },
   methods: {
     reloadTeams() {

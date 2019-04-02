@@ -4,39 +4,20 @@
 
     <div v-bind:class="[loggedin ? 'location-left-small' : 'location-centered-small']">
       <div class="grid">
-        <AccountPanel
-          :remotedb="remotedb"
-          :sync_change="sync_change"
-          :user="user"
-          :reloadSync="reloadSync"
-          @loggedin="loggedIn()"
-          @loggedout="loggedOut()"
-          class="location-span"
-        ></AccountPanel>
+        <AccountPanel :remotedb="remotedb" :sync_change="sync_change" :user="user" :reloadSync="reloadSync" @loggedin="loggedIn()" @loggedout="loggedOut()" class="location-span"></AccountPanel>
 
-        <div
-          class="background-box location-span"
-          v-if="loggedin"
-        >
+        <div class="background-box location-span" v-if="loggedin">
           <h2 class="content-centered">The Blue Alliance</h2>
-          <div class="grid-perminant">
-            <router-link
-              class="location-left content-centered"
-              :to="{name: 'ranking'}"
-            >Rankings</router-link>
-            <router-link
-              class="location-right content-centered"
-              :to="{name: 'schedule'}"
-            >Schedule</router-link>
+          <div class="grid-perminant content-centered">
+            <router-link class="location-left-small" :to="{name: 'ranking'}">Rankings</router-link>
+            <router-link class="location-centered-small" :to="{name: 'schedule'}">Schedule</router-link>
+            <router-link class="location-right-small" :to="{name: 'awards'}">Awards</router-link>
           </div>
         </div>
       </div>
     </div>
 
-    <div
-      class="location-right-large"
-      v-if="loggedin"
-    >
+    <div class="location-right-large" v-if="loggedin">
       <div class="background-box content-centered">
         <h2>Team Leaderboard</h2>
         <p>
@@ -44,45 +25,20 @@
           members.
         </p>
       </div>
-      <div
-        v-if="teams.length != 0"
-        class="background-box leaderboard-team leaderboard-container mobile-shrink"
-      >
-        <h3
-          v-bind:class="sortedTeamOption === 'name' ? (sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''"
-          @click="toggleSorted(true, 'name')"
-        >Name</h3>
-        <h3
-          v-bind:class="sortedTeamOption === 'number' ? (sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''"
-          @click="toggleSorted(true, 'number')"
-        >Number</h3>
-        <h3
-          v-bind:class="sortedTeamOption === 'objectivePoints' ? (sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''"
-          @click="toggleSorted(true, 'objectivePoints')"
-        >Objective Points</h3>
-        <h3
-          v-bind:class="sortedTeamOption === 'commentPoints' ? (sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''"
-          @click="toggleSorted(true, 'commentPoints')"
-        >Comment Points</h3>
-        <h3
-          v-bind:class="sortedTeamOption === 'totalPoints' ? (sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''"
-          @click="toggleSorted(true, 'totalPoints')"
-        >Total Points</h3>
+      <div v-if="teams.length != 0" class="background-box leaderboard-team leaderboard-container mobile-shrink">
+        <h3 v-bind:class="sortedTeamOption === 'name' ? (sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''" @click="toggleSorted(true, 'name')">Name</h3>
+        <h3 v-bind:class="sortedTeamOption === 'number' ? (sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''" @click="toggleSorted(true, 'number')">Number</h3>
+        <h3 v-bind:class="sortedTeamOption === 'objectivePoints' ? (sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''" @click="toggleSorted(true, 'objectivePoints')">Objective Points</h3>
+        <h3 v-bind:class="sortedTeamOption === 'commentPoints' ? (sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''" @click="toggleSorted(true, 'commentPoints')">Comment Points</h3>
+        <h3 v-bind:class="sortedTeamOption === 'totalPoints' ? (sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''" @click="toggleSorted(true, 'totalPoints')">Total Points</h3>
       </div>
-      <p
-        v-else
-        class="location-centered background-box content-centered"
-      >There aren't any teams to display yet.
+      <p v-else class="location-centered background-box content-centered">
+        There aren't any teams to display yet.
         <br>Ask an admin to add teams.
       </p>
 
       <transition-group name="trans-group">
-        <LeaderboardTeam
-          v-for="(teamData) in teams"
-          v-bind:key="teamData['_id']"
-          :teamdata="teamData"
-          class="leaderboard-team"
-        ></LeaderboardTeam>
+        <LeaderboardTeam v-for="(teamData) in teams" v-bind:key="teamData['_id']" :teamdata="teamData" class="leaderboard-team"></LeaderboardTeam>
       </transition-group>
     </div>
   </div>
@@ -124,7 +80,7 @@ export default {
             return team.name;
           },
           function(team) {
-            return team.number;
+            return -team.number;
           }
         ],
         ["desc", "desc"]
@@ -135,7 +91,7 @@ export default {
         this.teams,
         [
           function(team) {
-            return team.number;
+            return -team.number;
           },
           function(team) {
             return team.name;
@@ -152,7 +108,7 @@ export default {
             return team.objectivePoints;
           },
           function(team) {
-            return team.number;
+            return -team.number;
           }
         ],
         ["desc", "desc"]
@@ -166,7 +122,7 @@ export default {
             return team.commentPoints;
           },
           function(team) {
-            return team.number;
+            return -team.number;
           }
         ],
         ["desc", "desc"]
@@ -180,7 +136,7 @@ export default {
             return team.objectivePoints + team.commentPoints;
           },
           function(team) {
-            return team.number;
+            return -team.number;
           }
         ],
         ["desc", "desc"]

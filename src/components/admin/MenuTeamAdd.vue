@@ -1,56 +1,29 @@
 <template>
   <div>
     <Error v-show="user.role != '_admin'">You must be logged in as an admin to view this page!</Error>
-    <div
-      v-show="user.role == '_admin'"
-      class="grid grid-shrink"
-    >
-      <div class="location-centered-small grid-perminant">
-        <h2 class=" background-box location-span content-centered">Add team</h2>
 
-        <Error
-          v-if="isError"
-          class="location-span"
-        >{{ errorMessage }}</Error>
+    <div v-show="user.role == '_admin'" class="grid grid-shrink">
+      <div class="location-centered-small grid-perminant">
+        <h2 class="background-box location-span content-centered">Add team</h2>
+
+        <Error v-if="isError" class="location-span">{{ errorMessage }}</Error>
 
         <p class="location-left background-box content-centered">Team Name</p>
 
         <div class="location-right background-box-input">
-          <input
-            v-model.trim="name"
-            type="text"
-            name="team-name"
-            placeholder="Team Name"
-            class="content-centered"
-          >
+          <input v-model.trim="name" type="text" name="team-name" placeholder="Team Name" class="content-centered">
         </div>
 
         <p class="location-left background-box content-centered">Team Number</p>
 
         <div class="location-right background-box-input">
-          <input
-            v-model.number="number"
-            type="number"
-            pattern="[0-9]*"
-            max="9999"
-            min="1"
-            name="team-number"
-            placeholder="Team Number"
-            class="content-centered"
-          >
+          <input v-model.number="number" type="number" pattern="[0-9]*" max="9999" min="1" name="team-number" placeholder="Team Number" class="content-centered">
         </div>
 
         <div class="location-span">
-          <h3
-            @click="submitTeam()"
-            class="background-box content-centered"
-            v-bind:class="[this.allFieldsValid ? 'background-box-hover' : 'background-box-disabled']"
-          >Add</h3>
+          <h3 @click="submitTeam()" class="background-box content-centered" v-bind:class="[this.allFieldsValid ? 'background-box-hover' : 'background-box-disabled']">Add</h3>
 
-          <h3
-            @click="goBack()"
-            class="background-box background-box-hover content-centered"
-          >Cancel</h3>
+          <h3 @click="goBack()" class="background-box background-box-hover content-centered">Cancel</h3>
         </div>
       </div>
     </div>
@@ -68,6 +41,7 @@ export default {
   props: {
     localdb: Object,
     remotedb: Object,
+    reloadUser: Function,
     user: Object
   },
   data: function() {
@@ -115,6 +89,9 @@ export default {
     allFieldsValid() {
       return this.name.length !== 0 && this.number > 0;
     }
+  },
+  created: function() {
+    this.reloadUser();
   }
 };
 </script>

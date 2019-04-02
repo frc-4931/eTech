@@ -61,8 +61,8 @@ Run `node server.js`.
 
 ## Recommendations
 
-### Prevent caching of database
-At our first competition using eTech we had some minor little errors with loading old data that were at the time unexplainable and didn't make sense. After the competition however, we figured out Cloudflare was caching database responses.
+### Prevent database caching
+At our first competition using eTech we had some minor little errors where some people would load old data. At the time the problem was unexplainable and didn't make sense. After the competition however, we figured out Cloudflare was caching database responses.
 
 To fix this, add a cache bypass for any request to `/database/*`. For example, `etech.example.com/database/*` should bypass cache.
 

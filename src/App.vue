@@ -1,22 +1,10 @@
 <template>
   <div id="app">
-    <transition
-      enter-active-class="content-fade-in"
-      leave-active-class="content-fade-out"
-      mode="out-in"
-    >
-      <router-view
-        :localdb="localdb"
-        :remotedb="remotedb"
-        :localtbadb="localtbadb"
-        :bluealliancedb="bluealliancedb"
-        :sync_change="sync_change"
-        :user="user"
-        :reloadSync="reloadSync"
-      ></router-view>
-    </transition>
+    <ConnectionError v-if="isConnectionError"/>
 
-    <ConnectionError v-if="isConnectionError"></ConnectionError>
+    <transition enter-active-class="content-fade-in" leave-active-class="content-fade-out" mode="out-in">
+      <router-view :localdb="localdb" :remotedb="remotedb" :localtbadb="localtbadb" :bluealliancedb="bluealliancedb" :sync_change="sync_change" :user="user" :reloadSync="reloadSync" :reloadUser="reloadUser"></router-view>
+    </transition>
   </div>
 </template>
 
@@ -68,8 +56,7 @@ export default {
     };
   },
   methods: {
-    reloadSync() {
-      //console.log("Reloading sync");
+    reloadSync: function() {
       var dThis = this;
 
       dThis.sync = dThis.localdb
@@ -101,33 +88,37 @@ export default {
         .on("paused", function() {
           dThis.sync_change.onBlueAllianceDbPaused();
         });
+    },
+    reloadUser: function(callback) {
+      var dThis = this;
+
+      this.remotedb.getSession(function(err, response) {
+        if (err) {
+          console.log(err);
+        } else if (!response.userCtx.name) {
+          dThis.user.username = null;
+          dThis.user.role = null;
+        } else {
+          var roles = response.userCtx.roles;
+          dThis.$set(dThis.user, "username", response.userCtx.name);
+
+          if (roles.indexOf("_admin") !== -1) {
+            dThis.$set(dThis.user, "role", "_admin");
+          } else if (roles.indexOf("edit") !== -1) {
+            dThis.$set(dThis.user, "role", "edit");
+          } else if (roles.indexOf("view") !== -1) {
+            dThis.$set(dThis.user, "role", "view");
+          }
+        }
+
+        if (callback != null) callback();
+      });
     }
   },
   created: function() {
     PouchDB.plugin(Authentication);
 
-    var dThis = this;
-
-    this.remotedb.getSession(function(err, response) {
-      if (err) {
-        //Error
-      } else if (!response.userCtx.name) {
-        dThis.user.username = null;
-        dThis.user.role = null;
-      } else {
-        var roles = response.userCtx.roles;
-        dThis.$set(dThis.user, "username", response.userCtx.name);
-
-        if (roles.indexOf("_admin") !== -1) {
-          dThis.$set(dThis.user, "role", "_admin");
-        } else if (roles.indexOf("edit") !== -1) {
-          dThis.$set(dThis.user, "role", "edit");
-        } else if (roles.indexOf("view") !== -1) {
-          dThis.$set(dThis.user, "role", "view");
-        }
-      }
-    });
-
+    this.reloadUser();
     this.reloadSync();
   }
 };

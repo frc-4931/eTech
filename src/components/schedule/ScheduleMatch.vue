@@ -1,30 +1,12 @@
 <template>
   <div class="background-box mobile-shrink schedule-match">
     <p>{{ match }}</p>
-    <p
-      :class="blueClass"
-      @click="viewTeam(matchData.alliances.blue.team_keys[0])"
-    >{{ matchData.alliances.blue.team_keys[0].replace("frc", "") }}</p>
-    <p
-      @click="viewTeam(matchData.alliances.blue.team_keys[1])"
-      :class="blueClass"
-    >{{ matchData.alliances.blue.team_keys[1].replace("frc", "") }}</p>
-    <p
-      @click="viewTeam(matchData.alliances.blue.team_keys[2])"
-      :class="blueClass"
-    >{{ matchData.alliances.blue.team_keys[2].replace("frc", "") }}</p>
-    <p
-      @click="viewTeam(matchData.alliances.red.team_keys[0])"
-      :class="redClass"
-    >{{ matchData.alliances.red.team_keys[0].replace("frc", "") }}</p>
-    <p
-      @click="viewTeam(matchData.alliances.red.team_keys[1])"
-      :class="redClass"
-    >{{ matchData.alliances.red.team_keys[1].replace("frc", "") }}</p>
-    <p
-      @click="viewTeam(matchData.alliances.red.team_keys[2])"
-      :class="redClass"
-    >{{ matchData.alliances.red.team_keys[2].replace("frc", "") }}</p>
+    <p :class="blueClass" @click="viewTeam(matchData.alliances.blue.team_keys[0])">{{ matchData.alliances.blue.team_keys[0].replace("frc", "") }}</p>
+    <p @click="viewTeam(matchData.alliances.blue.team_keys[1])" :class="blueClass">{{ matchData.alliances.blue.team_keys[1].replace("frc", "") }}</p>
+    <p @click="viewTeam(matchData.alliances.blue.team_keys[2])" :class="blueClass">{{ matchData.alliances.blue.team_keys[2].replace("frc", "") }}</p>
+    <p @click="viewTeam(matchData.alliances.red.team_keys[0])" :class="redClass">{{ matchData.alliances.red.team_keys[0].replace("frc", "") }}</p>
+    <p @click="viewTeam(matchData.alliances.red.team_keys[1])" :class="redClass">{{ matchData.alliances.red.team_keys[1].replace("frc", "") }}</p>
+    <p @click="viewTeam(matchData.alliances.red.team_keys[2])" :class="redClass">{{ matchData.alliances.red.team_keys[2].replace("frc", "") }}</p>
     <p>{{ matchData.alliances.blue.score }}</p>
     <p>{{ matchData.alliances.red.score }}</p>
     <p>{{ scheduledTime }}</p>

@@ -1,28 +1,13 @@
 <template>
   <div id="scouting-menu">
     <div class="scouting-menu-fields">
-      <component
-        v-for="scField in template"
-        :key="docId+(scField.field || scField.title)"
-        :is="scField.type"
-        :data="scField"
-        :locked="!hasEdit"
-        @valuechange="valueChange(scField.field, ...arguments)"
-      ></component>
+      <component v-for="scField in template" :key="docId+(scField.field || scField.title)" :is="scField.type" :data="scField" :locked="!hasEdit" @valuechange="valueChange(scField.field, ...arguments)"></component>
     </div>
 
-    <div class="line" />
+    <div class="line"/>
 
-    <h3
-      v-if="hasEdit"
-      @click="save()"
-      class="location-centered-small background-box background-box-hover content-centered"
-    >{{ unsaved ? "Save" : "Saved!" }}</h3>
-    <h3
-      v-if="hasEdit"
-      @click="deleteScout()"
-      class="location-centered-small background-box background-box-hover content-centered"
-    >Delete</h3>
+    <SaveButton v-if="hasEdit" :unsavedChanges="unsaved" :saveCallback="save"/>
+    <h3 v-if="hasEdit" @click="deleteScout()" class="location-centered-small background-box background-box-hover content-centered">Delete</h3>
   </div>
 </template>
 
@@ -32,6 +17,7 @@ import NumberField from "./NumberField.vue";
 import BooleanField from "./BooleanField.vue";
 import DropdownField from "./DropdownField.vue";
 import TitleField from "./TitleField.vue";
+import SaveButton from "../SaveButton.vue";
 //Pre genereated template incase there is not one in the db
 import PitTemplate from "../../assets/pitscout.js";
 import MatchTemplate from "../../assets/matchscout.js";
@@ -43,6 +29,7 @@ export default {
     NumberField,
     BooleanField,
     DropdownField,
+    SaveButton,
     TitleField
   },
   props: {

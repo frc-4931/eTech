@@ -1,51 +1,27 @@
 <template>
-  <div
-    v-if="isAdmin"
-    id="menu-template-editor"
-  >
+  <div v-if="isAdmin" id="menu-template-editor">
     <div class="grid">
       <div class="mobile-view field-edit done-button-container">
-        <div
-          @click="goBack()"
-          class="mobile-view background-box background-box-hover content-centered"
-        >
+        <div @click="goBack()" class="mobile-view background-box background-box-hover content-centered">
           <h3>Back</h3>
         </div>
 
-        <div
-          @click="saveTemplate(curTemplate)"
-          class="mobile-view field-button background-box background-box-hover content-centered"
-        >
+        <div @click="saveTemplate(curTemplate)" class="mobile-view field-button background-box background-box-hover content-centered">
           <h3>Save</h3>
         </div>
       </div>
 
-      <div
-        @click="goBack()"
-        class="desktop-view location-left-tiny background-box background-box-hover content-centered"
-      >
+      <div @click="goBack()" class="desktop-view location-left-tiny background-box background-box-hover content-centered">
         <h3>Back</h3>
       </div>
 
-      <Error
-        v-if="isError"
-        class="mobile-none-margin-top location-centered background-box content-centered"
-      >{{errorMessage}}</Error>
-      <Message
-        v-else-if="isMessage"
-        class="mobile-none-margin-top location-centered background-box content-centered"
-      >{{generalMessage}}</Message>
-      <div
-        v-else
-        class="mobile-none-margin-top location-centered background-box content-centered"
-      >
+      <Error v-if="isError" class="mobile-none-margin-top location-centered background-box content-centered">{{errorMessage}}</Error>
+      <Message v-else-if="isMessage" class="mobile-none-margin-top location-centered background-box content-centered">{{generalMessage}}</Message>
+      <div v-else class="mobile-none-margin-top location-centered background-box content-centered">
         <h2>Template Editor</h2>
       </div>
 
-      <div
-        @click="saveTemplate(curTemplate)"
-        class="desktop-view location-right-tiny background-box background-box-hover content-centered"
-      >
+      <div @click="saveTemplate(curTemplate)" class="desktop-view location-right-tiny background-box background-box-hover content-centered">
         <h3>Save</h3>
       </div>
 
@@ -53,16 +29,8 @@
         <h3 class="background-box">Select Template to Edit:</h3>
 
         <div class="background-box-input">
-          <select
-            v-model="curTemplate"
-            @change="loadTemplate(curTemplate)"
-            id="select-template"
-            class="content-input-large"
-          >
-            <option
-              value="none"
-              disabled
-            >Select a Scouting Template</option>
+          <select v-model="curTemplate" @change="loadTemplate(curTemplate)" id="select-template" class="content-input-large">
+            <option value="none" disabled>Select a Scouting Template</option>
             <option value="TEMPLATE_PITSCOUT">Pit Scout</option>
             <option value="TEMPLATE_MATCHSCOUT">Match Scout</option>
           </select>
@@ -71,37 +39,17 @@
 
       <div class="location-centered-small">
         <!-- beautify ignore:start -->
-        <component
-          v-for="(field, index) in fields"
-          :key="field.field || field.title"
-          :id="field.field || field.title.replace(/[^a-zA-Z]/g, '')"
-          :is="fieldIs(field)"
-          :indata="field"
-          :data="field"
-          @clicked="openField(field)"
-          @save="saveField(index, ...arguments)"
-          @close="closeField()"
-          @delete="deleteField(index)"
-          @move-up="moveUp(index)"
-          @move-down="moveDown(index)"
-        ></component>
+        <component v-for="(field, index) in fields" :key="field.field || field.title" :id="field.field || field.title.replace(/[^a-zA-Z]/g, '')" :is="fieldIs(field)" :indata="field" :data="field" @clicked="openField(field)" @save="saveField(index, ...arguments)" @close="closeField()" @delete="deleteField(index)" @move-up="moveUp(index)" @move-down="moveDown(index)"></component>
         <!-- beautify ignore:end -->
-        <div class="line" />
+        <div class="line"/>
 
-        <div
-          v-if="curOpen == 'field_add'"
-          id="template-field-add"
-        >
+        <div v-if="curOpen == 'field_add'" id="template-field-add">
           <h3 class="background-box content-centered">Creating New Field</h3>
 
           <div class="field-edit">
             <p class="background-box">Display Name</p>
             <div class="background-box-input">
-              <input
-                type="text"
-                v-model.trim="newFieldTitle"
-                placeholder="Display Name"
-              >
+              <input type="text" v-model.trim="newFieldTitle" placeholder="Display Name">
             </div>
           </div>
           <div class="field-edit">
@@ -117,26 +65,15 @@
             </div>
           </div>
 
-          <div
-            @click="createField()"
-            class="background-box background-box-hover content-centered"
-          >
+          <div @click="createField()" class="background-box background-box-hover content-centered">
             <p>Create</p>
           </div>
-          <div
-            @click="closeField()"
-            class="background-box background-box-hover content-centered"
-          >
+          <div @click="closeField()" class="background-box background-box-hover content-centered">
             <p>Cancel</p>
           </div>
         </div>
 
-        <div
-          v-else-if="curTemplate != 'none'"
-          @click="openFieldAdd()"
-          style="margin-top: 30px;"
-          class="location-centered-small background-box background-box-hover content-centered"
-        >
+        <div v-else-if="curTemplate != 'none'" @click="openFieldAdd()" style="margin-top: 30px;" class="location-centered-small background-box background-box-hover content-centered">
           <h3>Create new field</h3>
         </div>
       </div>

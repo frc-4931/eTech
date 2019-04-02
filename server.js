@@ -13,6 +13,13 @@ const request = require("request");
 
 const optionDefinitions = [
   {
+    name: "cache-files",
+    alias: "c",
+    type: Boolean,
+    description:
+      'Cache files in memory (EXPERIMENTAL)'
+  },
+  {
     name: "directory",
     alias: "d",
     type: String,
@@ -126,12 +133,15 @@ if (options.help) {
   process.exit();
 }
 
-const LOCAL_DATABASE = "/database";
+const DATABASE_URN = "/database";
+const API_URN = "/api";
 const PROXY_TARGET = options.databaseAddress + ":" + options.databasePort;
 const DIRECTORY = options.directory;
 const PORT = options.port;
 
 const proxy = httpProxy.createProxyServer({});
+
+const fileCache = new Map();
 
 var getTime = function () {
   return chalk.white(new Date().toLocaleString([], { hour12: false })) + "   ";
@@ -148,9 +158,9 @@ proxy.on("error", function (err, req, response) {
 const handler = function (request, response) {
   var url = request.url;
 
-  if (url.startsWith(LOCAL_DATABASE)) {
+  if (url.startsWith(DATABASE_URN)) {
     var modifiedRequest = request;
-    modifiedRequest.url = request.url.replace(LOCAL_DATABASE, "");
+    modifiedRequest.url = request.url.replace(DATABASE_URN, "");
 
     if (options.logDbRequests)
       console.log(
@@ -162,6 +172,25 @@ const handler = function (request, response) {
     proxy.web(modifiedRequest, response, {
       target: PROXY_TARGET
     });
+  } else if (url.startsWith(API_URN)) {
+    var responseCode = 200;
+    var content = new Object();
+
+    if (url == API_URN + "/status") {
+      content["use_ssl"] = options.useSsl == undefined ? false : true;
+
+      content["tba_enabled"] = options.tbaEnabled == undefined ? false : true;
+      content["tba_event_key"] = options.tbaEventKey;
+      content["tba_interval"] = options.tbaEnabled ? options.tbaInterval : undefined;
+    } else {
+      responseCode = 404;
+    }
+
+    response.writeHead(responseCode, {
+      "Content-Type": "application/json"
+    });
+
+    response.end(JSON.stringify(content));
   } else {
     var file;
     var type = "text/html";
@@ -171,35 +200,38 @@ const handler = function (request, response) {
     } else if (url.endsWith(".css") && url.startsWith("/css/")) {
       file = url;
       type = "text/css";
-    } else if (url.endsWith(".js") && url.startsWith("/js/")) {
+    } else if ((url.endsWith(".js") || url.endsWith(".js.map")) && url.startsWith("/js/")) {
       file = url;
-    } else if (url.endsWith(".js.map") && url.startsWith("/js/")) {
-      file = url;
+      type = "text/javascript";
     } else if (url.startsWith("/favicon/")) {
       file = url.substring(8, url.length);
       if (url.endsWith(".png")) type = "image/x-icon";
+      else if (url.endsWith(".svg")) type = "image/svg+xml";
     } else {
       file = "/index.html";
     }
 
-    if (options.logFileRequests)
-      console.log(
-        getTime() + chalk.gray(request.connection.remoteAddress + ": " + url + " > " + file)
-      );
+    if (options.logFileRequests) console.log(getTime() + chalk.gray(request.connection.remoteAddress + ": " + url + " > " + file));
 
-    fs.readFile(DIRECTORY + file, (err, content) => {
-      var responseCode = 200;
-      if (err) {
-        if (options.logFileRequests) console.log(getTime() + "We cannot open file.");
-        responseCode = 404;
-      }
+    var content = fileCache.get(file);
 
-      response.writeHead(responseCode, {
-        "Content-Type": type
+    if (options.cacheFiles ? content == undefined : true) {
+      fs.readFile(DIRECTORY + file, "utf8", (err, fileContents) => {
+        if (err) {
+          if (options.logFileRequests) console.log(getTime() + chalk.gray("Cannot open file: " + file));
+          response.writeHead(200, { "Content-Type": "text/plain" });
+          response.end("The requested URL " + url + " was not found on this server");
+        } else {
+          if (options.cacheFiles) fileCache.set(file, fileContents);
+
+          response.writeHead(200, { "Content-Type": type });
+          response.end(fileContents);
+        }
       });
-
+    } else {
+      response.writeHead(200, { "Content-Type": type });
       response.end(content);
-    });
+    }
   }
 };
 
@@ -259,7 +291,7 @@ if (useBA) {
   try {
     var tbaLogin = options.tbaDbLogin.split(":", 2);
   } catch (exept) {
-    console.log(chalk.redBright("Error while trying to prase databse loggin credentials."));
+    console.log(chalk.redBright("Error while trying to parse database loggin credentials."));
     process.exit();
   }
   tbaDB.logIn(tbaLogin[0], tbaLogin[1]).catch(function (err) {
@@ -423,6 +455,7 @@ if (useBA) {
 
     cacheToFile("event/" + baEvent + "/rankings", "RANKINGS");
     cacheToFile("event/" + baEvent + "/alliances", "ALLIANCES");
+    cacheToFile("event/" + baEvent + "/awards", "AWARDS");
   };
 
   var intervalTime = options.tbaInterval * 1000;
@@ -438,6 +471,8 @@ console.log(
   chalk.yellowBright(PROXY_TARGET)
 );
 
+if (options.cacheFiles)
+  console.log(chalk.cyan(" - Caching files is enabled"));
 if (options.logFileRequests)
   console.log(chalk.cyan(" - Logging file requests to the console is enabled"));
 if (options.logDbRequests)

@@ -1,9 +1,5 @@
 <template>
-  <transition
-    enter-active-class="content-fade-in"
-    leave-active-class="content-fade-out"
-    mode="out-in"
-  >
+  <transition enter-active-class="content-fade-in" leave-active-class="content-fade-out" mode="out-in">
     <div class="background-box content-centered">
       <h2>Error</h2>
       <p>
