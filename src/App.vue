@@ -1,5 +1,9 @@
 <template>
   <div id="app">
+    <NavigationDrawer :user="user" :active="navigationDrawerEnabled"/>
+
+    <p @click="navigationDrawerEnabled = !navigationDrawerEnabled" class="content-centered">{{navigationDrawerEnabled}}</p>
+
     <ConnectionError v-if="isConnectionError"/>
 
     <transition enter-active-class="content-fade-in" leave-active-class="content-fade-out" mode="out-in">
@@ -12,6 +16,7 @@
 import ConnectionError from "./components/ConnectionError.vue";
 import PouchDB from "pouchdb";
 import Authentication from "pouchdb-authentication";
+import NavigationDrawer from "./components/NavigationDrawer.vue";
 
 var url = "";
 var setup = {};
@@ -35,11 +40,13 @@ if (window.webpackHotUpdate) {
 export default {
   name: "app",
   components: {
-    ConnectionError
+    ConnectionError,
+    NavigationDrawer
   },
   data: function() {
     return {
       isConnectionError: false,
+      navigationDrawerEnabled: false,
       localdb: new PouchDB("localdb"),
       remotedb: new PouchDB(url + "scouting", setup),
       bluealliancedb: new PouchDB(url + "bluealliance", setup),
@@ -96,6 +103,7 @@ export default {
         if (err) {
           console.log(err);
         } else if (!response.userCtx.name) {
+          dThis.user.name = null;
           dThis.user.username = null;
           dThis.user.role = null;
         } else {

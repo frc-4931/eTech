@@ -69,9 +69,9 @@ body {
   color: var(--box-hover-color) !important;
 }
 .background-box-hover:hover,
-.background-box-hover:active,
 .background-box-hover:focus {
   background-color: var(--box-hover-color);
+  box-shadow: var(--shadow-hover);
 }
 .line {
   background: linear-gradient(
@@ -221,6 +221,7 @@ textarea {
 
 :root {
   --shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5);
+  --shadow-hover: 0 4px 8px 0 rgba(0, 0, 0, 0.75);
 
   --background-color: #455a64;
   --text-color: #eceff1;
