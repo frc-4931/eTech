@@ -133,8 +133,7 @@ if (options.help) {
   process.exit();
 }
 
-const DATABASE_URN = "/database";
-const API_URN = "/api";
+const DATABASE_URL = "/database";
 const PROXY_TARGET = options.databaseAddress + ":" + options.databasePort;
 const DIRECTORY = options.directory;
 const PORT = options.port;
@@ -158,9 +157,9 @@ proxy.on("error", function (err, req, response) {
 const handler = function (request, response) {
   var url = request.url;
 
-  if (url.startsWith(DATABASE_URN)) {
+  if (url.startsWith(DATABASE_URL)) {
     var modifiedRequest = request;
-    modifiedRequest.url = request.url.replace(DATABASE_URN, "");
+    modifiedRequest.url = request.url.replace(DATABASE_URL, "");
 
     if (options.logDbRequests)
       console.log(
@@ -172,25 +171,6 @@ const handler = function (request, response) {
     proxy.web(modifiedRequest, response, {
       target: PROXY_TARGET
     });
-  } else if (url.startsWith(API_URN)) {
-    var responseCode = 200;
-    var content = new Object();
-
-    if (url == API_URN + "/status") {
-      content["use_ssl"] = options.useSsl == undefined ? false : true;
-
-      content["tba_enabled"] = options.tbaEnabled == undefined ? false : true;
-      content["tba_event_key"] = options.tbaEventKey;
-      content["tba_interval"] = options.tbaEnabled ? options.tbaInterval : undefined;
-    } else {
-      responseCode = 404;
-    }
-
-    response.writeHead(responseCode, {
-      "Content-Type": "application/json"
-    });
-
-    response.end(JSON.stringify(content));
   } else {
     var file;
     var type = "text/html";
