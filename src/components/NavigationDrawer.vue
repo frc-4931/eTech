@@ -109,9 +109,6 @@ export default {
 .nav-drawer h2 {
   margin: 10px;
 }
-.nav-drawer h2 {
-  color: var(--neutral);
-}
 .nav-drawer-account-panel {
   background-color: var(--background-color);
   box-shadow: var(--shadow);

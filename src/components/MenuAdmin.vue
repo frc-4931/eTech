@@ -10,13 +10,9 @@
       <h2 class="content-centered background-box">Tools</h2>
 
       <div class="background-box">
-        <router-link :to="{name: 'team-add'}">Add Team</router-link>
-        <br>
         <router-link :to="{name: 'user-add'}">Add User</router-link>
         <br>
         <router-link :to="{name: 'admin-template'}">Edit Scouting Templates</router-link>
-        <br>
-        <router-link :to="{name: 'import-tba-teams'}">Import Teams From TBA</router-link>
         <br>
       </div>
     </div>
@@ -31,8 +27,7 @@
       </div>
 
       <div v-else class="location-centered background-box content-centered">
-        <p>There aren't any teams to display yet.</p>
-        <router-link :to="{name: 'team-add'}">Add a team here.</router-link>
+        <p>There aren't any teams to display.</p>
       </div>
 
       <transition-group name="trans-group">
