@@ -80,6 +80,7 @@ export default {
 .nav-drawer-background {
   background-color: rgba(0, 0, 0, 0.5);
   position: fixed;
+  z-index: 98;
   left: 0;
   top: 0;
   width: 100%;
@@ -94,7 +95,7 @@ export default {
   height: 100%;
   width: 350px;
   position: fixed;
-  z-index: 1;
+  z-index: 99;
   top: 0;
   left: calc(0vw - 355px);
   background-color: var(--box-color);

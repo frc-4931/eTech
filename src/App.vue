@@ -2,6 +2,8 @@
   <div id="app">
     <NavigationDrawer :user="user" :navigationDrawerStatus="navigationDrawerStatus"/>
 
+    <TopBar :navigationDrawerStatus="navigationDrawerStatus"/>
+
     <ConnectionError v-if="isConnectionError"/>
 
     <transition enter-active-class="content-fade-in" leave-active-class="content-fade-out" mode="out-in">
@@ -15,6 +17,7 @@ import ConnectionError from "./components/ConnectionError.vue";
 import PouchDB from "pouchdb";
 import Authentication from "pouchdb-authentication";
 import NavigationDrawer from "./components/NavigationDrawer.vue";
+import TopBar from "./components/TopBar.vue";
 
 var url = "";
 var setup = {};
@@ -39,6 +42,7 @@ export default {
   name: "app",
   components: {
     ConnectionError,
+    TopBar,
     NavigationDrawer
   },
   data: function() {
@@ -135,10 +139,4 @@ export default {
 <style>
 @import url("./css/normalize.css");
 @import url("./css/style.css");
-
-.navigation-bar {
-  background-color: var(--box-color);
-  box-shadow: var(--shadow);
-  padding: 10px;
-}
 </style>

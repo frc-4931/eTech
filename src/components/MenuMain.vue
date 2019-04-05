@@ -1,7 +1,5 @@
 <template>
   <div class="grid">
-    <h1 class="content-centered location-span background-box">eTech: Scouting Done Right</h1>
-
     <div v-bind:class="[loggedin ? 'location-left-small' : 'location-centered-small']">
       <div class="grid">
         <AccountPanel :remotedb="remotedb" :sync_change="sync_change" :user="user" :reloadSync="reloadSync" @loggedin="loggedIn()" @loggedout="loggedOut()" class="location-span"></AccountPanel>
