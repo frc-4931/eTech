@@ -5,15 +5,6 @@
     <div v-bind:class="[loggedin ? 'location-left-small' : 'location-centered-small']">
       <div class="grid">
         <AccountPanel :remotedb="remotedb" :sync_change="sync_change" :user="user" :reloadSync="reloadSync" @loggedin="loggedIn()" @loggedout="loggedOut()" class="location-span"></AccountPanel>
-
-        <div class="background-box location-span" v-if="loggedin">
-          <h2 class="content-centered">The Blue Alliance</h2>
-          <div class="grid-perminant content-centered">
-            <router-link class="location-left-small" :to="{name: 'ranking'}">Rankings</router-link>
-            <router-link class="location-centered-small" :to="{name: 'schedule'}">Schedule</router-link>
-            <router-link class="location-right-small" :to="{name: 'awards'}">Awards</router-link>
-          </div>
-        </div>
       </div>
     </div>
 

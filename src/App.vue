@@ -1,8 +1,6 @@
 <template>
   <div id="app">
-    <NavigationDrawer :user="user" :active="navigationDrawerEnabled"/>
-
-    <p @click="navigationDrawerEnabled = !navigationDrawerEnabled" class="content-centered">{{navigationDrawerEnabled}}</p>
+    <NavigationDrawer :user="user" :navigationDrawerStatus="navigationDrawerStatus"/>
 
     <ConnectionError v-if="isConnectionError"/>
 
@@ -46,7 +44,9 @@ export default {
   data: function() {
     return {
       isConnectionError: false,
-      navigationDrawerEnabled: false,
+      navigationDrawerStatus: {
+        active: false
+      },
       localdb: new PouchDB("localdb"),
       remotedb: new PouchDB(url + "scouting", setup),
       bluealliancedb: new PouchDB(url + "bluealliance", setup),
@@ -135,4 +135,10 @@ export default {
 <style>
 @import url("./css/normalize.css");
 @import url("./css/style.css");
+
+.navigation-bar {
+  background-color: var(--box-color);
+  box-shadow: var(--shadow);
+  padding: 10px;
+}
 </style>

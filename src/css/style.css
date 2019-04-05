@@ -41,10 +41,10 @@ body {
   text-align: right;
 }
 .content-fade-in {
-  animation: fade-in 0.4s ease-in-out;
+  animation: fade-in 0.25s ease-in-out;
 }
 .content-fade-out {
-  animation: fade-out 0.1s ease-in-out;
+  animation: fade-out 0.25s ease-in-out;
 }
 .background-box {
   background-color: var(--box-color);
