@@ -3,8 +3,6 @@
     <Error v-if="user.role == null">You must be logged in to view this page!</Error>
 
     <div v-else class="grid">
-      <BackButton/>
-
       <h1 class="background-box content-centered location-span">Schedule</h1>
 
       <div class="location-span">
@@ -27,7 +25,6 @@
 
 <script>
 import Error from "../Error.vue";
-import BackButton from "../BackButton.vue";
 import orderBy from "lodash.orderby";
 import ScheduleMatch from "./ScheduleMatch.vue";
 
@@ -35,7 +32,6 @@ export default {
   name: "MenuSchedule",
   components: {
     ScheduleMatch,
-    BackButton,
     Error
   },
   data: function() {

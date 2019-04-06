@@ -2,8 +2,6 @@
   <Error v-if="!isAdmin">You must be logged in as an admin to view this page!</Error>
 
   <div v-else class="grid">
-    <BackButton :pushuri="'/'"/>
-
     <h2 class="location-span background-box content-centered">Admin Tools</h2>
 
     <div class="location-left-small">
@@ -60,7 +58,6 @@
 <script>
 import AdminTeam from "./admin/AdminTeam.vue";
 import AdminUser from "./admin/AdminUser.vue";
-import BackButton from "./BackButton.vue";
 import orderBy from "lodash.orderby";
 import Error from "./Error.vue";
 import PouchDB from "pouchdb";
@@ -87,7 +84,6 @@ export default {
   components: {
     AdminTeam,
     AdminUser,
-    BackButton,
     Error
   },
   props: {

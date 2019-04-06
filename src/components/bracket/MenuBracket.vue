@@ -2,8 +2,6 @@
   <Error v-if="user.role == null">You must be logged in to view this page!</Error>
 
   <div v-else class="grid">
-    <BackButton/>
-
     <h1 class="background-box location-span content-centered">Bracket</h1>
 
     <div class="location-centered bracket-container">
@@ -68,7 +66,6 @@
 
 <script>
 import Error from "../Error.vue";
-import BackButton from "../BackButton.vue";
 import BracketSlot from "./BracketSlot.vue";
 import BracketConnectorLine from "./BracketConnectorLine.vue";
 
@@ -76,7 +73,6 @@ export default {
   name: "MenuBracket",
   components: {
     Error,
-    BackButton,
     BracketSlot,
     BracketConnectorLine
   },

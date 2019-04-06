@@ -13,6 +13,7 @@ import MenuRanking from "./components/ranking/MenuRanking.vue";
 import MenuSchedule from "./components/schedule/MenuSchedule.vue";
 import MenuBracket from "./components/bracket/MenuBracket.vue";
 import MenuAwards from "./components/awards/MenuAwards.vue";
+import MenuCredits from "./components/credits/MenuCredits.vue";
 import PageNotFound from "./components/PageNotFound.vue";
 
 Vue.config.productionTip = false
@@ -31,6 +32,7 @@ const routes = [
   { path: "/tba/schedule", name: "schedule", component: MenuSchedule },
   { path: "/tba/bracket", name: "bracket", component: MenuBracket },
   { path: "/tba/awards", name: "awards", component: MenuAwards },
+  { path: "/credits", name: "credits", component: MenuCredits },
   { path: "*", name: "page-not-found", component: PageNotFound }
 ];
 

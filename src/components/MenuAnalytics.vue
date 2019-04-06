@@ -1,7 +1,5 @@
 <template>
   <div v-if="loggedin" class="grid">
-    <BackButton/>
-
     <h1 class="location-span background-box content-centered">Analytics</h1>
 
     <div class="location-right-large">
@@ -44,13 +42,11 @@
 
 <script>
 import Error from "./Error.vue";
-import BackButton from "./BackButton.vue";
 
 export default {
   name: "MenuAnalytics",
   components: {
-    Error,
-    BackButton
+    Error
   },
   props: {
     localdb: Object,
