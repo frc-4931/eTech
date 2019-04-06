@@ -2,7 +2,7 @@
   <div id="app">
     <NavigationDrawer :user="user" :navigationDrawerStatus="navigationDrawerStatus"/>
 
-    <TopBar :navigationDrawerStatus="navigationDrawerStatus"/>
+    <TopBar :user="user" :navigationDrawerStatus="navigationDrawerStatus"/>
 
     <ConnectionError v-if="isConnectionError"/>
 

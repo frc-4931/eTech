@@ -19,7 +19,7 @@
 
         <div class="nav-drawer-tab" @click="viewPage('awards')" :class="isCurrent('account')">
           <div>
-            <i class="material-icons">account_box</i>
+            <i class="material-icons">person</i>
           </div>
           <p>Account</p>
         </div>
@@ -50,11 +50,14 @@
 
       <h2 class="content-centered">The Blue Alliance</h2>
       <div class="nav-drawer-tab" @click="viewPage('ranking')" :class="isCurrent('ranking')">
+        <div>
+          <i class="material-icons">swap_vert</i>
+        </div>
         <p>Rankings</p>
       </div>
       <div class="nav-drawer-tab" @click="viewPage('schedule')" :class="isCurrent('schedule')">
         <div>
-          <i class="material-icons">schedule</i>
+          <i class="material-icons">watch_later</i>
         </div>
         <p>Schedule</p>
       </div>
@@ -65,11 +68,18 @@
         <p>Awards</p>
       </div>
       <div class="nav-drawer-tab" @click="viewPage('bracket')" :class="isCurrent('bracket')">
+        <div>
+          <i class="material-icons">view_list</i>
+        </div>
         <p>Finals Bracket</p>
       </div>
 
       <div class="line"/>
+
       <div class="nav-drawer-tab" @click="viewPage('credits')" :class="isCurrent('credits')">
+        <div>
+          <i class="material-icons">info</i>
+        </div>
         <p>About & credits</p>
       </div>
     </div>
@@ -85,12 +95,9 @@ export default {
   },
   methods: {
     viewPage: function(page) {
+      this.navigationDrawerStatus.active = false;
       if (this.$router.currentRoute.name != page) {
-        this.navigationDrawerStatus.active = false;
-
-        var dThis = this;
-
-        dThis.$router.push({ name: page });
+        this.$router.push({ name: page });
       }
     },
     isCurrent(page) {
@@ -104,15 +111,18 @@ export default {
 
 <style>
 .nav-drawer-background {
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.75);
   position: fixed;
   z-index: 98;
   left: 0;
   top: 0;
   width: 100%;
   height: 100%;
-  transition: 0.25s;
-  overflow-y: scroll;
+  transition: 0.25s ease-in-out;
+}
+::-webkit-scrollbar {
+  width: 0px; /* Remove scrollbar space */
+  background: transparent; /* Optional: just make scrollbar invisible */
 }
 .nav-drawer-background-enter,
 .nav-drawer-background-leave-active {
@@ -120,17 +130,18 @@ export default {
 }
 .nav-drawer {
   height: 100%;
-  width: 350px;
+  width: 320px;
   position: fixed;
   z-index: 99;
   top: 0;
-  left: calc(0vw - 355px);
+  left: -325px;
   background-color: var(--box-color);
   box-shadow: var(--shadow);
-  transition: 0.25s;
+  transition: 0.25s ease-in-out;
+  overflow-y: scroll;
 }
 .nav-drawer-active {
-  left: calc(0vw - 0px);
+  left: 0px;
 }
 .nav-drawer h1,
 .nav-drawer h2,
@@ -155,16 +166,16 @@ export default {
 }
 .nav-drawer-tab {
   display: grid;
-  grid-template-columns: 30px 1fr;
-  padding: 0px 10px 0px 10px;
+  grid-template-columns: 50px 1fr;
   transition: all 0.2s ease-in-out;
 }
 .nav-drawer-tab-current {
   background-color: var(--link-color) !important;
+  box-shadow: none !important;
 }
 .nav-drawer-tab p {
   grid-column: 2/3;
-  padding: 10px;
+  padding: 10px 0px 10px 0px;
 }
 .nav-drawer-tab:hover,
 .nav-drawer-tab:focus {

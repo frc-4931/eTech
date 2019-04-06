@@ -1,20 +1,18 @@
 <template>
-  <div class="top-bar content-centered">
-    <div class="toggle-nav-drawer">
-      <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" @click="navigationDrawerStatus.active = true">
-        <path fill="none" d="M0 0h24v24H0z"></path>
-        <path d="M16.01 11H4v2h12.01v3L20 12l-3.99-4z"></path>
-      </svg>
-    </div>
+  <div>
+    <transition>
+      <i v-show="user.role != null" class="material-icons toggle-nav-drawer" @click="navigationDrawerStatus.active = !navigationDrawerStatus.active" :class="navigationDrawerStatus.active ? 'toggle-nav-drawer-open' : ''">menu</i>
+    </transition>
 
-    <h1>eTech</h1>
+    <h1 class="top-bar content-centered">eTech</h1>
   </div>
 </template>
 
 <script>
 export default {
   props: {
-    navigationDrawerStatus: Object
+    navigationDrawerStatus: Object,
+    user: Object
   }
 };
 </script>
@@ -29,17 +27,16 @@ export default {
   background-color: var(--box-color);
   box-shadow: var(--shadow);
   padding: 10px;
-  display: grid;
-  grid-template-columns: 72px 1fr 72px;
 }
 .toggle-nav-drawer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  position: fixed;
+  left: 16px;
+  top: 16px;
+  z-index: 100;
+  transition: 0.25s ease-in-out;
 }
-.toggle-nav-drawer svg {
-  color: var(--text-color);
-  fill: currentColor;
+.toggle-nav-drawer-open {
+  transform: rotate(90deg);
 }
 html {
   padding-top: 66px;

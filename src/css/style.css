@@ -38,6 +38,9 @@ body {
 .content-right {
   text-align: right;
 }
+.content-justified {
+  text-align: justify;
+}
 .content-fade-in {
   animation: fade-in 0.25s ease-in-out;
 }
