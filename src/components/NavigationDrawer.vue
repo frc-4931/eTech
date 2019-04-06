@@ -112,6 +112,7 @@ export default {
   width: 100%;
   height: 100%;
   transition: 0.25s;
+  overflow-y: scroll;
 }
 .nav-drawer-background-enter,
 .nav-drawer-background-leave-active {
