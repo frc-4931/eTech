@@ -1,7 +1,7 @@
 <template>
   <div>
-    <transition>
-      <i v-show="user.role != null" class="material-icons toggle-nav-drawer" @click="navigationDrawerStatus.active = !navigationDrawerStatus.active" :class="navigationDrawerStatus.active ? 'toggle-nav-drawer-open' : ''">menu</i>
+    <transition enter-active-class="toggle-nav-drawer-trans" leave-active-class="toggle-nav-drawer-trans">
+      <i v-if="user.role != null" class="material-icons toggle-nav-drawer" @click="navigationDrawerStatus.active = !navigationDrawerStatus.active" :class="navigationDrawerStatus.active ? 'toggle-nav-drawer-open' : ''">menu</i>
     </transition>
 
     <h1 class="top-bar content-centered">eTech</h1>

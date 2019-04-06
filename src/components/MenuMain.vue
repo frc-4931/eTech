@@ -69,10 +69,10 @@ export default {
             return team.name;
           },
           function(team) {
-            return -team.number;
+            return team.number;
           }
         ],
-        ["desc", "desc"]
+        ["desc", "asc"]
       ).reverse();
     },
     sortTeamsByNumber() {
@@ -80,13 +80,13 @@ export default {
         this.teams,
         [
           function(team) {
-            return -team.number;
+            return team.number;
           },
           function(team) {
             return team.name;
           }
         ],
-        ["desc", "desc"]
+        ["asc", "desc"]
       );
     },
     sortTeamsByObjectivePoints() {
@@ -97,10 +97,10 @@ export default {
             return team.objectivePoints;
           },
           function(team) {
-            return -team.number;
+            return team.number;
           }
         ],
-        ["desc", "desc"]
+        ["desc", "asc"]
       );
     },
     sortTeamsByCommentPoints() {
@@ -111,10 +111,10 @@ export default {
             return team.commentPoints;
           },
           function(team) {
-            return -team.number;
+            return team.number;
           }
         ],
-        ["desc", "desc"]
+        ["desc", "asc"]
       );
     },
     sortTeamsByTotalPoints() {
@@ -125,10 +125,10 @@ export default {
             return team.objectivePoints + team.commentPoints;
           },
           function(team) {
-            return -team.number;
+            return team.number;
           }
         ],
-        ["desc", "desc"]
+        ["desc", "asc"]
       );
     },
     toggleSorted(reverse, sortingMethod) {

@@ -4,7 +4,7 @@ import Router from "vue-router";
 
 import MenuMain from "./components/MenuMain.vue"
 import MenuTeamView from "./components/MenuTeamView.vue";
-import MenuAdmin from "./components/MenuAdmin.vue";
+import MenuAdmin from "./components/admin/MenuAdmin.vue";
 import MenuTemplateEditor from "./components/MenuTemplateEditor.vue";
 import MenuUserAdd from "./components/admin/MenuUserAdd.vue";
 import MenuUserEdit from "./components/admin/MenuUserEdit.vue";

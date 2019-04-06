@@ -23,6 +23,15 @@
         <div class="location-right">
           <p class="background-box">Damian Kocher</p>
         </div>
+
+        <div class="location-left">
+          <p class="background-box">!</p>
+        </div>
+        <div class="location-right">
+          <p class="background-box">
+            <a href="http://evilletech.com/" target="_blank">Edwardsville Technologies</a>
+          </p>
+        </div>
       </div>
     </div>
 

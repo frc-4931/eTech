@@ -70,9 +70,9 @@ const optionDefinitions = [
       "Enable SSL. Read how to use it here: https://github.com/frc-4931/eTech#enable-ssl"
   },
   {
-    name: "tba-enabled",
+    name: "tba-disabled",
     type: Boolean,
-    description: "Enables The Blue Alliance integration."
+    description: "Disables The Blue Alliance integration."
   },
   {
     name: "tba-log",
@@ -87,8 +87,8 @@ const optionDefinitions = [
   {
     name: "tba-interval",
     type: Number,
-    defaultValue: 30,
-    description: "Amount of time in seconds between pinging The Blue Alliance for data (Defaults to '30')."
+    defaultValue: 60,
+    description: "Amount of time in seconds between pinging The Blue Alliance for data (Defaults to '60')."
   },
   {
     name: "tba-auth-key",
@@ -147,11 +147,15 @@ var getTime = function () {
 }
 
 proxy.on("error", function (err, req, response) {
-  response.writeHead(500, {
-    "Content-Type": "text/plain"
-  });
+  try {
+    response.writeHead(500, {
+      "Content-Type": "text/plain",
+    });
 
-  response.end("Something went wrong. Maybe the database is down?");
+    response.end("Something went wrong. Maybe the database is down?");
+  } catch (err) {
+    console.log(err)
+  }
 });
 
 const handler = function (request, response) {
@@ -263,19 +267,26 @@ if (options.useSsl) {
 }
 
 // The Blue Alliance Intigration
-var useBA = options.tbaEnabled;
+var useBA = !options.tbaDisabled;
 var teamKeys = [];
 var matchKeys = [];
 if (useBA) {
   var tbaDB = new pouchdb(PROXY_TARGET + "/bluealliance");
+  var scoutingDB = new pouchdb(PROXY_TARGET + "/scouting");
   try {
     var tbaLogin = options.tbaDbLogin.split(":", 2);
   } catch (exept) {
-    console.log(chalk.redBright("Error while trying to parse database loggin credentials."));
+    if (!useBA) console.log(chalk.redBright("Error while trying to parse database loggin credentials."));
+    else console.log(chalk.cyan("Either supply database login details or use --tba-disabled as a launch option."))
     process.exit();
   }
   tbaDB.logIn(tbaLogin[0], tbaLogin[1]).catch(function (err) {
     console.log(chalk.redBright("Error while logging into The Blue Alliance database."));
+    console.log(err)
+    process.exit();
+  });
+  scoutingDB.logIn(tbaLogin[0], tbaLogin[1]).catch(function (err) {
+    console.log(chalk.redBright("Error while logging into the scouting database."));
     console.log(err)
     process.exit();
   });
@@ -286,14 +297,14 @@ if (useBA) {
   if (options.tbaAuthKey) {
     baKey = options.tbaAuthKey;
   } else {
-    console.log(chalk.redBright("Error: You must supply a The Blue Alliance authentication key when TBA integration is enabled."));
+    console.log(chalk.redBright("Error: You must supply a The Blue Alliance authentication key using --tba-auth-key as a launch option when TBA integration is enabled."));
     process.exit();
   }
 
   if (options.tbaEventKey) {
     baEvent = options.tbaEventKey;
   } else {
-    console.log(chalk.redBright("Error: You must supply a The Blue Alliance event key when TBA integration is enabled."));
+    console.log(chalk.redBright("Error: You must supply a The Blue Alliance event key by using --tba-event-key as a launch option when TBA integration is enabled."));
     process.exit();
   }
 
@@ -398,9 +409,7 @@ if (useBA) {
               doc.json = data;
               doc.lastModified = date;
 
-              tbaDB.put(doc).catch(function (err) {
-                console.log(err)
-              });
+              tbaDB.put(doc);
             }
           })
           .catch(function () {
@@ -431,6 +440,21 @@ if (useBA) {
       cacheToFile("team/" + teamKey + "/years_participated", "TEAMYEARS_" + teamKey)
       cacheToFile("team/" + teamKey, "TEAMINFO_" + teamKey)
       cacheToFile("team/" + teamKey + "/event/" + baEvent + "/awards", "TEAMAWARDS_" + teamKey)
+
+
+      tbaDB.get("TEAMINFO_" + teamKey).then(function (doc) {
+        var teamNumber = teamKey.replace("frc", "");
+
+        var doc = {
+          name: doc.json.nickname,
+          number: teamNumber,
+          objectivePoints: 0,
+          commentPoints: 0,
+          _id: "TEAM_" + teamNumber
+        };
+
+        scoutingDB.put(doc).catch(function () { return });;
+      }).catch(function () { return });
     }
 
     cacheToFile("event/" + baEvent + "/rankings", "RANKINGS");
@@ -460,7 +484,7 @@ if (options.logDbRequests)
     chalk.cyan(" - Logging database requests to the console is enabled")
   );
 if (options.useSsl) console.log(chalk.cyan(" - SSL is enabled"));
-if (options.tbaEnabled) console.log(chalk.cyan(" - The Blue Alliance integration is enabled"))
+if (options.tbaDisabled) console.log(chalk.cyan(" - The Blue Alliance integration is disabled"))
 if (options.tbaLog)
   console.log(
     chalk.cyan(" - Logging The blue Alliance requests to the console is enabled")

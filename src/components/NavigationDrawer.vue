@@ -39,16 +39,15 @@
         <p>Search for team</p>
       </div>
 
-      <div v-if="this.user.role === '_admin'" class="nav-drawer-tab" @click="viewPage('admin')" :class="isCurrent('admin')">
+      <div v-if="this.user.role === '_admin'" class="nav-drawer-tab" @click="viewPage('analytics')" :class="isCurrent('analytics')">
         <div>
-          <i class="material-icons">build</i>
+          <i class="material-icons">bar_chart</i>
         </div>
-        <p>Admin Tools</p>
+        <p>Analytics</p>
       </div>
 
       <div class="line"/>
 
-      <h2 class="content-centered">The Blue Alliance</h2>
       <div class="nav-drawer-tab" @click="viewPage('ranking')" :class="isCurrent('ranking')">
         <div>
           <i class="material-icons">swap_vert</i>
@@ -72,6 +71,17 @@
           <i class="material-icons">view_list</i>
         </div>
         <p>Finals Bracket</p>
+      </div>
+
+      <div v-if="this.user.role === '_admin'">
+        <div class="line"/>
+
+        <div class="nav-drawer-tab" @click="viewPage('admin')" :class="isCurrent('admin')">
+          <div>
+            <i class="material-icons">build</i>
+          </div>
+          <p>Admin Tools</p>
+        </div>
       </div>
 
       <div class="line"/>

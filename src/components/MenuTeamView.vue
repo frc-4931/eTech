@@ -17,7 +17,7 @@
           </select>
         </div>
 
-        <transition enter-active-class="content-long-fade-in" leave-active-class="content-long-fade-out" mode="out-in">
+        <transition enter-active-class="content-long-fade-in" leave-active-class="content-long-fade-out">
           <NewScout v-if="scoutingSelect == 'create'" :localdb="localdb" :user="user" :teamNumber="teamNumber" :callback="teamCreated"></NewScout>
           <ScoutMenu :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('PITSCOUT_')" :isMatchScout="false" :localdb="localdb" :docId="scoutingSelect" :callback="teamModified" :closeteam="teamClose" :shouldUpdate="shouldUpdateScoutMenu" :callUpdated="updatedScoutMenu" :hasEdit="hasEdit"></ScoutMenu>
           <ScoutMenu :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('MATCHSCOUT_')" :isMatchScout="true" :localdb="localdb" :docId="scoutingSelect" :callback="teamModified" :closeteam="teamClose" :shouldUpdate="shouldUpdateScoutMenu" :callUpdated="updatedScoutMenu" :hasEdit="hasEdit"></ScoutMenu>
