@@ -3,6 +3,11 @@
     <div class="location-centered-small">
       <h1 class="background-box content-centered">About</h1>
       <p class="background-box content-justified">eTech is an all-in-one web application that allows users to continue scouting when offline, and when the user revives their connection the information is automatically synced to all other devices, and their screens are updated in real time.</p>
+      <div class="background-box">
+        <p class="background-box content-justified">
+          <a href="https://github.com/frc-4931/eTech">Github</a>
+        </p>
+      </div>
     </div>
 
     <div class="location-centered-small credits-container">
@@ -120,7 +125,7 @@
           <p class="background-box">HTTPS</p>
         </div>
         <div class="location-right">
-          <p class="background-box">???</p>
+          <p class="background-box">ISC</p>
         </div>
 
         <div class="location-left">
@@ -128,6 +133,13 @@
         </div>
         <div class="location-right">
           <p class="background-box">MIT</p>
+        </div>
+
+        <div class="location-left">
+          <p class="background-box">Request</p>
+        </div>
+        <div class="location-right">
+          <p class="background-box">Apache License 2.0</p>
         </div>
       </div>
     </div>
