@@ -72,8 +72,7 @@ body {
 .background-box-hover:hover,
 .background-box-hover:focus {
   background-color: var(--box-hover-color);
-  box-shadow: var(--shadow-hover);
-  cursor: pointer;
+  box-shadow: var(--shadow-hover);  
 }
 .line {
   background: linear-gradient(
@@ -168,7 +167,6 @@ select {
 }
 a:hover {
   color: var(--link-active-color);
-  cursor: pointer;
 }
 @media (min-width: 700px) {
   .grid {

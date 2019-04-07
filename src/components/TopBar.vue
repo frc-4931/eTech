@@ -34,7 +34,6 @@ export default {
   top: 16px;
   z-index: 100;
   transition: 0.25s ease-in-out;
-  cursor: pointer;
 }
 .toggle-nav-drawer-open {
   transform: rotate(90deg);

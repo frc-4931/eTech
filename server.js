@@ -430,13 +430,10 @@ if (useBA) {
 
         getTeamKeys().then(() => {
           getMatchKeys().then(() => {
-            //cacheToFile("event/" + baEvent + "/matches/simple", "MATCHES"); // Leaving original API in until fully removed from client
-
-            //Change to individual files to reduce amount of data downloaded at a time. Will also reduce loading times.
-            // for (let matchKey of matchKeys) {
-            //   cacheToFile("match/" + matchKey, "MATCH_" + matchKey); // Full match breakdown
-            //   cacheToFile("match/" + matchKey + "/simple", "MATCHSIMPLE_" + matchKey); // No full match breakdown
-            // }
+            for (let matchKey of matchKeys) {
+              //cacheToFile("match/" + matchKey, "MATCH_" + matchKey); // Full match breakdown
+              cacheToFile("match/" + matchKey + "/simple", "MATCHSIMPLE_" + matchKey); // Simple match breakdown
+            }
 
             var getTeamInfo = new Promise(function (resolve, reject) {
               var i = 0;
@@ -472,22 +469,23 @@ if (useBA) {
                     _id: "TEAM_" + doc.json.team_number
                   };
 
-                  scoutingDB.put(file).then(() => { if (options.tbaLog) console.log(getTime() + chalk.blue("Adding team: ") + chalk.gray(file.number)) }).catch(() => { return });
-                }).catch(function (a) { console.log(a) });
+                  scoutingDB.put(file).then(() => {
+                    if (options.tbaLog)
+                      console.log(getTime() + chalk.blue("Adding team: ") + chalk.gray(file.number))
+                  }).catch(() => { return });
+                }).catch(() => { return });
               })
             }
 
             getTeamInfo.then(() => {
-              console.log(teamKeys.length)
-
               for (let teamKey of teamKeys) {
                 addTeam(teamKey);
               }
             });
 
-            // cacheToFile("event/" + baEvent + "/rankings", "RANKINGS");
-            // cacheToFile("event/" + baEvent + "/alliances", "ALLIANCES");
-            // cacheToFile("event/" + baEvent + "/awards", "AWARDS");
+            cacheToFile("event/" + baEvent + "/rankings", "RANKINGS");
+            cacheToFile("event/" + baEvent + "/alliances", "ALLIANCES");
+            cacheToFile("event/" + baEvent + "/awards", "AWARDS");
           });
         });
       };

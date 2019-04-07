@@ -191,7 +191,6 @@ export default {
 .nav-drawer-tab:focus {
   background-color: var(--box-hover-color);
   box-shadow: var(--shadow);
-  cursor: pointer;
 }
 .nav-drawer-tab div {
   display: flex;
