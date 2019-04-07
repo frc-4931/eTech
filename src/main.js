@@ -2,7 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import Router from "vue-router";
 
-import MenuMain from "./components/MenuMain.vue"
+import MenuHome from "./components/MenuHome.vue"
 import MenuTeamView from "./components/MenuTeamView.vue";
 import MenuAdmin from "./components/admin/MenuAdmin.vue";
 import MenuTemplateEditor from "./components/MenuTemplateEditor.vue";
@@ -21,7 +21,7 @@ Vue.config.productionTip = false
 Vue.use(Router);
 
 const routes = [
-  { path: "/", name: "home", component: MenuMain },
+  { path: "/", name: "home", component: MenuHome },
   { path: "/team/:number", name: "team", component: MenuTeamView, props: true },
   { path: "/admin/", name: "admin", component: MenuAdmin },
   { path: "/admin/user/add", name: "user-add", component: MenuUserAdd },

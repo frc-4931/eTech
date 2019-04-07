@@ -15,17 +15,9 @@
     <div class="background-box">
       <select v-model="rating" name="comment-points" required>
         <option value="Invalid" selected="selected" disabled>Select Point Value for Comment</option>
-        <option value="5">+5</option>
-        <option value="4">+4</option>
-        <option value="3">+3</option>
-        <option value="2">+2</option>
-        <option value="1">+1</option>
+        <option value="1">Positive</option>
         <option value="0">Neutral</option>
-        <option value="-1">-1</option>
-        <option value="-2">-2</option>
-        <option value="-3">-3</option>
-        <option value="-4">-4</option>
-        <option value="-5">-5</option>
+        <option value="-1">Negative</option>
       </select>
     </div>
 
