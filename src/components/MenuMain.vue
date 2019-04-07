@@ -15,11 +15,11 @@
         </p>
       </div>
       <div v-if="teams.length != 0" class="background-box leaderboard-team leaderboard-container mobile-shrink">
-        <h3 v-bind:class="sortedTeamOption === 'name' ? (sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''" @click="toggleSorted(true, 'name')">Name</h3>
-        <h3 v-bind:class="sortedTeamOption === 'number' ? (sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''" @click="toggleSorted(true, 'number')">Number</h3>
-        <h3 v-bind:class="sortedTeamOption === 'objectivePoints' ? (sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''" @click="toggleSorted(true, 'objectivePoints')">Objective Points</h3>
-        <h3 v-bind:class="sortedTeamOption === 'commentPoints' ? (sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''" @click="toggleSorted(true, 'commentPoints')">Comment Points</h3>
-        <h3 v-bind:class="sortedTeamOption === 'totalPoints' ? (sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''" @click="toggleSorted(true, 'totalPoints')">Total Points</h3>
+        <h3 v-bind:class="HomeSortingOptions.sortedTeamOption === 'name' ? (HomeSortingOptions.sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''" @click="toggleSorted(true, 'name')">Name</h3>
+        <h3 v-bind:class="HomeSortingOptions.sortedTeamOption === 'number' ? (HomeSortingOptions.sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''" @click="toggleSorted(true, 'number')">Number</h3>
+        <h3 v-bind:class="HomeSortingOptions.sortedTeamOption === 'objectivePoints' ? (HomeSortingOptions.sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''" @click="toggleSorted(true, 'objectivePoints')">Objective Points</h3>
+        <h3 v-bind:class="HomeSortingOptions.sortedTeamOption === 'commentPoints' ? (HomeSortingOptions.sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''" @click="toggleSorted(true, 'commentPoints')">Comment Points</h3>
+        <h3 v-bind:class="HomeSortingOptions.sortedTeamOption === 'totalPoints' ? (HomeSortingOptions.sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''" @click="toggleSorted(true, 'totalPoints')">Total Points</h3>
       </div>
       <p v-else class="location-centered background-box content-centered">
         There aren't any teams to display yet.
@@ -45,6 +45,7 @@ export default {
     AccountPanel
   },
   props: {
+    HomeSortingOptions: Object,
     localdb: Object,
     remotedb: Object,
     sync_change: Object,
@@ -55,9 +56,7 @@ export default {
     return {
       teams: [],
       users: [],
-      loggedin: false,
-      sortedTeamOption: "totalPoints",
-      sortedTeamFlipped: false
+      loggedin: false
     };
   },
   methods: {
@@ -72,8 +71,8 @@ export default {
             return team.number;
           }
         ],
-        ["desc", "asc"]
-      ).reverse();
+        ["asc", "asc"]
+      );
     },
     sortTeamsByNumber() {
       this.teams = orderBy(
@@ -155,14 +154,15 @@ export default {
       }
       func();
 
-      if (sortingMethod != this.sortedTeamOption) {
-        this.sortedTeamFlipped = false;
-        this.sortedTeamOption = sortingMethod;
+      if (sortingMethod != this.HomeSortingOptions.sortedTeamOption) {
+        this.HomeSortingOptions.sortedTeamFlipped = false;
+        this.HomeSortingOptions.sortedTeamOption = sortingMethod;
       } else if (reverse) {
-        this.sortedTeamFlipped = !this.sortedTeamFlipped;
+        this.HomeSortingOptions.sortedTeamFlipped = !this.HomeSortingOptions
+          .sortedTeamFlipped;
       }
 
-      if (this.sortedTeamFlipped) this.teams.reverse();
+      if (this.HomeSortingOptions.sortedTeamFlipped) this.teams.reverse();
     },
     addToBoard(team_doc) {
       var teamID = team_doc["doc"]["_id"];
@@ -182,7 +182,11 @@ export default {
             dThis.addToBoard(result["rows"][docID]);
           }
 
-          if (sort) dThis.toggleSorted(false, dThis.sortedTeamOption);
+          if (sort)
+            dThis.toggleSorted(
+              false,
+              dThis.HomeSortingOptions.sortedTeamOption
+            );
         });
     },
     loggedIn() {

@@ -7,7 +7,7 @@
     <ConnectionError v-if="isConnectionError"/>
 
     <transition enter-active-class="content-fade-in" leave-active-class="content-fade-out" mode="out-in">
-      <router-view :localdb="localdb" :remotedb="remotedb" :localtbadb="localtbadb" :bluealliancedb="bluealliancedb" :sync_change="sync_change" :user="user" :reloadSync="reloadSync" :reloadUser="reloadUser"></router-view>
+      <router-view :HomeSortingOptions="HomeSortingOptions" :localdb="localdb" :remotedb="remotedb" :localtbadb="localtbadb" :bluealliancedb="bluealliancedb" :sync_change="sync_change" :user="user" :reloadSync="reloadSync" :reloadUser="reloadUser"></router-view>
     </transition>
   </div>
 </template>
@@ -48,8 +48,10 @@ export default {
   data: function() {
     return {
       isConnectionError: false,
-      navigationDrawerStatus: {
-        active: false
+      navigationDrawerStatus: { active: false },
+      HomeSortingOptions: {
+        sortedTeamOption: "totalPoints",
+        sortedTeamFlipped: false
       },
       localdb: new PouchDB("localdb"),
       remotedb: new PouchDB(url + "scouting", setup),
