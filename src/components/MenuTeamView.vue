@@ -3,7 +3,28 @@
     <div class="grid grid-shrink">
       <BackButton/>
 
-      <h2 class="content-centered location-centered background-box">{{ team.name }} - {{ team.number }}</h2>
+      <div class="location-centered-small">
+        <h2 class="content-centered background-box">{{ team.name }} - {{ team.number }}</h2>
+
+        <div class="background-box">
+          <div class="grid-perminant" v-if="teaminfo.city != null">
+            <p class="location-left-tiny">City:</p>
+            <p class="location-right-giant content-right">{{ teaminfo.city }}</p>
+          </div>
+
+          <div class="grid-perminant" v-if="teaminfo.rookie_year != null">
+            <p class="location-left">Rookie Year:</p>
+            <p class="location-right content-right">{{ teaminfo.rookie_year }}</p>
+          </div>
+
+          <div class="grid-perminant" v-if="teaminfo.website != null">
+            <p class="location-left-tiny">Website:</p>
+            <p class="location-right-giant content-right">
+              <a style="overflow-x: hidden;" :href="teaminfo.website" target="_blank">{{ displayURL }}</a>
+            </p>
+          </div>
+        </div>
+      </div>
 
       <div class="location-left-padded">
         <h3 class="content-centered background-box">Total Objective Points: {{ team.objectivePoints }}</h3>
@@ -71,7 +92,7 @@ export default {
   props: {
     number: { type: [String, Number], required: true },
     localdb: Object,
-    remotedb: Object,
+    localtbadb: Object,
     sync_change: Object,
     user: Object
   },
@@ -94,6 +115,7 @@ export default {
   },
   data: function() {
     return {
+      teaminfo: Object,
       team: {
         name: "",
         number: 0,
@@ -348,6 +370,13 @@ export default {
       //User is not logged in
       this.loggedin = false;
     }
+
+    this.localtbadb
+      .get("TEAMINFO_frc" + this.number)
+      .then(doc => {
+        this.teaminfo = doc.json;
+      })
+      .catch(err => console.log(err));
   },
   computed: {
     totalPoints: function() {
@@ -358,6 +387,21 @@ export default {
     },
     hasEdit() {
       return this.user.role === "_admin" || this.user.role === "edit";
+    },
+    displayURL: function() {
+      if (this.teaminfo.website != undefined) {
+        var displayURL = this.teaminfo.website;
+
+        var replacements = ["https://", "http://", "www."];
+
+        replacements.forEach(
+          replacement => (displayURL = displayURL.replace(replacement, ""))
+        );
+
+        return displayURL;
+      } else {
+        return "";
+      }
     }
   }
 };

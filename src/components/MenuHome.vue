@@ -14,6 +14,9 @@
           members.
         </p>
       </div>
+      <div class="background-box">
+        <input v-model.trim="filter" type="text" name="filter" placeholder="Search for teams...">
+      </div>
       <div v-if="teams.length != 0" class="background-box leaderboard-team leaderboard-container mobile-shrink">
         <h3 v-bind:class="HomeSortingOptions.sortedTeamOption === 'name' ? (HomeSortingOptions.sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''" @click="toggleSorted(true, 'name')">Name</h3>
         <h3 v-bind:class="HomeSortingOptions.sortedTeamOption === 'number' ? (HomeSortingOptions.sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''" @click="toggleSorted(true, 'number')">Number</h3>
@@ -27,7 +30,7 @@
       </p>
 
       <transition-group name="trans-group">
-        <LeaderboardTeam v-for="(teamData) in teams" v-bind:key="teamData['_id']" :teamdata="teamData" class="leaderboard-team"></LeaderboardTeam>
+        <LeaderboardTeam v-for="(teamData) in filteredTeams" v-bind:key="teamData['_id']" :teamdata="teamData" class="leaderboard-team"></LeaderboardTeam>
       </transition-group>
     </div>
   </div>
@@ -35,7 +38,8 @@
 
 <script>
 import LeaderboardTeam from "./LeaderboardTeam.vue";
-import orderBy from "lodash.orderby";
+import lodashOrderBy from "lodash.orderby";
+import lodashFilter from "lodash.filter";
 import AccountPanel from "./user/AccountPanel.vue";
 
 export default {
@@ -54,6 +58,7 @@ export default {
   },
   data: function() {
     return {
+      filter: "",
       teams: [],
       users: [],
       loggedin: false
@@ -61,7 +66,7 @@ export default {
   },
   methods: {
     sortTeamsByName() {
-      this.teams = orderBy(
+      this.teams = lodashOrderBy(
         this.teams,
         [
           function(team) {
@@ -75,7 +80,7 @@ export default {
       );
     },
     sortTeamsByNumber() {
-      this.teams = orderBy(
+      this.teams = lodashOrderBy(
         this.teams,
         [
           function(team) {
@@ -89,7 +94,7 @@ export default {
       );
     },
     sortTeamsByObjectivePoints() {
-      this.teams = orderBy(
+      this.teams = lodashOrderBy(
         this.teams,
         [
           function(team) {
@@ -103,7 +108,7 @@ export default {
       );
     },
     sortTeamsByCommentPoints() {
-      this.teams = orderBy(
+      this.teams = lodashOrderBy(
         this.teams,
         [
           function(team) {
@@ -117,7 +122,7 @@ export default {
       );
     },
     sortTeamsByTotalPoints() {
-      this.teams = orderBy(
+      this.teams = lodashOrderBy(
         this.teams,
         [
           function(team) {
@@ -164,10 +169,6 @@ export default {
 
       if (this.HomeSortingOptions.sortedTeamFlipped) this.teams.reverse();
     },
-    addToBoard(team_doc) {
-      var teamID = team_doc["doc"]["_id"];
-      if (teamID !== undefined) this.teams.push(team_doc["doc"]);
-    },
     loadTeams(sort) {
       var dThis = this;
       this.localdb
@@ -177,16 +178,15 @@ export default {
           endkey: "TEAM_\ufff0"
         })
         .then(function(result) {
-          dThis.teams = [];
+          var tempTeams = [];
           for (var docID in result["rows"]) {
-            dThis.addToBoard(result["rows"][docID]);
+            var teamID = result["rows"][docID]["doc"]["_id"];
+            if (teamID !== undefined)
+              tempTeams.push(result["rows"][docID]["doc"]);
           }
 
-          if (sort)
-            dThis.toggleSorted(
-              false,
-              dThis.HomeSortingOptions.sortedTeamOption
-            );
+          if (sort) dThis.teams = tempTeams;
+          dThis.toggleSorted(false, dThis.HomeSortingOptions.sortedTeamOption);
         });
     },
     loggedIn() {
@@ -215,6 +215,29 @@ export default {
       this.sync_change.onChange = function() {
         // Do nothing
       };
+    }
+  },
+  computed: {
+    filteredTeams: function() {
+      if (this.filter == "") return this.teams;
+
+      var filterWords = this.filter.toLowerCase().split(" ");
+
+      var dThis = this;
+      return lodashFilter(this.teams, function(team) {
+        var shouldInclude = false;
+        filterWords.forEach(function(f) {
+          if (
+            team.name.toLowerCase().includes(f) ||
+            team.number.toString().includes(f)
+          ) {
+            shouldInclude = true;
+            return true;
+          }
+        });
+
+        return shouldInclude;
+      });
     }
   },
   created: function() {
