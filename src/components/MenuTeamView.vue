@@ -1,26 +1,39 @@
 <template>
   <div v-if="loggedin && teamExists">
     <div class="grid grid-shrink">
-      <BackButton/>
+      <BackButton />
 
       <div class="location-centered-small">
         <h2 class="content-centered background-box">{{ team.name }} - {{ team.number }}</h2>
 
         <div class="background-box">
-          <div class="grid-perminant" v-if="teaminfo.city != null">
+          <div
+            class="grid-perminant"
+            v-if="teaminfo.city != null"
+          >
             <p class="location-left-tiny">City:</p>
             <p class="location-right-giant content-right">{{ teaminfo.city }}</p>
           </div>
 
-          <div class="grid-perminant" v-if="teaminfo.rookie_year != null">
+          <div
+            class="grid-perminant"
+            v-if="teaminfo.rookie_year != null"
+          >
             <p class="location-left">Rookie Year:</p>
             <p class="location-right content-right">{{ teaminfo.rookie_year }}</p>
           </div>
 
-          <div class="grid-perminant" v-if="teaminfo.website != null">
+          <div
+            class="grid-perminant"
+            v-if="teaminfo.website != null"
+          >
             <p class="location-left-tiny">Website:</p>
             <p class="location-right-giant content-right">
-              <a style="overflow-x: hidden;" :href="teaminfo.website" target="_blank">{{ displayURL }}</a>
+              <a
+                style="overflow-x: hidden;"
+                :href="teaminfo.website"
+                target="_blank"
+              >{{ displayURL }}</a>
             </p>
           </div>
         </div>
@@ -29,37 +42,93 @@
       <div class="location-left-padded">
         <h3 class="content-centered background-box">Total Objective Points: {{ team.objectivePoints }}</h3>
 
-        <div class="background-box-input" id="scouting-select">
-          <select v-model="scoutingSelect" @change="openScoutingMenu()" class="content-input-large">
+        <div
+          class="background-box-input"
+          id="scouting-select"
+        >
+          <select
+            v-model="scoutingSelect"
+            @change="openScoutingMenu()"
+            class="content-input-large"
+          >
             <option value="none">Select A Scouting Option</option>
-            <option v-if="hasEdit" value="create">--- New Scout ---</option>
-            <option v-for="(scout, idx) in pitScouts" :key="scout" :value="scout">Pit Scouting: {{ idx + 1 }}</option>
-            <option v-for="(scout, idx) in matchScouts" :key="scout" :value="scout">Match Scouting: Match {{ idx + 1 }}</option>
+            <option
+              v-if="hasEdit"
+              value="create"
+            >--- New Scout ---</option>
+            <option
+              v-for="(scout, idx) in pitScouts"
+              :key="scout"
+              :value="scout"
+            >Pit Scouting: {{ idx + 1 }}</option>
+            <option
+              v-for="(scout, idx) in matchScouts"
+              :key="scout"
+              :value="scout"
+            >Match Scouting: Match {{ idx + 1 }}</option>
           </select>
         </div>
 
-        <transition enter-active-class="content-long-fade-in" leave-active-class="content-long-fade-out">
-          <NewScout v-if="scoutingSelect == 'create'" :localdb="localdb" :user="user" :teamNumber="teamNumber" :callback="teamCreated"></NewScout>
-          <ScoutMenu :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('PITSCOUT_')" :isMatchScout="false" :localdb="localdb" :docId="scoutingSelect" :callback="teamModified" :closeteam="teamClose" :shouldUpdate="shouldUpdateScoutMenu" :callUpdated="updatedScoutMenu" :hasEdit="hasEdit"></ScoutMenu>
-          <ScoutMenu :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('MATCHSCOUT_')" :isMatchScout="true" :localdb="localdb" :docId="scoutingSelect" :callback="teamModified" :closeteam="teamClose" :shouldUpdate="shouldUpdateScoutMenu" :callUpdated="updatedScoutMenu" :hasEdit="hasEdit"></ScoutMenu>
+        <transition
+          enter-active-class="content-long-fade-in"
+          leave-active-class="content-long-fade-out"
+        >
+          <NewScout
+            v-if="scoutingSelect == 'create'"
+            :localdb="localdb"
+            :user="user"
+            :teamNumber="teamNumber"
+            :callback="teamCreated"
+          ></NewScout>
+          <ScoutMenu
+            :key="scoutingSelect"
+            v-else-if="scoutingSelect.startsWith('PITSCOUT_')"
+            :isMatchScout="false"
+            :localdb="localdb"
+            :docId="scoutingSelect"
+            :callback="teamModified"
+            :closeteam="teamClose"
+            :shouldUpdate="shouldUpdateScoutMenu"
+            :callUpdated="updatedScoutMenu"
+            :hasEdit="hasEdit"
+          ></ScoutMenu>
+          <ScoutMenu
+            :key="scoutingSelect"
+            v-else-if="scoutingSelect.startsWith('MATCHSCOUT_')"
+            :isMatchScout="true"
+            :localdb="localdb"
+            :docId="scoutingSelect"
+            :callback="teamModified"
+            :closeteam="teamClose"
+            :shouldUpdate="shouldUpdateScoutMenu"
+            :callUpdated="updatedScoutMenu"
+            :hasEdit="hasEdit"
+          ></ScoutMenu>
         </transition>
       </div>
       <div class="location-right-padded">
         <h3 class="content-centered background-box">Total Comment Points: {{ team.commentPoints }}</h3>
         <transition-group name="trans-group">
           <!-- beautify ignore:start -->
-          <component v-for="(comment, id) in comments" :locked="!hasEdit" :is="commentIs(id)" :modify="
-              function() {
-                openCommentModifyMenu(id);
-              }
-            " :key="id" :docId="id" :rating="comment.rating" :comment="comment.comment" :title="comment.title" :localdb="localdb" :callback="commentModified"></component>
+          <component v-for="(comment, id) in comments" :locked="!hasEdit" :is="commentIs(id)" :modify="() => openCommentModifyMenu(id)" :key="id" :docId="id" :rating="comment.rating" :comment="comment.comment" :title="comment.title" :localdb="localdb" :callback="commentModified"></component>
           <!-- beautify ignore:end -->
         </transition-group>
 
         <div v-if="hasEdit">
-          <h3 v-if="commentAddMenu == false" @click="openCommentAddMenu()" class="background-box background-box-hover content-centered">Add comment</h3>
+          <h3
+            v-if="commentAddMenu == false"
+            @click="openCommentAddMenu()"
+            class="background-box background-box-hover content-centered"
+          >Add comment</h3>
 
-          <MenuTeamCommentAdd id="comment-add-menu" v-else :localdb="localdb" :user="user" :teamNumber="teamNumber" :callback="commentCreated"></MenuTeamCommentAdd>
+          <MenuTeamCommentAdd
+            id="comment-add-menu"
+            v-else
+            :localdb="localdb"
+            :user="user"
+            :teamNumber="teamNumber"
+            :callback="commentCreated"
+          ></MenuTeamCommentAdd>
         </div>
       </div>
     </div>
@@ -273,7 +342,7 @@ export default {
           var dDocs = docs["rows"];
           var outDocs = [];
 
-          dThis.matchScouts.splice(0, dThis.pitScouts.length);
+          dThis.matchScouts.splice(0, dThis.matchScouts.length);
           for (var doc of dDocs) {
             dThis.matchScouts.push(doc.id);
             doc = doc["doc"];
@@ -281,6 +350,7 @@ export default {
             outDocs.push(doc);
             itr++;
           }
+
           dPoints.mPoints += points;
           dPoints.mAmount += itr;
 
