@@ -223,38 +223,52 @@ export default {
 
       var filterWords = this.filter.toLowerCase().split(" ");
 
+      let shouldCombine = false;
+      let index = 0;
+      for (let i in filterWords) {
+        let cur = filterWords[i];
+        if (shouldCombine)
+          filterWords[index] =
+            filterWords[index] + " " + filterWords.splice(i, 1);
+
+        if (cur.startsWith('"') || cur.startsWith('!"')) {
+          shouldCombine = true;
+          index = i;
+        }
+        if (cur.endsWith('"')) shouldCombine = false;
+      }
+
       var dThis = this;
       return lodashFilter(this.teams, function(team) {
         var shouldInclude = 0;
         filterWords.forEach(function(f) {
+          let invert = false;
+          let shouldInc = false;
+
           if (f.startsWith("!")) {
-            if (
-              team.name.toLowerCase().includes(f.replace("!", "")) ||
-              team.number.toString().includes(f.replace("!", ""))
-            ) {
-              return false;
-            } else {
-              shouldInclude++;
-            }
+            f = f.replace("!", "");
+            invert = true;
+          }
+
+          if (f.startsWith('"') && f.endsWith('"') && f.length >= 2) {
+            f = f.substring(0, f.length - 1).replace('"', "");
+
+            if (team.name.toLowerCase() == f || team.number.toString() == f)
+              shouldInc = true;
           } else if (
             team.name.toLowerCase().includes(f) ||
             team.number.toString().includes(f)
           ) {
-            shouldInclude++;
+            shouldInc = true;
           }
+
+          if (invert) shouldInc = !shouldInc;
+
+          if (shouldInc) shouldInclude++;
         });
 
         return shouldInclude == filterWords.length;
       });
-    }
-  },
-  created: function() {
-    if (
-      this.user.role === "_admin" ||
-      this.user.role === "edit" ||
-      this.user.role === "view"
-    ) {
-      this.loggedIn();
     }
   }
 };
