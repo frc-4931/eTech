@@ -43,16 +43,16 @@ export default {
   },
   computed: {
     getRating() {
-      var prefix = "";
+      var prefix = "Neutral";
       var dThis = this;
       if (this.rating > 0) {
-        prefix = "+";
+        prefix = "Positive";
         dThis.color = "color: var(--positive)";
       } else if (this.rating < 0) {
-        prefix = "";
+        prefix = "Negative";
         dThis.color = "color: var(--negative)";
       }
-      return prefix + this.rating;
+      return prefix;
     },
     getTruncatedMessage() {
       return this.comment

@@ -2,8 +2,6 @@
   <Error v-if="user.role == null">You must be logged in to view this page!</Error>
 
   <div v-else class="grid grid-shrink">
-    <BackButton/>
-
     <h1 class="location-centered background-box content-centered">Awards</h1>
 
     <div v-if="awards.length > 0" class="location-centered">
@@ -23,7 +21,6 @@
 
 <script>
 import Error from "../Error.vue";
-import BackButton from "../BackButton.vue";
 import AwardsWinner from "./AwardWinner.vue";
 import orderBy from "lodash.orderby";
 
@@ -31,7 +28,6 @@ export default {
   name: "MenuAwards",
   components: {
     Error,
-    BackButton,
     AwardsWinner
   },
   data: function() {

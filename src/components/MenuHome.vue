@@ -1,19 +1,8 @@
 <template>
   <div class="grid">
-    <h1 class="content-centered location-span background-box">eTech: Scouting Done Right</h1>
-
     <div v-bind:class="[loggedin ? 'location-left-small' : 'location-centered-small']">
       <div class="grid">
         <AccountPanel :remotedb="remotedb" :sync_change="sync_change" :user="user" :reloadSync="reloadSync" @loggedin="loggedIn()" @loggedout="loggedOut()" class="location-span"></AccountPanel>
-
-        <div class="background-box location-span" v-if="loggedin">
-          <h2 class="content-centered">The Blue Alliance</h2>
-          <div class="grid-perminant content-centered">
-            <router-link class="location-left-small" :to="{name: 'ranking'}">Rankings</router-link>
-            <router-link class="location-centered-small" :to="{name: 'schedule'}">Schedule</router-link>
-            <router-link class="location-right-small" :to="{name: 'awards'}">Awards</router-link>
-          </div>
-        </div>
       </div>
     </div>
 
@@ -25,12 +14,15 @@
           members.
         </p>
       </div>
+      <div class="background-box">
+        <input v-model.trim="filter" type="text" name="filter" placeholder="Search for teams...">
+      </div>
       <div v-if="teams.length != 0" class="background-box leaderboard-team leaderboard-container mobile-shrink">
-        <h3 v-bind:class="sortedTeamOption === 'name' ? (sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''" @click="toggleSorted(true, 'name')">Name</h3>
-        <h3 v-bind:class="sortedTeamOption === 'number' ? (sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''" @click="toggleSorted(true, 'number')">Number</h3>
-        <h3 v-bind:class="sortedTeamOption === 'objectivePoints' ? (sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''" @click="toggleSorted(true, 'objectivePoints')">Objective Points</h3>
-        <h3 v-bind:class="sortedTeamOption === 'commentPoints' ? (sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''" @click="toggleSorted(true, 'commentPoints')">Comment Points</h3>
-        <h3 v-bind:class="sortedTeamOption === 'totalPoints' ? (sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''" @click="toggleSorted(true, 'totalPoints')">Total Points</h3>
+        <h3 v-bind:class="HomeSortingOptions.sortedTeamOption === 'name' ? (HomeSortingOptions.sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''" @click="toggleSorted(true, 'name')">Name</h3>
+        <h3 v-bind:class="HomeSortingOptions.sortedTeamOption === 'number' ? (HomeSortingOptions.sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''" @click="toggleSorted(true, 'number')">Number</h3>
+        <h3 v-bind:class="HomeSortingOptions.sortedTeamOption === 'objectivePoints' ? (HomeSortingOptions.sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''" @click="toggleSorted(true, 'objectivePoints')">Objective Points</h3>
+        <h3 v-bind:class="HomeSortingOptions.sortedTeamOption === 'commentPoints' ? (HomeSortingOptions.sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''" @click="toggleSorted(true, 'commentPoints')">Comment Points</h3>
+        <h3 v-bind:class="HomeSortingOptions.sortedTeamOption === 'totalPoints' ? (HomeSortingOptions.sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''" @click="toggleSorted(true, 'totalPoints')">Total Points</h3>
       </div>
       <p v-else class="location-centered background-box content-centered">
         There aren't any teams to display yet.
@@ -38,7 +30,7 @@
       </p>
 
       <transition-group name="trans-group">
-        <LeaderboardTeam v-for="(teamData) in teams" v-bind:key="teamData['_id']" :teamdata="teamData" class="leaderboard-team"></LeaderboardTeam>
+        <LeaderboardTeam v-for="(teamData) in filteredTeams" v-bind:key="teamData['_id']" :teamdata="teamData" class="leaderboard-team"></LeaderboardTeam>
       </transition-group>
     </div>
   </div>
@@ -46,7 +38,8 @@
 
 <script>
 import LeaderboardTeam from "./LeaderboardTeam.vue";
-import orderBy from "lodash.orderby";
+import lodashOrderBy from "lodash.orderby";
+import lodashFilter from "lodash.filter";
 import AccountPanel from "./user/AccountPanel.vue";
 
 export default {
@@ -56,6 +49,7 @@ export default {
     AccountPanel
   },
   props: {
+    HomeSortingOptions: Object,
     localdb: Object,
     remotedb: Object,
     sync_change: Object,
@@ -64,82 +58,81 @@ export default {
   },
   data: function() {
     return {
+      filter: "",
       teams: [],
       users: [],
-      loggedin: false,
-      sortedTeamOption: "totalPoints",
-      sortedTeamFlipped: false
+      loggedin: false
     };
   },
   methods: {
     sortTeamsByName() {
-      this.teams = orderBy(
+      this.teams = lodashOrderBy(
         this.teams,
         [
           function(team) {
             return team.name;
           },
           function(team) {
-            return -team.number;
+            return team.number;
           }
         ],
-        ["desc", "desc"]
-      ).reverse();
+        ["asc", "asc"]
+      );
     },
     sortTeamsByNumber() {
-      this.teams = orderBy(
+      this.teams = lodashOrderBy(
         this.teams,
         [
           function(team) {
-            return -team.number;
+            return team.number;
           },
           function(team) {
             return team.name;
           }
         ],
-        ["desc", "desc"]
+        ["asc", "desc"]
       );
     },
     sortTeamsByObjectivePoints() {
-      this.teams = orderBy(
+      this.teams = lodashOrderBy(
         this.teams,
         [
           function(team) {
             return team.objectivePoints;
           },
           function(team) {
-            return -team.number;
+            return team.number;
           }
         ],
-        ["desc", "desc"]
+        ["desc", "asc"]
       );
     },
     sortTeamsByCommentPoints() {
-      this.teams = orderBy(
+      this.teams = lodashOrderBy(
         this.teams,
         [
           function(team) {
             return team.commentPoints;
           },
           function(team) {
-            return -team.number;
+            return team.number;
           }
         ],
-        ["desc", "desc"]
+        ["desc", "asc"]
       );
     },
     sortTeamsByTotalPoints() {
-      this.teams = orderBy(
+      this.teams = lodashOrderBy(
         this.teams,
         [
           function(team) {
             return team.objectivePoints + team.commentPoints;
           },
           function(team) {
-            return -team.number;
+            return team.number;
           }
         ],
-        ["desc", "desc"]
+        ["desc", "asc"]
       );
     },
     toggleSorted(reverse, sortingMethod) {
@@ -166,18 +159,15 @@ export default {
       }
       func();
 
-      if (sortingMethod != this.sortedTeamOption) {
-        this.sortedTeamFlipped = false;
-        this.sortedTeamOption = sortingMethod;
+      if (sortingMethod != this.HomeSortingOptions.sortedTeamOption) {
+        this.HomeSortingOptions.sortedTeamFlipped = false;
+        this.HomeSortingOptions.sortedTeamOption = sortingMethod;
       } else if (reverse) {
-        this.sortedTeamFlipped = !this.sortedTeamFlipped;
+        this.HomeSortingOptions.sortedTeamFlipped = !this.HomeSortingOptions
+          .sortedTeamFlipped;
       }
 
-      if (this.sortedTeamFlipped) this.teams.reverse();
-    },
-    addToBoard(team_doc) {
-      var teamID = team_doc["doc"]["_id"];
-      if (teamID !== undefined) this.teams.push(team_doc["doc"]);
+      if (this.HomeSortingOptions.sortedTeamFlipped) this.teams.reverse();
     },
     loadTeams(sort) {
       var dThis = this;
@@ -188,12 +178,15 @@ export default {
           endkey: "TEAM_\ufff0"
         })
         .then(function(result) {
-          dThis.teams = [];
+          var tempTeams = [];
           for (var docID in result["rows"]) {
-            dThis.addToBoard(result["rows"][docID]);
+            var teamID = result["rows"][docID]["doc"]["_id"];
+            if (teamID !== undefined)
+              tempTeams.push(result["rows"][docID]["doc"]);
           }
 
-          if (sort) dThis.toggleSorted(false, dThis.sortedTeamOption);
+          if (sort) dThis.teams = tempTeams;
+          dThis.toggleSorted(false, dThis.HomeSortingOptions.sortedTeamOption);
         });
     },
     loggedIn() {
@@ -224,13 +217,58 @@ export default {
       };
     }
   },
-  created: function() {
-    if (
-      this.user.role === "_admin" ||
-      this.user.role === "edit" ||
-      this.user.role === "view"
-    ) {
-      this.loggedIn();
+  computed: {
+    filteredTeams: function() {
+      if (this.filter == "") return this.teams;
+
+      var filterWords = this.filter.toLowerCase().split(" ");
+
+      let shouldCombine = false;
+      let index = 0;
+      for (let i in filterWords) {
+        let cur = filterWords[i];
+        if (shouldCombine)
+          filterWords[index] =
+            filterWords[index] + " " + filterWords.splice(i, 1);
+
+        if (cur.startsWith('"') || cur.startsWith('!"')) {
+          shouldCombine = true;
+          index = i;
+        }
+        if (cur.endsWith('"')) shouldCombine = false;
+      }
+
+      var dThis = this;
+      return lodashFilter(this.teams, function(team) {
+        var shouldInclude = 0;
+        filterWords.forEach(function(f) {
+          let invert = false;
+          let shouldInc = false;
+
+          if (f.startsWith("!")) {
+            f = f.replace("!", "");
+            invert = true;
+          }
+
+          if (f.startsWith('"') && f.endsWith('"') && f.length >= 2) {
+            f = f.substring(0, f.length - 1).replace('"', "");
+
+            if (team.name.toLowerCase() == f || team.number.toString() == f)
+              shouldInc = true;
+          } else if (
+            team.name.toLowerCase().includes(f) ||
+            team.number.toString().includes(f)
+          ) {
+            shouldInc = true;
+          }
+
+          if (invert) shouldInc = !shouldInc;
+
+          if (shouldInc) shouldInclude++;
+        });
+
+        return shouldInclude == filterWords.length;
+      });
     }
   }
 };

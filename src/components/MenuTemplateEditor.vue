@@ -16,7 +16,7 @@
       </div>
 
       <Error v-if="isError" class="mobile-none-margin-top location-centered background-box content-centered">{{errorMessage}}</Error>
-      <Message v-else-if="isMessage" class="mobile-none-margin-top location-centered background-box content-centered">{{generalMessage}}</Message>
+      <p v-else-if="isMessage" class="mobile-none-margin-top location-centered background-box content-centered">{{generalMessage}}</p>
       <div v-else class="mobile-none-margin-top location-centered background-box content-centered">
         <h2>Template Editor</h2>
       </div>
@@ -95,7 +95,6 @@ import PitTemplate from "../assets/pitscout.js";
 import MatchTemplate from "../assets/matchscout.js";
 
 import Error from "@/components/Error.vue";
-import Message from "@/components/Message.vue";
 
 import { scroller } from "vue-scrollto/src/scrollTo";
 
@@ -112,8 +111,7 @@ export default {
     TemplateEditDropdown,
     TemplateEditNumber,
     TemplateEditNumberInc,
-    Error,
-    Message
+    Error
   },
   data: function() {
     return {

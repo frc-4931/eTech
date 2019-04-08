@@ -2,42 +2,17 @@
   <Error v-if="!isAdmin">You must be logged in as an admin to view this page!</Error>
 
   <div v-else class="grid">
-    <BackButton :pushuri="'/'"/>
-
     <h2 class="location-span background-box content-centered">Admin Tools</h2>
 
     <div class="location-left-small">
       <h2 class="content-centered background-box">Tools</h2>
 
       <div class="background-box">
-        <router-link :to="{name: 'team-add'}">Add Team</router-link>
-        <br>
         <router-link :to="{name: 'user-add'}">Add User</router-link>
         <br>
         <router-link :to="{name: 'admin-template'}">Edit Scouting Templates</router-link>
         <br>
-        <router-link :to="{name: 'import-tba-teams'}">Import Teams From TBA</router-link>
-        <br>
       </div>
-    </div>
-
-    <div class="location-centered-small">
-      <h2 class="background-box content-centered">Teams</h2>
-
-      <div v-if="teams.length != 0" class="background-box admin-team">
-        <p>Team Number</p>
-        <p>Team Name</p>
-        <p>Remove Team</p>
-      </div>
-
-      <div v-else class="location-centered background-box content-centered">
-        <p>There aren't any teams to display yet.</p>
-        <router-link :to="{name: 'team-add'}">Add a team here.</router-link>
-      </div>
-
-      <transition-group name="trans-group">
-        <AdminTeam v-for="(teamData) in teams" v-bind:key="teamData['_id']" :teamdata="teamData" :removeteam="removeTeam"/>
-      </transition-group>
     </div>
 
     <div class="location-right-small">
@@ -63,11 +38,9 @@
 </template>
 
 <script>
-import AdminTeam from "./admin/AdminTeam.vue";
-import AdminUser from "./admin/AdminUser.vue";
-import BackButton from "./BackButton.vue";
+import AdminUser from "./AdminUser.vue";
 import orderBy from "lodash.orderby";
-import Error from "./Error.vue";
+import Error from "../Error.vue";
 import PouchDB from "pouchdb";
 
 // Setup for running dev server
@@ -90,9 +63,7 @@ if (window.webpackHotUpdate) {
 export default {
   name: "MenuAdmin",
   components: {
-    AdminTeam,
     AdminUser,
-    BackButton,
     Error
   },
   props: {
@@ -102,7 +73,6 @@ export default {
   },
   data: function() {
     return {
-      teams: [],
       users: [],
       isAdmin: true,
       usersdb: new PouchDB(url, setup)
@@ -112,30 +82,6 @@ export default {
     addToBoard(team_doc) {
       var teamID = team_doc["doc"]["_id"];
       if (teamID !== undefined) this.teams.push(team_doc["doc"]);
-    },
-    loadTeams() {
-      var dThis = this;
-      this.localdb
-        .allDocs({
-          include_docs: true,
-          startkey: "TEAM_0",
-          endkey: "TEAM_\ufff0"
-        })
-        .then(function(result) {
-          dThis.teams = [];
-          for (var docID in result["rows"]) {
-            dThis.addToBoard(result["rows"][docID]);
-          }
-          dThis.teams = orderBy(
-            dThis.teams,
-            [
-              function(team) {
-                return team.number;
-              }
-            ],
-            ["asc"]
-          );
-        });
     },
     removeTeam(number) {
       var shouldDelete = confirm(
@@ -188,22 +134,7 @@ export default {
       } else if (response.userCtx.roles.indexOf("_admin") !== -1) {
         dThis.isAdmin = true;
 
-        dThis.loadTeams();
         dThis.loadUsers();
-
-        dThis.sync_change.onChange = function(change) {
-          if (change["direction"] == "pull") {
-            var shouldLoadTeams = false;
-
-            for (var doc of change.change.docs) {
-              if (doc["_id"].startsWith("TEAM_")) {
-                shouldLoadTeams = true;
-              }
-            }
-
-            if (shouldLoadTeams) dThis.loadTeams();
-          }
-        };
 
         dThis.usersdb
           .changes({
@@ -227,11 +158,6 @@ export default {
 </script>
 
 <style>
-.admin-team {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  text-align: center;
-}
 .admin-user {
   display: grid;
   grid-template-columns: repeat(4, 1fr);

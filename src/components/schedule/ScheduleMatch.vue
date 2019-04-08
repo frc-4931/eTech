@@ -72,6 +72,8 @@ export default {
 .schedule-match p {
   padding-top: 10px;
   padding-bottom: 10px;
+  padding-left: 2.5px;
+  padding-right: 2.5px;
 }
 .schedule-match-blue {
   background-color: var(--tba-alliance-blue);

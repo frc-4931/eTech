@@ -1,6 +1,8 @@
 <template>
   <div class="tba-awards-container background-box">
-    <p>{{ winnerData.name}}</p>
+    <div class="tba-awards-name-container">
+      <p>{{ winnerData.name}}</p>
+    </div>
 
     <div>
       <div v-for="recipient in winnerData.recipient_list" :key="recipient.team_key + recipient.awardee">
@@ -25,3 +27,11 @@ export default {
   }
 };
 </script>
+
+<style>
+.tba-awards-name-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+</style>

@@ -1,21 +1,19 @@
 <template>
   <div class="grid-perminant pit-scout-div">
-    <p class="location-left background-box">{{ data.title }}</p>
+    <div class="pitscout-label background-box location-left">
+      <p>{{ data.title }}</p>
+    </div>
 
-    <div v-if="!locked" @click="increment()" class="noselect background-box content-centered background-box-hover">
+    <div @click="increment()" class="background-box content-centered" :class="locked ? 'background-box-disabled' : 'background-box-hover'">
       <p>+</p>
     </div>
 
-    <div v-if="!locked" class="background-box content-centered">
+    <div class="background-box content-centered">
       <p>{{ data.value }}</p>
     </div>
 
-    <div v-if="!locked" @click="decrement()" class="noselect background-box content-centered background-box-hover">
+    <div @click="decrement()" class="background-box content-centered" :class="locked ? 'background-box-disabled' : 'background-box-hover'">
       <p>-</p>
-    </div>
-
-    <div v-if="locked" class="background-box-input location-right">
-      <input v-model.number="data.value" type="number" pattern="[0-9]*" placeholder="Value" disabled>
     </div>
   </div>
 </template>
@@ -71,15 +69,3 @@ export default {
   }
 };
 </script>
-
-<style>
-.noselect {
-  -webkit-touch-callout: none; /* iOS Safari */
-  -webkit-user-select: none; /* Safari */
-  -khtml-user-select: none; /* Konqueror HTML */
-  -moz-user-select: none; /* Firefox */
-  -ms-user-select: none; /* Internet Explorer/Edge */
-  user-select: none; /* Non-prefixed version, currently
-                                  supported by Chrome and Opera */
-}
-</style>

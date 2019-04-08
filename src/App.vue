@@ -1,9 +1,13 @@
 <template>
   <div id="app">
+    <NavigationDrawer :user="user" :navigationDrawerStatus="navigationDrawerStatus"/>
+
+    <TopBar :user="user" :navigationDrawerStatus="navigationDrawerStatus"/>
+
     <ConnectionError v-if="isConnectionError"/>
 
     <transition enter-active-class="content-fade-in" leave-active-class="content-fade-out" mode="out-in">
-      <router-view :localdb="localdb" :remotedb="remotedb" :localtbadb="localtbadb" :bluealliancedb="bluealliancedb" :sync_change="sync_change" :user="user" :reloadSync="reloadSync" :reloadUser="reloadUser"></router-view>
+      <router-view :HomeSortingOptions="HomeSortingOptions" :localdb="localdb" :remotedb="remotedb" :localtbadb="localtbadb" :bluealliancedb="bluealliancedb" :sync_change="sync_change" :user="user" :reloadSync="reloadSync" :reloadUser="reloadUser"></router-view>
     </transition>
   </div>
 </template>
@@ -12,6 +16,8 @@
 import ConnectionError from "./components/ConnectionError.vue";
 import PouchDB from "pouchdb";
 import Authentication from "pouchdb-authentication";
+import NavigationDrawer from "./components/NavigationDrawer.vue";
+import TopBar from "./components/TopBar.vue";
 
 var url = "";
 var setup = {};
@@ -35,11 +41,18 @@ if (window.webpackHotUpdate) {
 export default {
   name: "app",
   components: {
-    ConnectionError
+    ConnectionError,
+    TopBar,
+    NavigationDrawer
   },
   data: function() {
     return {
       isConnectionError: false,
+      navigationDrawerStatus: { active: false },
+      HomeSortingOptions: {
+        sortedTeamOption: "totalPoints",
+        sortedTeamFlipped: false
+      },
       localdb: new PouchDB("localdb"),
       remotedb: new PouchDB(url + "scouting", setup),
       bluealliancedb: new PouchDB(url + "bluealliance", setup),
@@ -96,6 +109,7 @@ export default {
         if (err) {
           console.log(err);
         } else if (!response.userCtx.name) {
+          dThis.user.name = null;
           dThis.user.username = null;
           dThis.user.role = null;
         } else {

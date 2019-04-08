@@ -70,9 +70,9 @@ const optionDefinitions = [
       "Enable SSL. Read how to use it here: https://github.com/frc-4931/eTech#enable-ssl"
   },
   {
-    name: "tba-enabled",
+    name: "tba-disabled",
     type: Boolean,
-    description: "Enables The Blue Alliance integration."
+    description: "Disables The Blue Alliance integration."
   },
   {
     name: "tba-log",
@@ -87,8 +87,8 @@ const optionDefinitions = [
   {
     name: "tba-interval",
     type: Number,
-    defaultValue: 30,
-    description: "Amount of time in seconds between pinging The Blue Alliance for data (Defaults to '30')."
+    defaultValue: 60,
+    description: "Amount of time in seconds between pinging The Blue Alliance for data (Defaults to '60')."
   },
   {
     name: "tba-auth-key",
@@ -126,15 +126,14 @@ if (options.help) {
     },
     {
       content:
-        "Read more at: {underline https://github.com/Damian0001/etech/blob/master/README.md}"
+        "Read more at: {underline https://github.com/frc-4931/eTech/blob/master/README.md}"
     }
   ]);
   console.log(usage);
   process.exit();
 }
 
-const DATABASE_URN = "/database";
-const API_URN = "/api";
+const DATABASE_URL = "/database";
 const PROXY_TARGET = options.databaseAddress + ":" + options.databasePort;
 const DIRECTORY = options.directory;
 const PORT = options.port;
@@ -148,19 +147,23 @@ var getTime = function () {
 }
 
 proxy.on("error", function (err, req, response) {
-  response.writeHead(500, {
-    "Content-Type": "text/plain"
-  });
+  try {
+    response.writeHead(500, {
+      "Content-Type": "text/plain",
+    });
 
-  response.end("Something went wrong. Maybe the database is down?");
+    response.end("Something went wrong. Maybe the database is down?");
+  } catch (err) {
+    console.log(err)
+  }
 });
 
 const handler = function (request, response) {
   var url = request.url;
 
-  if (url.startsWith(DATABASE_URN)) {
+  if (url.startsWith(DATABASE_URL)) {
     var modifiedRequest = request;
-    modifiedRequest.url = request.url.replace(DATABASE_URN, "");
+    modifiedRequest.url = request.url.replace(DATABASE_URL, "");
 
     if (options.logDbRequests)
       console.log(
@@ -172,25 +175,6 @@ const handler = function (request, response) {
     proxy.web(modifiedRequest, response, {
       target: PROXY_TARGET
     });
-  } else if (url.startsWith(API_URN)) {
-    var responseCode = 200;
-    var content = new Object();
-
-    if (url == API_URN + "/status") {
-      content["use_ssl"] = options.useSsl == undefined ? false : true;
-
-      content["tba_enabled"] = options.tbaEnabled == undefined ? false : true;
-      content["tba_event_key"] = options.tbaEventKey;
-      content["tba_interval"] = options.tbaEnabled ? options.tbaInterval : undefined;
-    } else {
-      responseCode = 404;
-    }
-
-    response.writeHead(responseCode, {
-      "Content-Type": "application/json"
-    });
-
-    response.end(JSON.stringify(content));
   } else {
     var file;
     var type = "text/html";
@@ -283,183 +267,242 @@ if (options.useSsl) {
 }
 
 // The Blue Alliance Intigration
-var useBA = options.tbaEnabled;
+var useBA = !options.tbaDisabled;
 var teamKeys = [];
 var matchKeys = [];
 if (useBA) {
   var tbaDB = new pouchdb(PROXY_TARGET + "/bluealliance");
+  var scoutingDB = new pouchdb(PROXY_TARGET + "/scouting");
   try {
     var tbaLogin = options.tbaDbLogin.split(":", 2);
   } catch (exept) {
-    console.log(chalk.redBright("Error while trying to parse database loggin credentials."));
+    if (!useBA) console.log(chalk.redBright("Error while trying to parse database loggin credentials."));
+    else console.log(chalk.cyan("Either supply database login details or use --tba-disabled as a launch option."))
     process.exit();
   }
-  tbaDB.logIn(tbaLogin[0], tbaLogin[1]).catch(function (err) {
+  tbaDB.logIn(tbaLogin[0], tbaLogin[1]).then(function () {
+    scoutingDB.logIn(tbaLogin[0], tbaLogin[1]).then(function () {
+
+      var baKey;
+      var baEvent;
+
+      if (options.tbaAuthKey) {
+        baKey = options.tbaAuthKey;
+      } else {
+        console.log(chalk.redBright("Error: You must supply a The Blue Alliance authentication key using --tba-auth-key as a launch option when TBA integration is enabled."));
+        process.exit();
+      }
+
+      if (options.tbaEventKey) {
+        baEvent = options.tbaEventKey;
+      } else {
+        console.log(chalk.redBright("Error: You must supply a The Blue Alliance event key by using --tba-event-key as a launch option when TBA integration is enabled."));
+        process.exit();
+      }
+
+      let argOptions = options;
+      var runBA = function () {
+        if (!useBA) return;
+
+        var options = {
+          url: "https://www.thebluealliance.com/api/v3/",
+          method: "GET",
+          headers: {
+            "X-TBA-Auth-Key": baKey
+          }
+        };
+
+        var getMatchKeys = () => {
+          return new Promise((resolve, reject) => {
+            var opt = {};
+            Object.assign(opt, options);
+            var url = "event/" + baEvent + "/matches/keys";
+            opt.url += url;
+
+            if (argOptions.tbaLog)
+              console.log(
+                getTime() + chalk.blue("Caching match keys: ") + chalk.gray(url)
+              );
+
+            request(opt, function (err, res, body) {
+              if (err) {
+                console.log(getTime() + chalk.redBright("Error pulling data (" + url + ") from The Blue Alliance."));
+                reject(err);
+                return;
+              }
+
+              var data = JSON.parse(body);
+
+              if (data.Error) {
+                console.log(getTime() + chalk.redBright("Error: '" + data.Error + "' when pulling data (" + url + ") from The Blue Alliance."));
+                return;
+              }
+
+              matchKeys = data;
+              resolve();
+            });
+          });
+        }
+
+        var getTeamKeys = () => {
+          return new Promise((resolve, reject) => {
+            var opt = {};
+            Object.assign(opt, options);
+            var url = "event/" + baEvent + "/teams/keys";
+            opt.url += url;
+
+            if (argOptions.tbaLog)
+              console.log(
+                getTime() + chalk.blue("Caching team keys: ") + chalk.gray(url)
+              );
+
+            request(opt, function (err, res, body) {
+              if (err) {
+                console.log(getTime() + chalk.redBright("Error pulling data (" + url + ") from The Blue Alliance."));
+                reject(err);
+                return;
+              }
+
+              var data = JSON.parse(body);
+
+              if (data.Error) {
+                console.log(getTime() + chalk.redBright("Error: '" + data.Error + "' when pulling data (" + url + ") from The Blue Alliance."))
+                return;
+              }
+
+              teamKeys = data;
+              resolve();
+            });
+          });
+        }
+
+        var cacheToFile = (url, file) => {
+          return new Promise((resolve, reject) => {
+            var opt = {};
+            Object.assign(opt, options);
+            opt.url += url;
+
+            if (argOptions.tbaLog)
+              console.log(
+                getTime() + chalk.blue("Saving to file: ") + chalk.gray(url + " > " + file)
+              );
+
+            request(opt, function (err, res, body) {
+              if (err) {
+                console.log(getTime() + chalk.redBright("Error pulling data (" + url + ") from The Blue Alliance."))
+                reject();
+                return;
+              }
+
+              var data = JSON.parse(body);
+
+              if (data.Error) {
+                console.log(getTime() + chalk.redBright("Error: '" + data.Error + "' when pulling data (" + url + ") from The Blue Alliance."))
+                return;
+              }
+
+              var date = new Date(res.headers["last-modified"]).getTime();
+
+              var res = resolve;
+
+              tbaDB
+                .get(file)
+                .then(function (doc) {
+                  if (doc.lastModified === undefined || isNaN(doc.lastModified) || doc.lastModified < date) {
+                    doc.json = data;
+                    doc.lastModified = date;
+
+                    tbaDB.put(doc).then(() => resolve());
+                  } else {
+                    resolve();
+                  }
+                })
+                .catch(function () {
+                  var doc = { _id: file, json: data, lastModified: date };
+                  tbaDB.put(doc).then(() => { resolve() }).catch(function (err) {
+                    console.log(err);
+                    reject();
+                  });
+                });
+            });
+          });
+        }
+
+        getTeamKeys().then(() => {
+          getMatchKeys().then(() => {
+            for (let matchKey of matchKeys) {
+              //cacheToFile("match/" + matchKey, "MATCH_" + matchKey); // Full match breakdown
+              cacheToFile("match/" + matchKey + "/simple", "MATCHSIMPLE_" + matchKey); // Simple match breakdown
+            }
+
+            var getTeamInfo = new Promise(function (resolve, reject) {
+              var i = 0;
+
+              for (let teamKey of teamKeys) {
+                var promises = [
+                  // cacheToFile("team/" + teamKey + "/event/" + baEvent + "/status", "TEAMSTATUS_" + teamKey),
+                  // cacheToFile("team/" + teamKey + "/event/" + baEvent + "/matches/keys", "TEAMMATCHES_" + teamKey),
+                  // cacheToFile("team/" + teamKey + "/years_participated", "TEAMYEARS_" + teamKey),
+                  cacheToFile("team/" + teamKey, "TEAMINFO_" + teamKey),
+                  // cacheToFile("team/" + teamKey + "/event/" + baEvent + "/awards", "TEAMAWARDS_" + teamKey)
+                ];
+
+                Promise.all(promises).then(() => {
+                  i++;
+
+                  if (i == teamKeys.length) resolve();
+                });
+              }
+            });
+
+            var addTeam = (teamKey) => {
+              var teamNumber = teamKey.replace("frc", "");
+
+              scoutingDB.get("TEAM_" + teamNumber).then(() => { return }).catch((err) => {
+                tbaDB.get("TEAMINFO_frc" + teamNumber).then(function (doc) {
+
+                  var file = {
+                    name: doc.json.nickname,
+                    number: doc.json.team_number,
+                    objectivePoints: 0,
+                    commentPoints: 0,
+                    _id: "TEAM_" + doc.json.team_number
+                  };
+
+                  scoutingDB.put(file).then(() => {
+                    if (options.tbaLog)
+                      console.log(getTime() + chalk.blue("Adding team: ") + chalk.gray(file.number))
+                  }).catch(() => { return });
+                }).catch(() => { return });
+              })
+            }
+
+            getTeamInfo.then(() => {
+              for (let teamKey of teamKeys) {
+                addTeam(teamKey);
+              }
+            });
+
+            cacheToFile("event/" + baEvent + "/rankings", "RANKINGS");
+            cacheToFile("event/" + baEvent + "/alliances", "ALLIANCES");
+            cacheToFile("event/" + baEvent + "/awards", "AWARDS");
+          });
+        });
+      };
+
+      var intervalTime = options.tbaInterval * 1000;
+      setInterval(runBA, intervalTime);
+      runBA();
+    }).catch(function (err) {
+      console.log(chalk.redBright("Error while logging into the scouting database."));
+      console.log(err)
+      process.exit();
+    });
+  }).catch(function (err) {
     console.log(chalk.redBright("Error while logging into The Blue Alliance database."));
     console.log(err)
     process.exit();
   });
-
-  var baKey;
-  var baEvent;
-
-  if (options.tbaAuthKey) {
-    baKey = options.tbaAuthKey;
-  } else {
-    console.log(chalk.redBright("Error: You must supply a The Blue Alliance authentication key when TBA integration is enabled."));
-    process.exit();
-  }
-
-  if (options.tbaEventKey) {
-    baEvent = options.tbaEventKey;
-  } else {
-    console.log(chalk.redBright("Error: You must supply a The Blue Alliance event key when TBA integration is enabled."));
-    process.exit();
-  }
-
-  let argOptions = options;
-  var runBA = function () {
-    if (!useBA) return;
-
-    var options = {
-      url: "https://www.thebluealliance.com/api/v3/",
-      method: "GET",
-      headers: {
-        "X-TBA-Auth-Key": baKey
-      }
-    };
-
-    var getMatchKeys = function () {
-      var opt = {};
-      Object.assign(opt, options);
-      var url = "event/" + baEvent + "/matches/keys";
-      opt.url += url;
-
-      if (argOptions.tbaLog)
-        console.log(
-          getTime() + chalk.blue("Caching match keys: ") + chalk.gray(url)
-        );
-
-      request(opt, function (err, res, body) {
-        if (err) {
-          console.log(getTime() + chalk.redBright("Error pulling data (" + url + ") from The Blue Alliance."))
-          return;
-        }
-
-        var data = JSON.parse(body);
-
-        if (data.Error) {
-          console.log(getTime() + chalk.redBright("Error: '" + data.Error + "' when pulling data (" + url + ") from The Blue Alliance."))
-          return;
-        }
-
-        matchKeys = data;
-      });
-    }
-
-    var getTeamKeys = function () {
-      var opt = {};
-      Object.assign(opt, options);
-      var url = "event/" + baEvent + "/teams/keys";
-      opt.url += url;
-
-      if (argOptions.tbaLog)
-        console.log(
-          getTime() + chalk.blue("Caching team keys: ") + chalk.gray(url)
-        );
-
-      request(opt, function (err, res, body) {
-        if (err) {
-          console.log(getTime() + chalk.redBright("Error pulling data (" + url + ") from The Blue Alliance."))
-          return;
-        }
-
-        var data = JSON.parse(body);
-
-        if (data.Error) {
-          console.log(getTime() + chalk.redBright("Error: '" + data.Error + "' when pulling data (" + url + ") from The Blue Alliance."))
-          return;
-        }
-
-        teamKeys = data;
-      });
-    }
-
-    var cacheToFile = function (url, file) {
-      var opt = {};
-      Object.assign(opt, options);
-      opt.url += url;
-
-      if (argOptions.tbaLog)
-        console.log(
-          getTime() + chalk.blue("Saving to file: ") + chalk.gray(url + " > " + file)
-        );
-
-      request(opt, function (err, res, body) {
-
-        if (err) {
-          console.log(getTime() + chalk.redBright("Error pulling data (" + url + ") from The Blue Alliance."))
-          return;
-        }
-
-        var data = JSON.parse(body);
-
-        if (data.Error) {
-          console.log(getTime() + chalk.redBright("Error: '" + data.Error + "' when pulling data (" + url + ") from The Blue Alliance."))
-          return;
-        }
-
-        var date = new Date(res.headers["last-modified"]).getTime();
-
-        tbaDB
-          .get(file)
-          .then(function (doc) {
-            if (doc.lastModified === undefined || isNaN(doc.lastModified) || doc.lastModified < date) {
-              doc.json = data;
-              doc.lastModified = date;
-
-              tbaDB.put(doc).catch(function (err) {
-                console.log(err)
-              });
-            }
-          })
-          .catch(function () {
-            var doc = { _id: file, json: data, lastModified: date };
-            tbaDB.put(doc).catch(function (err) {
-              console.log(err)
-            });
-          });
-      });
-    }
-
-    if (teamKeys.length == 0)
-      getTeamKeys();
-    if (matchKeys.length == 0)
-      getMatchKeys();
-
-    //cacheToFile("event/" + baEvent + "/matches/simple", "MATCHES"); // Leaving original API in until fully removed from client
-
-    //Change to individual files to reduce amount of data downloaded at a time. Will also reduce loading times.
-    for (let matchKey of matchKeys) {
-      cacheToFile("match/" + matchKey, "MATCH_" + matchKey) // Full match breakdown
-      cacheToFile("match/" + matchKey + "/simple", "MATCHSIMPLE_" + matchKey) // No full match breakdown
-    }
-
-    for (let teamKey of teamKeys) {
-      cacheToFile("team/" + teamKey + "/event/" + baEvent + "/status", "TEAMSTATUS_" + teamKey)
-      cacheToFile("team/" + teamKey + "/event/" + baEvent + "/matches/keys", "TEAMMATCHES_" + teamKey)
-      cacheToFile("team/" + teamKey + "/years_participated", "TEAMYEARS_" + teamKey)
-      cacheToFile("team/" + teamKey, "TEAMINFO_" + teamKey)
-      cacheToFile("team/" + teamKey + "/event/" + baEvent + "/awards", "TEAMAWARDS_" + teamKey)
-    }
-
-    cacheToFile("event/" + baEvent + "/rankings", "RANKINGS");
-    cacheToFile("event/" + baEvent + "/alliances", "ALLIANCES");
-    cacheToFile("event/" + baEvent + "/awards", "AWARDS");
-  };
-
-  var intervalTime = options.tbaInterval * 1000;
-  setInterval(runBA, intervalTime);
 }
 
 console.log(
@@ -480,7 +523,7 @@ if (options.logDbRequests)
     chalk.cyan(" - Logging database requests to the console is enabled")
   );
 if (options.useSsl) console.log(chalk.cyan(" - SSL is enabled"));
-if (options.tbaEnabled) console.log(chalk.cyan(" - The Blue Alliance integration is enabled"))
+if (options.tbaDisabled) console.log(chalk.cyan(" - The Blue Alliance integration is disabled"))
 if (options.tbaLog)
   console.log(
     chalk.cyan(" - Logging The blue Alliance requests to the console is enabled")
