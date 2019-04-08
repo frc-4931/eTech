@@ -225,18 +225,26 @@ export default {
 
       var dThis = this;
       return lodashFilter(this.teams, function(team) {
-        var shouldInclude = false;
+        var shouldInclude = 0;
         filterWords.forEach(function(f) {
-          if (
+          if (f.startsWith("!")) {
+            if (
+              team.name.toLowerCase().includes(f.replace("!", "")) ||
+              team.number.toString().includes(f.replace("!", ""))
+            ) {
+              return false;
+            } else {
+              shouldInclude++;
+            }
+          } else if (
             team.name.toLowerCase().includes(f) ||
             team.number.toString().includes(f)
           ) {
-            shouldInclude = true;
-            return true;
+            shouldInclude++;
           }
         });
 
-        return shouldInclude;
+        return shouldInclude == filterWords.length;
       });
     }
   },

@@ -32,13 +32,6 @@
         <p>Home</p>
       </div>
 
-      <div class="nav-drawer-tab" @click="viewPage('ranking')" :class="isCurrent('dfakfka')">
-        <div>
-          <i class="material-icons">search</i>
-        </div>
-        <p>Search for team</p>
-      </div>
-
       <div v-if="this.user.role === '_admin'" class="nav-drawer-tab" @click="viewPage('analytics')" :class="isCurrent('analytics')">
         <div>
           <i class="material-icons">bar_chart</i>
