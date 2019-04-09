@@ -29,13 +29,57 @@
       class="background-box-input"
       id="match-select"
     >
-      <select class="content-input-large">
+      <select
+        v-model="matchID"
+        class="content-input-large"
+      >
         <option value="none">Select A Match</option>
-        <option
-          v-for="match in allTBAMatches"
-          :key="match"
-          :value="match"
-        >{{ getMatchTitle(match) }}</option>
+        <optgroup
+          v-if="qualMatches.length > 0"
+          label="Qualification Matches"
+        >
+          <option
+            v-for="match in qualMatches"
+            :key="match"
+            :value="'TBA-'+match"
+          >{{ getMatchTitle(match) }}</option>
+        </optgroup>
+        <optgroup
+          v-if="qfMatches.length > 0"
+          label="Quarter-Final Matches"
+        >
+          <option
+            v-for="match in qfMatches"
+            :key="match"
+            :value="'TBA-'+match"
+          >{{ getMatchTitle(match) }}</option>
+        </optgroup>
+        <optgroup
+          v-if="sfMatches.length > 0"
+          label="Semi-Final Matches"
+        >
+          <option
+            v-for="match in sfMatches"
+            :key="match"
+            :value="'TBA-'+match"
+          >{{ getMatchTitle(match) }}</option>
+        </optgroup>
+        <optgroup
+          v-if="finalMatches.length > 0"
+          label="Final Matches"
+        >
+          <option
+            v-for="match in finalMatches"
+            :key="match"
+            :value="'TBA-'+match"
+          >{{ getMatchTitle(match) }}</option>
+        </optgroup>
+        <optgroup label="Practice Matches">
+          <option value="PRACTICE">Practice Match</option>
+        </optgroup>
+        <optgroup label="Mnaual Matches">
+          <option value="MANUAL">NON LINKED MATCH</option>
+        </optgroup>
       </select>
     </div>
 
@@ -71,10 +115,30 @@ export default {
       pitTemplate: Object,
       matchTemplate: Object,
       loggedin: false,
-      allTBAMatches: []
+      allTBAMatches: [],
+      allTBAScouted: [],
+      matchID: "none"
     };
   },
   methods: {
+    getScoutNumber(id) {
+      var scoutString = id.replace(
+        this.pitScoutPrefix + this.teamNumber + "_",
+        ""
+      );
+
+      scoutString = scoutString.replace(
+        this.matchScoutPrefix + this.teamNumber + "_",
+        ""
+      );
+
+      if (scoutString.includes("_")) {
+        var inx = scoutString.indexOf("_");
+        scoutString = scoutString.slice(0, inx);
+      }
+
+      return parseInt(scoutString);
+    },
     createScout() {
       var dThis = this;
 
@@ -86,44 +150,89 @@ export default {
             endkey: dThis.pitScoutPrefix + dThis.teamNumber + "_\ufff0"
           })
           .then(function(docs) {
-            var len = docs["rows"].length;
             var pitScoutNumber = 0;
-            if (len > 0) {
-              var pitScoutString = docs["rows"][len - 1].id.replace(
-                dThis.pitScoutPrefix + dThis.teamNumber + "_",
-                ""
-              );
-              if (pitScoutString.includes("_")) {
-                var inx = pitScoutString.indexOf("_");
-                pitScoutString = pitScoutString.slice(0, inx);
-              }
-              pitScoutNumber = parseInt(pitScoutString) + 1;
-            }
+
+            docs["rows"].forEach(doc => {
+              var curNumber = dThis.getScoutNumber(doc.id) + 1;
+
+              if (curNumber > pitScoutNumber) pitScoutNumber = curNumber;
+            });
+
             dThis.createPitScout(pitScoutNumber);
           });
       } else if (this.seleted == "MatchScout") {
-        this.localdb
-          .allDocs({
-            include_docs: false,
-            startkey: dThis.matchScoutPrefix + dThis.teamNumber + "_0",
-            endkey: dThis.matchScoutPrefix + dThis.teamNumber + "_\ufff0"
-          })
-          .then(function(docs) {
-            var len = docs["rows"].length;
-            var matchScoutNumber = 0;
-            if (len > 0) {
-              var matchScoutString = docs["rows"][len - 1].id.replace(
-                dThis.matchScoutPrefix + dThis.teamNumber + "_",
-                ""
-              );
-              if (matchScoutString.includes("_")) {
-                var inx = matchScoutString.indexOf("_");
-                matchScoutString = matchScoutString.slice(0, inx);
+        var id = this.matchScoutPrefix + this.teamNumber + "_";
+
+        if (this.matchID == "MANUAL") {
+          this.localdb
+            .allDocs({
+              include_docs: false,
+              startkey: dThis.matchScoutPrefix + dThis.teamNumber + "_0",
+              endkey: dThis.matchScoutPrefix + dThis.teamNumber + "_\ufff0"
+            })
+            .then(function(docs) {
+              var matchScoutNumber = 0;
+
+              docs["rows"].forEach(doc => {
+                doc.id = doc.id.slice(0, doc.id.lastIndexOf("_"));
+                if (!doc.id.endsWith("_MANUAL")) return;
+
+                var curNumber = dThis.getScoutNumber(doc.id) + 1;
+
+                if (curNumber > matchScoutNumber) matchScoutNumber = curNumber;
+              });
+
+              id = id + matchScoutNumber + "_" + dThis.matchID;
+              dThis.createMatchScout(id);
+            });
+        } else if (this.matchID == "PRACTICE") {
+          this.localdb
+            .allDocs({
+              include_docs: false,
+              startkey: dThis.matchScoutPrefix + dThis.teamNumber + "_0",
+              endkey: dThis.matchScoutPrefix + dThis.teamNumber + "_\ufff0"
+            })
+            .then(function(docs) {
+              var matchScoutNumber = 0;
+
+              docs["rows"].forEach(doc => {
+                doc.id = doc.id.slice(0, doc.id.lastIndexOf("_"));
+                if (!doc.id.endsWith("_PRACTICE")) return;
+
+                var curNumber = dThis.getScoutNumber(doc.id) + 1;
+
+                if (curNumber > matchScoutNumber) matchScoutNumber = curNumber;
+              });
+
+              id = id + matchScoutNumber + "_" + dThis.matchID;
+              dThis.createMatchScout(id);
+            });
+        } else if (this.matchID.startsWith("TBA")) {
+          this.localdb
+            .allDocs({
+              include_docs: false,
+              startkey:
+                dThis.matchScoutPrefix + dThis.teamNumber + "_" + dThis.matchID,
+              endkey:
+                dThis.matchScoutPrefix +
+                dThis.teamNumber +
+                "_" +
+                dThis.matchID +
+                "\ufff0"
+            })
+            .then(docs => {
+              if (docs.rows.length > 0) {
+                //FIXME this scout already exists but was created by another user
+                console.log("This scout already exists!");
+                return;
               }
-              matchScoutNumber = parseInt(matchScoutString) + 1;
-            }
-            dThis.createMatchScout(matchScoutNumber);
-          });
+
+              id = id + dThis.matchID;
+              dThis.createMatchScout(id);
+            });
+        } else {
+          //ERROR SCOUT NOT SELECTED
+        }
       } else {
         alert("You must choose a scouting type!");
       }
@@ -155,16 +264,10 @@ export default {
         dThis.callback(doc._id);
       });
     },
-    createMatchScout(number) {
+    createMatchScout(id) {
       var dThis = this;
       var doc = {
-        _id:
-          this.matchScoutPrefix +
-          this.teamNumber +
-          "_" +
-          number +
-          "_" +
-          this.user.username
+        _id: id + "_" + this.user.username
       };
 
       var totalPoints = 0;
@@ -206,15 +309,14 @@ export default {
       var dThis = this;
 
       this.localtbadb.get("TEAMMATCHES_frc" + this.teamNumber).then(doc => {
-        let matches = [];
-        doc.json.forEach(match => {
-          matches.push(match.substring(match.indexOf("_") + 1));
-        });
+        let matches = doc.json;
 
         matches = orderBy(
           matches,
           [
             match => {
+              match = match.substring(match.indexOf("_") + 1);
+
               if (match.startsWith("qm")) return 0;
               else if (match.startsWith("qf")) return 1;
               else if (match.startsWith("sf")) return 2;
@@ -222,6 +324,8 @@ export default {
               else return -1;
             },
             match => {
+              match = match.substring(match.indexOf("_") + 1);
+
               if (match.startsWith("qm")) match = match.replace("qm", "");
               else if (match.startsWith("qf"))
                 match = match
@@ -243,10 +347,13 @@ export default {
           ["asc", "asc"]
         );
 
+        dThis.allTBAMatches.splice(0, dThis.allTBAMatches.length);
         dThis.allTBAMatches.push(...matches);
       });
     },
     getMatchTitle(matchString) {
+      matchString = matchString.substring(matchString.indexOf("_") + 1);
+
       if (matchString.startsWith("qm"))
         return "Qual " + matchString.replace("qm", "");
       else if (matchString.startsWith("qf"))
@@ -255,7 +362,7 @@ export default {
           matchString
             .replace("qf", "")
             .substring(0, matchString.indexOf("m") - 2) +
-          " Match " +
+          " - Match " +
           matchString.substring(matchString.indexOf("m") + 1)
         );
       else if (matchString.startsWith("sf"))
@@ -264,11 +371,65 @@ export default {
           matchString
             .replace("sf", "")
             .substring(0, matchString.indexOf("m") - 2) +
-          " Match " +
+          " - Match " +
           matchString.substring(matchString.indexOf("m") + 1)
         );
       else if (matchString.startsWith("f"))
         return "Final " + matchString.substring(matchString.indexOf("m") + 1);
+    },
+    getAllTBAScouted() {
+      var dThis = this;
+
+      this.localdb
+        .allDocs({
+          include_docs: false,
+          startkey: dThis.pitScoutPrefix + dThis.teamNumber + "_TBA-",
+          endkey: dThis.pitScoutPrefix + dThis.teamNumber + "_TBA-\ufff0"
+        })
+        .then(docs => {
+          dThis.allTBAScouted.splice(0, dThis.allTBAScouted.length);
+          docs["rows"].forEach(doc => {
+            dThis.allTBAScouted.push(doc.id);
+          });
+        });
+    }
+  },
+  computed: {
+    qualMatches() {
+      let matches = [];
+      this.allTBAMatches.forEach(match => {
+        let temp = match.substring(match.indexOf("_") + 1);
+
+        if (temp.startsWith("qm")) matches.push(match);
+      });
+      return matches;
+    },
+    qfMatches() {
+      let matches = [];
+      this.allTBAMatches.forEach(match => {
+        let temp = match.substring(match.indexOf("_") + 1);
+
+        if (temp.startsWith("qf")) matches.push(match);
+      });
+      return matches;
+    },
+    sfMatches() {
+      let matches = [];
+      this.allTBAMatches.forEach(match => {
+        let temp = match.substring(match.indexOf("_") + 1);
+
+        if (temp.startsWith("sf")) matches.push(match);
+      });
+      return matches;
+    },
+    finalMatches() {
+      let matches = [];
+      this.allTBAMatches.forEach(match => {
+        let temp = match.substring(match.indexOf("_") + 1);
+
+        if (temp.startsWith("f")) matches.push(match);
+      });
+      return matches;
     }
   },
   created() {

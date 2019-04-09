@@ -56,16 +56,74 @@
               v-if="hasEdit"
               value="create"
             >--- New Scout ---</option>
-            <option
-              v-for="scout in pitScouts"
-              :key="scout"
-              :value="scout"
-            >Pit Scouting: {{ getScoutNumber(scout) + 1 }}</option>
-            <option
-              v-for="scout in matchScouts"
-              :key="scout"
-              :value="scout"
-            >Match Scouting: Match {{ getScoutNumber(scout) + 1 }}</option>
+            <optgroup label="Pit Scouts">
+              <option
+                v-for="scout in pitScouts"
+                :key="scout"
+                :value="scout"
+              >Pit Scouting: {{ getScoutNumber(scout) + 1 }}</option>
+            </optgroup>
+
+            <optgroup
+              v-if="qualMatches.length > 0"
+              label="Qualification Matches"
+            >
+              <option
+                v-for="scout in qualMatches"
+                :key="scout"
+                :value="scout"
+              >{{ getMatchTitle(scout) }}</option>
+            </optgroup>
+            <optgroup
+              v-if="qfMatches.length > 0"
+              label="Quarter-Final Matches"
+            >
+              <option
+                v-for="scout in qfMatches"
+                :key="scout"
+                :value="scout"
+              >{{ getMatchTitle(scout) }}</option>
+            </optgroup>
+            <optgroup
+              v-if="sfMatches.length > 0"
+              label="Semi-Final Matches"
+            >
+              <option
+                v-for="scout in sfMatches"
+                :key="scout"
+                :value="scout"
+              >{{ getMatchTitle(scout) }}</option>
+            </optgroup>
+            <optgroup
+              v-if="finalMatches.length > 0"
+              label="Final Matches"
+            >
+              <option
+                v-for="scout in finalMatches"
+                :key="scout"
+                :value="scout"
+              >{{ getMatchTitle(scout) }}</option>
+            </optgroup>
+            <optgroup
+              v-if="manualMatches.length > 0"
+              label="Practice Match Scouts"
+            >
+              <option
+                v-for="scout in practiceMatches"
+                :key="scout"
+                :value="scout"
+              >Practice Match {{ getScoutNumber(scout) + 1 }}</option>
+            </optgroup>
+            <optgroup
+              v-if="manualMatches.length > 0"
+              label="Manual Match Scouts"
+            >
+              <option
+                v-for="scout in manualMatches"
+                :key="scout"
+                :value="scout"
+              >Manual Match {{ getScoutNumber(scout) + 1 }}</option>
+            </optgroup>
           </select>
         </div>
 
@@ -347,7 +405,7 @@ export default {
         .then(function() {
           return dThis.localdb.allDocs({
             include_docs: true,
-            startkey: "MATCHSCOUT_" + team + "_0",
+            startkey: "MATCHSCOUT_" + team + "_",
             endkey: "MATCHSCOUT_" + team + "_\ufff0"
           });
         })
@@ -452,15 +510,9 @@ export default {
       };
     },
     getScoutNumber(id) {
-      var scoutString = id.replace(
-        this.pitScoutPrefix + this.teamNumber + "_",
-        ""
-      );
-
-      scoutString = scoutString.replace(
-        this.matchScoutPrefix + this.teamNumber + "_",
-        ""
-      );
+      var scoutString = id
+        .replace(this.pitScoutPrefix + this.teamNumber + "_", "")
+        .replace(this.matchScoutPrefix + this.teamNumber + "_", "");
 
       if (scoutString.includes("_")) {
         var inx = scoutString.indexOf("_");
@@ -468,6 +520,81 @@ export default {
       }
 
       return parseInt(scoutString);
+    },
+    trimScout(id) {
+      let scoutString = id
+        .replace(this.pitScoutPrefix + this.teamNumber + "_", "")
+        .replace(this.matchScoutPrefix + this.teamNumber + "_", "");
+
+      var inx = scoutString.lastIndexOf("_");
+      return scoutString.slice(0, inx);
+    },
+    getMatchTitle(matchString) {
+      matchString = this.trimScout(matchString);
+
+      matchString = matchString.substring(matchString.indexOf("_") + 1);
+
+      if (matchString.startsWith("qm"))
+        return "Qual " + matchString.replace("qm", "");
+      else if (matchString.startsWith("qf"))
+        return (
+          "QF " +
+          matchString
+            .replace("qf", "")
+            .substring(0, matchString.indexOf("m") - 2) +
+          " - Match " +
+          matchString.substring(matchString.indexOf("m") + 1)
+        );
+      else if (matchString.startsWith("sf"))
+        return (
+          "SF " +
+          matchString
+            .replace("sf", "")
+            .substring(0, matchString.indexOf("m") - 2) +
+          " - Match " +
+          matchString.substring(matchString.indexOf("m") + 1)
+        );
+      else if (matchString.startsWith("f"))
+        return "Final " + matchString.substring(matchString.indexOf("m") + 1);
+    },
+    orderTBAScouts(matches) {
+      return orderBy(
+        matches,
+        [
+          match => {
+            match = this.trimScout(match);
+            match = match.substring(match.indexOf("_") + 1);
+
+            if (match.startsWith("qm")) return 0;
+            else if (match.startsWith("qf")) return 1;
+            else if (match.startsWith("sf")) return 2;
+            else if (match.startsWith("f")) return 3;
+            else return -1;
+          },
+          match => {
+            match = this.trimScout(match);
+            match = match.substring(match.indexOf("_") + 1);
+
+            if (match.startsWith("qm")) match = match.replace("qm", "");
+            else if (match.startsWith("qf"))
+              match = match
+                .replace("qf", "")
+                .substring(0, match.indexOf("m") - 2);
+            else if (match.startsWith("sf"))
+              match = match
+                .replace("sf", "")
+                .substring(0, match.indexOf("m") - 2);
+            else if (match.startsWith("f"))
+              match = match
+                .replace("f", "")
+                .substring(0, match.indexOf("m") - 2);
+            else return -1;
+
+            return parseInt(match);
+          }
+        ],
+        ["asc", "asc"]
+      );
     }
   },
   created: function() {
@@ -515,6 +642,80 @@ export default {
       } else {
         return "";
       }
+    },
+    qualMatches() {
+      let matches = [];
+      this.matchScouts.forEach(match => {
+        let temp = this.trimScout(match);
+
+        if (!temp.startsWith("TBA")) return;
+        temp = temp.replace("TBA-", "");
+
+        temp = temp.substring(temp.indexOf("_") + 1);
+
+        if (temp.startsWith("qm")) matches.push(match);
+      });
+      return this.orderTBAScouts(matches);
+    },
+    qfMatches() {
+      let matches = [];
+      this.matchScouts.forEach(match => {
+        let temp = this.trimScout(match);
+
+        if (!temp.startsWith("TBA")) return;
+        temp = temp.replace("TBA-", "");
+
+        temp = temp.substring(temp.indexOf("_") + 1);
+
+        if (temp.startsWith("qf")) matches.push(match);
+      });
+      return this.orderTBAScouts(matches);
+    },
+    sfMatches() {
+      let matches = [];
+      this.matchScouts.forEach(match => {
+        let temp = this.trimScout(match);
+
+        if (!temp.startsWith("TBA")) return;
+        temp = temp.replace("TBA-", "");
+
+        temp = temp.substring(temp.indexOf("_") + 1);
+
+        if (temp.startsWith("sf")) matches.push(match);
+      });
+      return this.orderTBAScouts(matches);
+    },
+    finalMatches() {
+      let matches = [];
+      this.matchScouts.forEach(match => {
+        let temp = this.trimScout(match);
+
+        if (!temp.startsWith("TBA")) return;
+        temp = temp.replace("TBA-", "");
+
+        temp = temp.substring(temp.indexOf("_") + 1);
+
+        if (temp.startsWith("f")) matches.push(match);
+      });
+      return this.orderTBAScouts(matches);
+    },
+    manualMatches() {
+      let matches = [];
+      this.matchScouts.forEach(match => {
+        let temp = this.trimScout(match);
+
+        if (temp.endsWith("MANUAL")) matches.push(match);
+      });
+      return matches;
+    },
+    practiceMatches() {
+      let matches = [];
+      this.matchScouts.forEach(match => {
+        let temp = this.trimScout(match);
+
+        if (temp.endsWith("PRACTICE")) matches.push(match);
+      });
+      return matches;
     }
   }
 };
