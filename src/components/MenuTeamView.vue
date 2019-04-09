@@ -57,15 +57,15 @@
               value="create"
             >--- New Scout ---</option>
             <option
-              v-for="(scout, idx) in pitScouts"
+              v-for="scout in pitScouts"
               :key="scout"
               :value="scout"
-            >Pit Scouting: {{ idx + 1 }}</option>
+            >Pit Scouting: {{ getScoutNumber(scout) + 1 }}</option>
             <option
-              v-for="(scout, idx) in matchScouts"
+              v-for="scout in matchScouts"
               :key="scout"
               :value="scout"
-            >Match Scouting: Match {{ idx + 1 }}</option>
+            >Match Scouting: Match {{ getScoutNumber(scout) + 1 }}</option>
           </select>
         </div>
 
@@ -147,6 +147,7 @@ import NewScout from "./scouting/NewScout.vue";
 import BackButton from "./BackButton.vue";
 import Error from "./Error.vue";
 import { scroller } from "vue-scrollto/src/scrollTo";
+import orderBy from "lodash.orderby";
 
 export default {
   name: "MenuTeamView",
@@ -209,7 +210,9 @@ export default {
       scrollTo: scroller(),
       shouldUpdateScoutMenu: false,
       loggedin: false,
-      teamExists: false
+      teamExists: false,
+      pitScoutPrefix: "PITSCOUT_",
+      matchScoutPrefix: "MATCHSCOUT_"
     };
   },
   methods: {
@@ -325,6 +328,17 @@ export default {
             points += doc["TOTAL-POINTS"];
             itr++;
           }
+
+          dThis.pitScouts = orderBy(
+            dThis.pitScouts,
+            [
+              id => {
+                return dThis.getScoutNumber(id);
+              }
+            ],
+            ["asc"]
+          );
+
           dPoints.pPoints += points;
           dPoints.pAmount += itr;
 
@@ -351,6 +365,16 @@ export default {
             outDocs.push(doc);
             itr++;
           }
+
+          dThis.matchScouts = orderBy(
+            dThis.matchScouts,
+            [
+              id => {
+                return dThis.getScoutNumber(id);
+              }
+            ],
+            ["asc"]
+          );
 
           dPoints.mPoints += points;
           dPoints.mAmount += itr;
@@ -426,6 +450,24 @@ export default {
           }
         }
       };
+    },
+    getScoutNumber(id) {
+      var scoutString = id.replace(
+        this.pitScoutPrefix + this.teamNumber + "_",
+        ""
+      );
+
+      scoutString = scoutString.replace(
+        this.matchScoutPrefix + this.teamNumber + "_",
+        ""
+      );
+
+      if (scoutString.includes("_")) {
+        var inx = scoutString.indexOf("_");
+        scoutString = scoutString.slice(0, inx);
+      }
+
+      return parseInt(scoutString);
     }
   },
   created: function() {
