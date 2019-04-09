@@ -1,13 +1,26 @@
 <template>
   <div id="scouting-menu">
     <div class="scouting-menu-fields">
-      <component v-for="scField in template" :key="docId+(scField.field || scField.title)" :is="scField.type" :data="scField" :locked="!hasEdit" @valuechange="valueChange(scField.field, ...arguments)"></component>
+      <component
+        v-for="scField in template"
+        :key="docId+(scField.field || scField.title)"
+        :is="scField.type"
+        :data="scField"
+        :locked="!hasEdit"
+        @valuechange="valueChange(scField.field, ...arguments)"
+      ></component>
     </div>
 
     <div v-if="hasEdit">
-      <div class="line"/>
-      <SaveButton :unsavedChanges="unsaved" :saveCallback="save"/>
-      <h3 @click="deleteScout()" class="location-centered-small background-box background-box-hover content-centered">Delete</h3>
+      <div class="line" />
+      <SaveButton
+        :unsavedChanges="unsaved"
+        :saveCallback="save"
+      />
+      <h3
+        @click="deleteScout()"
+        class="location-centered-small background-box background-box-hover content-centered"
+      >Delete</h3>
     </div>
   </div>
 </template>
@@ -40,15 +53,11 @@ export default {
     callback: Function,
     closeteam: Function,
     shouldUpdate: false,
-    callUpdated: Function,
     hasEdit: Boolean
   },
   watch: {
-    shouldUpdate(newValue) {
-      if (newValue === true) {
-        this.updateScoutData();
-        this.callUpdated();
-      }
+    shouldUpdate() {
+      this.updateScoutData();
     }
   },
   data: function() {

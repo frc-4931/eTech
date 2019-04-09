@@ -141,6 +141,7 @@
             :user="user"
             :teamNumber="teamNumber"
             :callback="teamCreated"
+            :update="changeUpdateNewScout"
           ></NewScout>
           <ScoutMenu
             :key="scoutingSelect"
@@ -151,7 +152,6 @@
             :callback="teamModified"
             :closeteam="teamClose"
             :shouldUpdate="shouldUpdateScoutMenu"
-            :callUpdated="updatedScoutMenu"
             :hasEdit="hasEdit"
           ></ScoutMenu>
           <ScoutMenu
@@ -163,7 +163,6 @@
             :callback="teamModified"
             :closeteam="teamClose"
             :shouldUpdate="shouldUpdateScoutMenu"
-            :callUpdated="updatedScoutMenu"
             :hasEdit="hasEdit"
           ></ScoutMenu>
         </transition>
@@ -171,9 +170,19 @@
       <div class="location-right-padded">
         <h3 class="content-centered background-box">Total Comment Points: {{ team.commentPoints }}</h3>
         <transition-group name="trans-group">
-          <!-- beautify ignore:start -->
-          <component v-for="(comment, id) in comments" :locked="!hasEdit" :is="commentIs(id)" :modify="() => openCommentModifyMenu(id)" :key="id" :docId="id" :rating="comment.rating" :comment="comment.comment" :title="comment.title" :localdb="localdb" :callback="commentModified"></component>
-          <!-- beautify ignore:end -->
+          <component
+            v-for="(comment, id) in comments"
+            :locked="!hasEdit"
+            :is="commentIs(id)"
+            :modify="() => openCommentModifyMenu(id)"
+            :key="id"
+            :docId="id"
+            :rating="comment.rating"
+            :comment="comment.comment"
+            :title="comment.title"
+            :localdb="localdb"
+            :callback="commentModified"
+          ></component>
         </transition-group>
 
         <div v-if="hasEdit">
@@ -273,7 +282,8 @@ export default {
       loggedin: false,
       teamExists: false,
       pitScoutPrefix: "PITSCOUT_",
-      matchScoutPrefix: "MATCHSCOUT_"
+      matchScoutPrefix: "MATCHSCOUT_",
+      changeUpdateNewScout: false // Changing the state of this works as onChange
     };
   },
   methods: {
@@ -361,10 +371,11 @@ export default {
       this.loadScouting();
     },
     updateScoutMenu() {
-      if (this.scoutingSelect !== "none") this.shouldUpdateScoutMenu = true;
+      if (this.scoutingSelect !== "none")
+        this.shouldUpdateScoutMenu = !this.shouldUpdateScoutMenu;
     },
-    updatedScoutMenu() {
-      this.shouldUpdateScoutMenu = false;
+    updateNewScout() {
+      this.changeUpdateNewScout = !this.changeUpdateNewScout;
     },
     loadScouting: function() {
       var dThis = this;
@@ -505,6 +516,7 @@ export default {
           if (shouldLoadScouting) {
             dThis.updateScoutMenu();
             dThis.loadScouting();
+            dThis.updateNewScout();
           }
           if (shouldLoadComments) {
             dThis.loadComments();

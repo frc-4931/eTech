@@ -185,6 +185,8 @@ export default {
       return (
         this.name != "" &&
         this.username != "" &&
+        !this.username.includes(" ") &&
+        !this.username.includes("_") &&
         this.password === this.confrimPassword &&
         this.password != ""
       );

@@ -105,7 +105,8 @@ export default {
     localdb: Object,
     localtbadb: Object,
     user: Object,
-    callback: Function
+    callback: Function,
+    update: Boolean
   },
   data: function() {
     return {
@@ -212,13 +213,17 @@ export default {
             .allDocs({
               include_docs: false,
               startkey:
-                dThis.matchScoutPrefix + dThis.teamNumber + "_" + dThis.matchID,
+                dThis.matchScoutPrefix +
+                dThis.teamNumber +
+                "_" +
+                dThis.matchID +
+                "_",
               endkey:
                 dThis.matchScoutPrefix +
                 dThis.teamNumber +
                 "_" +
                 dThis.matchID +
-                "\ufff0"
+                "_\ufff0"
             })
             .then(docs => {
               if (docs.rows.length > 0) {
@@ -440,6 +445,12 @@ export default {
           matches.push(match);
       });
       return matches;
+    }
+  },
+  watch: {
+    update() {
+      this.getTBAMatches();
+      this.getAllTBAScouted();
     }
   },
   created() {
