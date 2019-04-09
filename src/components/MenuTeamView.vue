@@ -56,12 +56,15 @@
               v-if="hasEdit"
               value="create"
             >--- New Scout ---</option>
-            <optgroup label="Pit Scouts">
+            <optgroup
+              v-if="pitScouts.length > 0"
+              label="Pit Scouts"
+            >
               <option
                 v-for="scout in pitScouts"
                 :key="scout"
                 :value="scout"
-              >Pit Scouting: {{ getScoutNumber(scout) + 1 }}</option>
+              >Pit Scout {{ getScoutNumber(scout) + 1 }}</option>
             </optgroup>
 
             <optgroup

@@ -78,7 +78,7 @@
           <option value="PRACTICE">Practice Match</option>
         </optgroup>
         <optgroup label="Mnaual Matches">
-          <option value="MANUAL">NON LINKED MATCH</option>
+          <option value="MANUAL">Manual Match (Not recommended in most circumstances)</option>
         </optgroup>
       </select>
     </div>
@@ -383,13 +383,19 @@ export default {
       this.localdb
         .allDocs({
           include_docs: false,
-          startkey: dThis.pitScoutPrefix + dThis.teamNumber + "_TBA-",
-          endkey: dThis.pitScoutPrefix + dThis.teamNumber + "_TBA-\ufff0"
+          startkey: dThis.matchScoutPrefix + dThis.teamNumber + "_TBA-",
+          endkey: dThis.matchScoutPrefix + dThis.teamNumber + "_TBA-\ufff0"
         })
         .then(docs => {
           dThis.allTBAScouted.splice(0, dThis.allTBAScouted.length);
           docs["rows"].forEach(doc => {
-            dThis.allTBAScouted.push(doc.id);
+            let temp = doc.id.replace(
+              this.matchScoutPrefix + this.teamNumber + "_TBA-",
+              ""
+            );
+            temp = temp.slice(0, temp.lastIndexOf("_"));
+
+            dThis.allTBAScouted.push(temp);
           });
         });
     }
@@ -400,7 +406,8 @@ export default {
       this.allTBAMatches.forEach(match => {
         let temp = match.substring(match.indexOf("_") + 1);
 
-        if (temp.startsWith("qm")) matches.push(match);
+        if (temp.startsWith("qm") && !this.allTBAScouted.includes(match))
+          matches.push(match);
       });
       return matches;
     },
@@ -409,7 +416,8 @@ export default {
       this.allTBAMatches.forEach(match => {
         let temp = match.substring(match.indexOf("_") + 1);
 
-        if (temp.startsWith("qf")) matches.push(match);
+        if (temp.startsWith("qf") && !this.allTBAScouted.includes(match))
+          matches.push(match);
       });
       return matches;
     },
@@ -418,7 +426,8 @@ export default {
       this.allTBAMatches.forEach(match => {
         let temp = match.substring(match.indexOf("_") + 1);
 
-        if (temp.startsWith("sf")) matches.push(match);
+        if (temp.startsWith("sf") && !this.allTBAScouted.includes(match))
+          matches.push(match);
       });
       return matches;
     },
@@ -427,7 +436,8 @@ export default {
       this.allTBAMatches.forEach(match => {
         let temp = match.substring(match.indexOf("_") + 1);
 
-        if (temp.startsWith("f")) matches.push(match);
+        if (temp.startsWith("f") && !this.allTBAScouted.includes(match))
+          matches.push(match);
       });
       return matches;
     }
@@ -457,6 +467,7 @@ export default {
         });
 
       this.getTBAMatches();
+      this.getAllTBAScouted();
     } else {
       this.loggedin = false;
     }
