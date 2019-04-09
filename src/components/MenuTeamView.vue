@@ -152,7 +152,7 @@
             :callback="teamModified"
             :closeteam="teamClose"
             :shouldUpdate="shouldUpdateScoutMenu"
-            :hasEdit="hasEdit"
+            :hasEdit="editMode"
           ></ScoutMenu>
           <ScoutMenu
             :key="scoutingSelect"
@@ -163,7 +163,7 @@
             :callback="teamModified"
             :closeteam="teamClose"
             :shouldUpdate="shouldUpdateScoutMenu"
-            :hasEdit="hasEdit"
+            :hasEdit="editMode"
           ></ScoutMenu>
         </transition>
       </div>
@@ -283,7 +283,8 @@ export default {
       teamExists: false,
       pitScoutPrefix: "PITSCOUT_",
       matchScoutPrefix: "MATCHSCOUT_",
-      changeUpdateNewScout: false // Changing the state of this works as onChange
+      changeUpdateNewScout: false, // Changing the state of this works as onChange
+      isEditMode: true
     };
   },
   methods: {
@@ -642,6 +643,9 @@ export default {
     },
     hasEdit() {
       return this.user.role === "_admin" || this.user.role === "edit";
+    },
+    editMode() {
+      return this.hasEdit && this.isEditMode;
     },
     displayURL: function() {
       if (this.teaminfo.website != undefined) {

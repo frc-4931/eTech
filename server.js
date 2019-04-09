@@ -403,8 +403,6 @@ if (useBA) {
 
               var date = new Date(res.headers["last-modified"]).getTime();
 
-              var res = resolve;
-
               tbaDB
                 .get(file)
                 .then(function (doc) {
@@ -428,53 +426,53 @@ if (useBA) {
           });
         }
 
+        var addTeam = (teamKey) => {
+          var teamNumber = teamKey.replace("frc", "");
+
+          scoutingDB.get("TEAM_" + teamNumber).then(() => { return }).catch(() => {
+            tbaDB.get("TEAMINFO_frc" + teamNumber).then(function (doc) {
+
+              var file = {
+                name: doc.json.nickname,
+                number: doc.json.team_number,
+                objectivePoints: 0,
+                commentPoints: 0,
+                _id: "TEAM_" + doc.json.team_number
+              };
+
+              scoutingDB.put(file).then(() => {
+                if (options.tbaLog)
+                  console.log(getTime() + chalk.blue("Adding team: ") + chalk.gray(file.number))
+              }).catch(() => { return });
+            }).catch(() => { return });
+          })
+        }
+
+        var getTeamInfo = new Promise(function (resolve) {
+          var i = 0;
+
+          for (let teamKey of teamKeys) {
+            var promises = [
+              // cacheToFile("team/" + teamKey + "/event/" + baEvent + "/status", "TEAMSTATUS_" + teamKey),
+              // cacheToFile("team/" + teamKey + "/event/" + baEvent + "/matches/keys", "TEAMMATCHES_" + teamKey),
+              // cacheToFile("team/" + teamKey + "/years_participated", "TEAMYEARS_" + teamKey),
+              cacheToFile("team/" + teamKey, "TEAMINFO_" + teamKey),
+              // cacheToFile("team/" + teamKey + "/event/" + baEvent + "/awards", "TEAMAWARDS_" + teamKey)
+            ];
+
+            Promise.all(promises).then(() => {
+              i++;
+
+              if (i == teamKeys.length) resolve();
+            }).catch(() => { return });
+          }
+        });
+
         getTeamKeys().then(() => {
           getMatchKeys().then(() => {
             for (let matchKey of matchKeys) {
               //cacheToFile("match/" + matchKey, "MATCH_" + matchKey); // Full match breakdown
               cacheToFile("match/" + matchKey + "/simple", "MATCHSIMPLE_" + matchKey); // Simple match breakdown
-            }
-
-            var getTeamInfo = new Promise(function (resolve, reject) {
-              var i = 0;
-
-              for (let teamKey of teamKeys) {
-                var promises = [
-                  // cacheToFile("team/" + teamKey + "/event/" + baEvent + "/status", "TEAMSTATUS_" + teamKey),
-                  // cacheToFile("team/" + teamKey + "/event/" + baEvent + "/matches/keys", "TEAMMATCHES_" + teamKey),
-                  // cacheToFile("team/" + teamKey + "/years_participated", "TEAMYEARS_" + teamKey),
-                  cacheToFile("team/" + teamKey, "TEAMINFO_" + teamKey),
-                  // cacheToFile("team/" + teamKey + "/event/" + baEvent + "/awards", "TEAMAWARDS_" + teamKey)
-                ];
-
-                Promise.all(promises).then(() => {
-                  i++;
-
-                  if (i == teamKeys.length) resolve();
-                });
-              }
-            });
-
-            var addTeam = (teamKey) => {
-              var teamNumber = teamKey.replace("frc", "");
-
-              scoutingDB.get("TEAM_" + teamNumber).then(() => { return }).catch((err) => {
-                tbaDB.get("TEAMINFO_frc" + teamNumber).then(function (doc) {
-
-                  var file = {
-                    name: doc.json.nickname,
-                    number: doc.json.team_number,
-                    objectivePoints: 0,
-                    commentPoints: 0,
-                    _id: "TEAM_" + doc.json.team_number
-                  };
-
-                  scoutingDB.put(file).then(() => {
-                    if (options.tbaLog)
-                      console.log(getTime() + chalk.blue("Adding team: ") + chalk.gray(file.number))
-                  }).catch(() => { return });
-                }).catch(() => { return });
-              })
             }
 
             getTeamInfo.then(() => {
