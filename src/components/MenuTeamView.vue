@@ -48,10 +48,10 @@
         >
           <select
             v-model="scoutingSelect"
-            @change="openScoutingMenu()"
+            @change="openScoutingMenu"
             class="content-input-large"
           >
-            <option value="none">Select A Scouting Option</option>
+            <option value="">Select A Scouting Option</option>
             <option
               v-if="hasEdit"
               value="create"
@@ -273,7 +273,7 @@ export default {
       matchScouts: [
         //List of match scouts in order
       ],
-      scoutingSelect: "none",
+      scoutingSelect: "",
       scoutingLoaded: 0,
       commentAddMenu: false,
       commentModifyMenu: "none",
@@ -341,7 +341,7 @@ export default {
         });
       }
     },
-    openScoutingMenu() {
+    openScoutingMenu(change) {
       var dThis = this;
       this.$nextTick().then(function() {
         dThis.scrollTo("#scouting-select");
@@ -361,18 +361,18 @@ export default {
         : "CommentField";
     },
     teamCreated(id) {
-      this.scoutingSelect = id || "none";
+      this.scoutingSelect = id || "";
       this.loadScouting();
     },
     teamModified() {
       this.loadScouting();
     },
     teamClose() {
-      this.scoutingSelect = "none";
+      this.scoutingSelect = "";
       this.loadScouting();
     },
     updateScoutMenu() {
-      if (this.scoutingSelect !== "none")
+      if (this.scoutingSelect !== "")
         this.shouldUpdateScoutMenu = !this.shouldUpdateScoutMenu;
     },
     updateNewScout() {
