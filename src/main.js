@@ -1,5 +1,5 @@
-import Vue from 'vue'
-import App from './App.vue'
+import Vue from "vue"
+import App from "./App.vue"
 import Router from "vue-router";
 
 import MenuHome from "./components/MenuHome.vue"
@@ -16,32 +16,40 @@ import MenuAwards from "./components/awards/MenuAwards.vue";
 import MenuCredits from "./components/credits/MenuCredits.vue";
 import PageNotFound from "./components/PageNotFound.vue";
 
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
 
 Vue.use(Router);
 
 const routes = [
-  { path: "/", name: "home", component: MenuHome },
-  { path: "/team/:number", name: "team", component: MenuTeamView, props: true },
-  { path: "/admin/", name: "admin", component: MenuAdmin },
-  { path: "/admin/user/add", name: "user-add", component: MenuUserAdd },
-  { path: "/admin/user/:username", name: "user-edit", component: MenuUserEdit, props: true },
-  { path: "/admin/template", name: "admin-template", component: MenuTemplateEditor, },
-  { path: "/analytics", name: "analytics", component: MenuAnalytics },
-  { path: "/tba/ranking", name: "ranking", component: MenuRanking },
-  { path: "/tba/schedule", name: "schedule", component: MenuSchedule },
-  { path: "/tba/bracket", name: "bracket", component: MenuBracket },
-  { path: "/tba/awards", name: "awards", component: MenuAwards },
-  { path: "/credits", name: "credits", component: MenuCredits },
-  { path: "*", name: "page-not-found", component: PageNotFound }
+  { path: "/", name: "home", component: MenuHome, meta: { title: "Home" } },
+  { path: "/team/:number", name: "team", component: MenuTeamView, props: true, meta: { title: "Team !!!!" } },
+  { path: "/admin/", name: "admin", component: MenuAdmin, meta: { title: "Admin Tools" } },
+  { path: "/admin/user/add", name: "user-add", component: MenuUserAdd, meta: { title: "Add user" } },
+  { path: "/admin/user/:username", name: "user-edit", component: MenuUserEdit, props: true, meta: { title: "Editing user !!!!" } },
+  { path: "/admin/template", name: "admin-template", component: MenuTemplateEditor, meta: { title: "Template Editor" } },
+  { path: "/analytics", name: "analytics", component: MenuAnalytics, meta: { title: "Analytics" } },
+  { path: "/tba/ranking", name: "ranking", component: MenuRanking, meta: { title: "Ranking" } },
+  { path: "/tba/schedule", name: "schedule", component: MenuSchedule, meta: { title: "Schedule" } },
+  { path: "/tba/bracket", name: "bracket", component: MenuBracket, meta: { title: "Finals Bracket" } },
+  { path: "/tba/awards", name: "awards", component: MenuAwards, meta: { title: "Home" } },
+  { path: "/credits", name: "credits", component: MenuCredits, meta: { title: "Credits" } },
+  { path: "*", name: "page-not-found", component: PageNotFound, meta: { title: "Page Not Found" } }
 ];
 
 const router = new Router({
   routes: routes,
   mode: "history"
-})
+});
+
+router.beforeEach((to, from, next) => {
+  const nearestWithTitle = to.matched.slice().reverse().find(r => r.meta && r.meta.title);
+
+  if (nearestWithTitle) document.title = "eTech: Scouting Done Right - " + nearestWithTitle.meta.title;
+
+  next();
+});
 
 new Vue({
   router,
   render: h => h(App)
-}).$mount('#app')
+}).$mount("#app");
