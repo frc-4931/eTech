@@ -1,5 +1,5 @@
 <template>
-  <div v-if="loggedin" class="grid">
+  <div v-if="user.role != null" class="grid">
     <h1 class="location-span background-box content-centered">Analytics</h1>
 
     <div class="location-right-large">
@@ -50,10 +50,8 @@ export default {
   },
   props: {
     localdb: Object,
-    remotedb: Object,
     sync_change: Object,
-    user: Object,
-    reloadSync: Function
+    user: Object
   },
   data() {
     return {
@@ -64,23 +62,7 @@ export default {
       loggedin: true
     };
   },
-  methods: {},
-  watch: {
-    user: {
-      handler: function(newValue) {
-        if (
-          newValue.role === "_admin" ||
-          newValue.role === "edit" ||
-          newValue.role === "view"
-        ) {
-          this.loggedin = true;
-        } else {
-          this.loggedin = false;
-        }
-      },
-      deep: true
-    }
-  }
+  methods: {}
 };
 </script>
 

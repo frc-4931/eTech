@@ -281,3 +281,7 @@ textarea {
 .trans-group-leave-active {
   position: absolute;
 }
+
+html::-webkit-scrollbar { 
+  display: none; 
+}

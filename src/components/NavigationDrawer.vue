@@ -123,10 +123,6 @@ export default {
   height: 100%;
   transition: 0.25s ease-in-out;
 }
-::-webkit-scrollbar {
-  width: 0px; /* Remove scrollbar space */
-  background: transparent; /* Optional: just make scrollbar invisible */
-}
 .nav-drawer-background-enter,
 .nav-drawer-background-leave-active {
   opacity: 0;
@@ -189,6 +185,9 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.nav-drawer::-webkit-scrollbar {
+  display: none;
 }
 .nav-drawer .line {
   margin: 0px !important;
