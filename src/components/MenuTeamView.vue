@@ -76,6 +76,7 @@
           <NewScout
             v-if="scoutingSelect == 'create'"
             :localdb="localdb"
+            :localtbadb="localtbadb"
             :user="user"
             :teamNumber="teamNumber"
             :callback="teamCreated"

@@ -2,17 +2,47 @@
   <div v-if="loggedin">
     <div class="background-box grid-perminant">
       <label class="location-left content-padding-left">
-        <input class="radio-button" v-model="seleted" value="PitScout" type="radio" name="r_scout_select">
+        <input
+          class="radio-button"
+          v-model="seleted"
+          value="PitScout"
+          type="radio"
+          name="r_scout_select"
+        >
         Pit Scout
       </label>
 
       <label class="location-right content-right content-padding-right">
-        <input class="radio-button" v-model="seleted" value="MatchScout" type="radio" name="r_scout_select">
+        <input
+          class="radio-button"
+          v-model="seleted"
+          value="MatchScout"
+          type="radio"
+          name="r_scout_select"
+        >
         Match Scout
       </label>
     </div>
 
-    <h3 @click="createScout()" class="location-centered-small background-box background-box-hover content-centered">Create</h3>
+    <div
+      v-if="seleted == 'MatchScout'"
+      class="background-box-input"
+      id="match-select"
+    >
+      <select class="content-input-large">
+        <option value="none">Select A Match</option>
+        <option
+          v-for="match in allTBAMatches"
+          :key="match"
+          :value="match"
+        >{{ getMatchTitle(match) }}</option>
+      </select>
+    </div>
+
+    <h3
+      @click="createScout()"
+      class="location-centered-small background-box background-box-hover content-centered"
+    >Create</h3>
   </div>
   <Error v-else>You must be logged in to create a new scout!</Error>
 </template>
@@ -21,6 +51,7 @@
 import PitTemplate from "../../assets/pitscout.js";
 import MatchTemplate from "../../assets/matchscout.js";
 import Error from "../Error.vue";
+import orderBy from "lodash.orderby";
 
 export default {
   name: "NewScout",
@@ -28,6 +59,7 @@ export default {
   props: {
     teamNumber: Number,
     localdb: Object,
+    localtbadb: Object,
     user: Object,
     callback: Function
   },
@@ -38,7 +70,8 @@ export default {
       matchScoutPrefix: "MATCHSCOUT_",
       pitTemplate: Object,
       matchTemplate: Object,
-      loggedin: false
+      loggedin: false,
+      allTBAMatches: []
     };
   },
   methods: {
@@ -168,6 +201,74 @@ export default {
           break;
       }
       return points;
+    },
+    getTBAMatches() {
+      var dThis = this;
+
+      this.localtbadb.get("TEAMMATCHES_frc" + this.teamNumber).then(doc => {
+        let matches = [];
+        doc.json.forEach(match => {
+          matches.push(match.substring(match.indexOf("_") + 1));
+        });
+
+        matches = orderBy(
+          matches,
+          [
+            match => {
+              if (match.startsWith("qm")) return 0;
+              else if (match.startsWith("qf")) return 1;
+              else if (match.startsWith("sf")) return 2;
+              else if (match.startsWith("f")) return 3;
+              else return -1;
+            },
+            match => {
+              if (match.startsWith("qm")) match = match.replace("qm", "");
+              else if (match.startsWith("qf"))
+                match = match
+                  .replace("qf", "")
+                  .substring(0, match.indexOf("m") - 2);
+              else if (match.startsWith("sf"))
+                match = match
+                  .replace("sf", "")
+                  .substring(0, match.indexOf("m") - 2);
+              else if (match.startsWith("f"))
+                match = match
+                  .replace("f", "")
+                  .substring(0, match.indexOf("m") - 2);
+              else return -1;
+
+              return parseInt(match);
+            }
+          ],
+          ["asc", "asc"]
+        );
+
+        dThis.allTBAMatches.push(...matches);
+      });
+    },
+    getMatchTitle(matchString) {
+      if (matchString.startsWith("qm"))
+        return "Qual " + matchString.replace("qm", "");
+      else if (matchString.startsWith("qf"))
+        return (
+          "QF " +
+          matchString
+            .replace("qf", "")
+            .substring(0, matchString.indexOf("m") - 2) +
+          " Match " +
+          matchString.substring(matchString.indexOf("m") + 1)
+        );
+      else if (matchString.startsWith("sf"))
+        return (
+          "SF " +
+          matchString
+            .replace("sf", "")
+            .substring(0, matchString.indexOf("m") - 2) +
+          " Match " +
+          matchString.substring(matchString.indexOf("m") + 1)
+        );
+      else if (matchString.startsWith("f"))
+        return "Final " + matchString.substring(matchString.indexOf("m") + 1);
     }
   },
   created() {
@@ -193,6 +294,8 @@ export default {
           //If can't pull template use local pre generated
           dThis.matchTemplate = MatchTemplate.fields;
         });
+
+      this.getTBAMatches();
     } else {
       this.loggedin = false;
     }
