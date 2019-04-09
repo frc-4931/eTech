@@ -284,7 +284,9 @@ export default {
       pitScoutPrefix: "PITSCOUT_",
       matchScoutPrefix: "MATCHSCOUT_",
       changeUpdateNewScout: false, // Changing the state of this works as onChange
-      isEditMode: true
+      isEditMode: true,
+      matchInfo: Object,
+      isTBAMatch: false
     };
   },
   methods: {
@@ -343,6 +345,7 @@ export default {
     },
     openScoutingMenu(change) {
       var dThis = this;
+      this.getMatchInfo();
       this.$nextTick().then(function() {
         dThis.scrollTo("#scouting-select");
       });
@@ -480,6 +483,7 @@ export default {
     },
     initRoutine() {
       var dThis = this;
+
       this.localdb
         .get("TEAM_" + this.teamNumber)
         .then(function(doc) {
@@ -494,8 +498,34 @@ export default {
           dThis.teamExists = false;
         });
 
+      this.localtbadb
+        .get("TEAMINFO_frc" + this.number)
+        .then(doc => {
+          dThis.teaminfo = doc.json;
+        })
+        .catch(err => console.log(err));
+
       this.loadComments();
       this.loadScouting();
+
+      this.sync_change.onBlueAllianceDbChange = function(change) {
+        if (change["direction"] == "pull") {
+          var shouldLoadMatchInfo = false;
+
+          for (var doc of change.change.docs) {
+            if (
+              doc["_id"].startsWith("MATCH") &&
+              doc["_id"].endsWith(
+                dThis.trimScout(dThis.scoutingSelect).replace("TBA-", "")
+              )
+            ) {
+              shouldLoadMatchInfo = true;
+            }
+          }
+
+          if (shouldLoadMatchInfo) dThis.getMatchInfo();
+        }
+      };
 
       this.sync_change.onChange = function(change) {
         if (change["direction"] == "pull") {
@@ -611,6 +641,24 @@ export default {
         ],
         ["asc", "asc"]
       );
+    },
+    getMatchInfo() {
+      var dThis = this;
+      let temp = this.trimScout(this.scoutingSelect);
+
+      if (!temp.startsWith("TBA")) {
+        this.isTBAMatch = false;
+        return;
+      }
+      temp = temp.replace("TBA-", "");
+
+      this.localtbadb
+        .get("MATCHSIMPLE_" + temp)
+        .then(doc => {
+          dThis.matchInfo = doc.json;
+          dThis.isTBAMatch = true;
+        })
+        .catch(err => console.log(err));
     }
   },
   created: function() {
@@ -626,13 +674,6 @@ export default {
       //User is not logged in
       this.loggedin = false;
     }
-
-    this.localtbadb
-      .get("TEAMINFO_frc" + this.number)
-      .then(doc => {
-        this.teaminfo = doc.json;
-      })
-      .catch(err => console.log(err));
   },
   computed: {
     totalPoints: function() {
