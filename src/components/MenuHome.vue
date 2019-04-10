@@ -2,11 +2,22 @@
   <div class="grid">
     <div v-bind:class="[loggedin ? 'location-left-small' : 'location-centered-small']">
       <div class="grid">
-        <AccountPanel :remotedb="remotedb" :sync_change="sync_change" :user="user" :reloadSync="reloadSync" @loggedin="loggedIn()" @loggedout="loggedOut()" class="location-span"></AccountPanel>
+        <AccountPanel
+          :remotedb="remotedb"
+          :sync_change="sync_change"
+          :user="user"
+          :reloadSync="reloadSync"
+          @loggedin="loggedIn()"
+          @loggedout="loggedOut()"
+          class="location-span"
+        ></AccountPanel>
       </div>
     </div>
 
-    <div class="location-right-large" v-if="loggedin">
+    <div
+      class="location-right-large"
+      v-if="loggedin"
+    >
       <div class="background-box content-centered">
         <h2>Team Leaderboard</h2>
         <p>
@@ -15,22 +26,53 @@
         </p>
       </div>
       <div class="background-box">
-        <input v-model.trim="filter" type="text" name="filter" placeholder="Search for teams...">
+        <input
+          v-model.trim="filter"
+          type="text"
+          name="filter"
+          placeholder="Search for teams..."
+        >
       </div>
-      <div v-if="teams.length != 0" class="background-box leaderboard-team leaderboard-container mobile-shrink">
-        <h3 v-bind:class="HomeSortingOptions.sortedTeamOption === 'name' ? (HomeSortingOptions.sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''" @click="toggleSorted(true, 'name')">Name</h3>
-        <h3 v-bind:class="HomeSortingOptions.sortedTeamOption === 'number' ? (HomeSortingOptions.sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''" @click="toggleSorted(true, 'number')">Number</h3>
-        <h3 v-bind:class="HomeSortingOptions.sortedTeamOption === 'objectivePoints' ? (HomeSortingOptions.sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''" @click="toggleSorted(true, 'objectivePoints')">Objective Points</h3>
-        <h3 v-bind:class="HomeSortingOptions.sortedTeamOption === 'commentPoints' ? (HomeSortingOptions.sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''" @click="toggleSorted(true, 'commentPoints')">Comment Points</h3>
-        <h3 v-bind:class="HomeSortingOptions.sortedTeamOption === 'totalPoints' ? (HomeSortingOptions.sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''" @click="toggleSorted(true, 'totalPoints')">Total Points</h3>
+      <div
+        v-if="teams.length != 0"
+        class="background-box leaderboard-team leaderboard-container mobile-shrink"
+      >
+        <h3
+          v-bind:class="HomeSortingOptions.sortedTeamOption === 'name' ? (HomeSortingOptions.sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''"
+          @click="toggleSorted(true, 'name')"
+        >Name</h3>
+        <h3
+          v-bind:class="HomeSortingOptions.sortedTeamOption === 'number' ? (HomeSortingOptions.sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''"
+          @click="toggleSorted(true, 'number')"
+        >Number</h3>
+        <h3
+          v-bind:class="HomeSortingOptions.sortedTeamOption === 'objectivePoints' ? (HomeSortingOptions.sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''"
+          @click="toggleSorted(true, 'objectivePoints')"
+        >Objective Points</h3>
+        <h3
+          v-bind:class="HomeSortingOptions.sortedTeamOption === 'commentPoints' ? (HomeSortingOptions.sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''"
+          @click="toggleSorted(true, 'commentPoints')"
+        >Comment Points</h3>
+        <h3
+          v-bind:class="HomeSortingOptions.sortedTeamOption === 'totalPoints' ? (HomeSortingOptions.sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''"
+          @click="toggleSorted(true, 'totalPoints')"
+        >Total Points</h3>
       </div>
-      <p v-else class="location-centered background-box content-centered">
+      <p
+        v-else
+        class="location-centered background-box content-centered"
+      >
         There aren't any teams to display yet.
         <br>Ask an admin to add teams.
       </p>
 
       <transition-group name="trans-group">
-        <LeaderboardTeam v-for="(teamData) in filteredTeams" v-bind:key="teamData['_id']" :teamdata="teamData" class="leaderboard-team"></LeaderboardTeam>
+        <LeaderboardTeam
+          v-for="(teamData) in filteredTeams"
+          v-bind:key="teamData['_id']"
+          :teamdata="teamData"
+          class="leaderboard-team"
+        ></LeaderboardTeam>
       </transition-group>
     </div>
   </div>
@@ -207,6 +249,9 @@ export default {
           if (shouldLoadTeams) dThis.loadTeams(true);
         }
       };
+      this.sync_change.onBlueAllianceDbChange = function() {
+        //Do Nothing
+      };
     },
     loggedOut() {
       this.teams = [];
@@ -214,6 +259,9 @@ export default {
 
       this.sync_change.onChange = function() {
         // Do nothing
+      };
+      this.sync_change.onBlueAllianceDbChange = function() {
+        //Do Nothing
       };
     }
   },

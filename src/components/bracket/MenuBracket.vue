@@ -271,7 +271,6 @@ export default {
         status = "winner";
       }
 
-      console.log(level, location, alliance, teams, status);
       this.bracketData[level][location].alliance = alliance;
       this.bracketData[level][location].teams = teams;
       this.bracketData[level][location].status = status;
