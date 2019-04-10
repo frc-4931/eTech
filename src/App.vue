@@ -26,7 +26,6 @@
         :sync_change="sync_change"
         :user="user"
         :reloadSync="reloadSync"
-        :reloadUser="reloadUser"
       ></router-view>
     </transition>
   </div>
@@ -38,6 +37,7 @@ import PouchDB from "pouchdb";
 import Authentication from "pouchdb-authentication";
 import NavigationDrawer from "./components/NavigationDrawer.vue";
 import TopBar from "./components/TopBar.vue";
+import { resolve, reject } from "q";
 
 var url = "";
 var setup = {};
@@ -79,12 +79,20 @@ export default {
       localtbadb: new PouchDB("localtbadb"),
       sync: {},
       tbasync: {},
-      user: { username: null, role: null },
+      user: {
+        username: null,
+        role: null,
+        logIn: logIn,
+        logOut: logOut,
+        getLoggedIn: getLoggedIn
+      },
       sync_change: {
         onChange: function() {},
         onPaused: function() {},
         onBlueAllianceDbChange: function() {},
-        onBlueAllianceDbPaused: function() {}
+        onBlueAllianceDbPaused: function() {},
+        onLogin: function() {},
+        onLogout: function() {}
       }
     };
   },
@@ -122,37 +130,85 @@ export default {
           dThis.sync_change.onBlueAllianceDbPaused();
         });
     },
-    reloadUser: function(callback) {
+    logIn(username, password) {
       var dThis = this;
+      return new Promise((resolve, reject) => {
+        dThis.remotedb.logIn(username.toLowerCase(), password, function(err) {
+          if (err) {
+            dThis.user.username = null;
+            dThis.user.roll = null;
 
-      this.remotedb.getSession(function(err, response) {
-        if (err) {
-          console.log(err);
-        } else if (!response.userCtx.name) {
-          dThis.user.name = null;
-          dThis.user.username = null;
-          dThis.user.role = null;
-        } else {
-          var roles = response.userCtx.roles;
-          dThis.$set(dThis.user, "username", response.userCtx.name);
-
-          if (roles.indexOf("_admin") !== -1) {
-            dThis.$set(dThis.user, "role", "_admin");
-          } else if (roles.indexOf("edit") !== -1) {
-            dThis.$set(dThis.user, "role", "edit");
-          } else if (roles.indexOf("view") !== -1) {
-            dThis.$set(dThis.user, "role", "view");
+            if (err.name === "unauthorized" || err.name === "forbidden") {
+              reject("Username or password is incorrect.");
+            } else {
+              reject("Error, please try again.");
+            }
+          } else {
+            //Login successful
+            dThis.getLoggedIn();
+            dThis.reloadSync();
+            resolve();
           }
+        });
+      });
+    },
+    logOut() {
+      var dThis = this;
+      return new Promise((resolve, reject) => {
+        if (confirm("Are you sure you would like to log out?")) {
+          dThis.remotedb.logOut(function(err) {
+            if (err) {
+              reject("Error, please try again.");
+            } else {
+              dThis.user.username = null;
+              dThis.user.role = null;
+              dThis.getLoggedIn();
+              resolve();
+            }
+          });
         }
+      });
+    },
+    getLoggedIn() {
+      // .then( (isOnline, userObj) => {} )
+      var dThis = this;
+      return new Promise((resolve, reject) => {
+        dThis.remotedb.getSession(function(err, response) {
+          if (err) {
+            var loggedin =
+              dThis.user.username != null && dThis.user.role != null;
 
-        if (callback != null) callback();
+            if (loggedin) resolve(false, dThis.user);
+            else
+              reject({ status: 408, message: "Could not connect to server!" });
+          } else if (!response.userCtx.name) {
+            dThis.user.username = null;
+            dThis.user.role = null;
+
+            reject({ status: 401, message: "Logged out!" });
+          } else {
+            dThis.user.username = response.userCtx.name;
+
+            var roles = response.userCtx.roles;
+            if (roles.indexOf("_admin") !== -1) {
+              dThis.user.role = "_admin";
+            } else if (roles.indexOf("edit") !== -1) {
+              dThis.user.role = "edit";
+            } else if (roles.indexOf("view") !== -1) {
+              dThis.user.role = "view";
+            } else {
+              dThis.user.role = null;
+            }
+
+            resolve(true, dThis.user);
+          }
+        });
       });
     }
   },
   created: function() {
     PouchDB.plugin(Authentication);
 
-    this.reloadUser();
     this.reloadSync();
   }
 };
