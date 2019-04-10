@@ -33,7 +33,7 @@
         v-model="matchID"
         class="content-input-large"
       >
-        <option value="none">Select A Match</option>
+        <option value="">Select A Match</option>
         <optgroup
           v-if="qualMatches.length > 0"
           label="Qualification Matches"
@@ -118,7 +118,7 @@ export default {
       loggedin: false,
       allTBAMatches: [],
       allTBAScouted: [],
-      matchID: "none"
+      matchID: ""
     };
   },
   methods: {
@@ -451,6 +451,9 @@ export default {
     update() {
       this.getTBAMatches();
       this.getAllTBAScouted();
+    },
+    allTBAScouted(newVal) {
+      if (newVal.includes(this.matchID.replace("TBA-", ""))) this.matchID = "";
     }
   },
   created() {

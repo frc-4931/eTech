@@ -1,13 +1,33 @@
 <template>
   <div id="app">
-    <NavigationDrawer :user="user" :navigationDrawerStatus="navigationDrawerStatus"/>
+    <NavigationDrawer
+      :user="user"
+      :navigationDrawerStatus="navigationDrawerStatus"
+    />
 
-    <TopBar :user="user" :navigationDrawerStatus="navigationDrawerStatus"/>
+    <TopBar
+      :user="user"
+      :navigationDrawerStatus="navigationDrawerStatus"
+    />
 
-    <ConnectionError v-if="isConnectionError"/>
+    <ConnectionError v-if="isConnectionError" />
 
-    <transition enter-active-class="content-fade-in" leave-active-class="content-fade-out" mode="out-in">
-      <router-view :HomeSortingOptions="HomeSortingOptions" :localdb="localdb" :remotedb="remotedb" :localtbadb="localtbadb" :bluealliancedb="bluealliancedb" :sync_change="sync_change" :user="user" :reloadSync="reloadSync" :reloadUser="reloadUser"></router-view>
+    <transition
+      enter-active-class="content-fade-in"
+      leave-active-class="content-fade-out"
+      mode="out-in"
+    >
+      <router-view
+        :HomeSortingOptions="HomeSortingOptions"
+        :localdb="localdb"
+        :remotedb="remotedb"
+        :localtbadb="localtbadb"
+        :bluealliancedb="bluealliancedb"
+        :sync_change="sync_change"
+        :user="user"
+        :reloadSync="reloadSync"
+        :reloadUser="reloadUser"
+      ></router-view>
     </transition>
   </div>
 </template>

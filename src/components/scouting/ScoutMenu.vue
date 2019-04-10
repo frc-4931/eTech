@@ -11,16 +11,36 @@
       ></component>
     </div>
 
-    <div v-if="hasEdit">
-      <div class="line" />
+    <div
+      v-if="hasEdit"
+      class="grid-perminant"
+    >
       <SaveButton
+        class="location-span pitscout-label"
         :unsavedChanges="unsaved"
         :saveCallback="save"
       />
       <h3
         @click="deleteScout()"
-        class="location-centered-small background-box background-box-hover content-centered"
+        class="location-left background-box background-box-hover content-centered"
+        style="margin-top: 0px; margin-right: 5px;"
       >Delete</h3>
+      <h3
+        @click="close()"
+        class="location-right background-box background-box-hover content-centered"
+        style="margin-top: 0px; margin-left: 5px;"
+      >Close
+      </h3>
+    </div>
+    <div
+      v-else
+      class="grid-perminant"
+    >
+      <h3
+        @click="close()"
+        class="location-span background-box background-box-hover content-centered"
+      >Close
+      </h3>
     </div>
   </div>
 </template>
@@ -183,6 +203,16 @@ export default {
     },
     save() {
       this.updateAndPutData();
+    },
+    close() {
+      if (this.unsaved) {
+        if (
+          confirm(
+            "You have unsaved changes!\nAre you sure you want to close this menu?"
+          )
+        )
+          this.closeteam();
+      } else this.closeteam();
     },
     deleteScout() {
       var confirmDelete = confirm(
