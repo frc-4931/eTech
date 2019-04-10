@@ -133,7 +133,10 @@ export default {
     logIn(username, password) {
       var dThis = this;
       return new Promise((resolve, reject) => {
-        dThis.remotedb.logIn(username.toLowerCase(), password, function(err) {
+        dThis.remotedb.logIn(username.toLowerCase(), password, function(
+          err,
+          response
+        ) {
           if (err) {
             dThis.user.username = null;
             dThis.user.roll = null;
@@ -145,8 +148,7 @@ export default {
             }
           } else {
             //Login successful
-            dThis.getLoggedIn();
-            dThis.reloadSync();
+            console.log(response);
             resolve();
           }
         });
@@ -207,9 +209,15 @@ export default {
     }
   },
   created: function() {
+    var dThis = this;
+
     PouchDB.plugin(Authentication);
 
-    this.reloadSync();
+    this.getLoggedIn().then(isOnline => {
+      if (isOnline) dThis.reloadSync();
+    });
+
+    //this.reloadSync();
   }
 };
 </script>
