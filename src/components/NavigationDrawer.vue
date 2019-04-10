@@ -25,7 +25,7 @@
         </div>
       </div>
 
-      <div class="nav-drawer-tab" @click="viewPage('home')" :class="isCurrent('home')">
+      <div class="nav-drawer-tab" @click="viewPage('home')" :class="isCurrent('')">
         <div>
           <i class="material-icons">home</i>
         </div>
@@ -41,25 +41,25 @@
 
       <div class="line"/>
 
-      <div class="nav-drawer-tab" @click="viewPage('ranking')" :class="isCurrent('ranking')">
+      <div class="nav-drawer-tab" @click="viewPage('tba/ranking')" :class="isCurrent('ranking')">
         <div>
           <i class="material-icons">swap_vert</i>
         </div>
         <p>Rankings</p>
       </div>
-      <div class="nav-drawer-tab" @click="viewPage('schedule')" :class="isCurrent('schedule')">
+      <div class="nav-drawer-tab" @click="viewPage('tba/schedule')" :class="isCurrent('schedule')">
         <div>
           <i class="material-icons">watch_later</i>
         </div>
         <p>Schedule</p>
       </div>
-      <div class="nav-drawer-tab" @click="viewPage('awards')" :class="isCurrent('awards')">
+      <div class="nav-drawer-tab" @click="viewPage('tba/awards')" :class="isCurrent('awards')">
         <div>
           <i class="material-icons">star</i>
         </div>
         <p>Awards</p>
       </div>
-      <div class="nav-drawer-tab" @click="viewPage('bracket')" :class="isCurrent('bracket')">
+      <div class="nav-drawer-tab" @click="viewPage('tba/bracket')" :class="isCurrent('bracket')">
         <div>
           <i class="material-icons">view_list</i>
         </div>
@@ -104,7 +104,7 @@ export default {
       }
     },
     isCurrent(page) {
-      return this.$router.currentRoute.name == page
+      return this.$router.currentRoute.path.startsWith("/" + page)
         ? "nav-drawer-tab-current"
         : "";
     }

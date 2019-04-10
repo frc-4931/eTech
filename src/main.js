@@ -22,11 +22,11 @@ Vue.use(Router);
 
 const routes = [
   { path: "/", name: "home", component: MenuHome, meta: { title: "Home" } },
-  { path: "/team/:number", name: "team", component: MenuTeamView, props: true, meta: { title: "Team !!!!" } },
+  { path: "/team/:number", name: "team", component: MenuTeamView, props: true, meta: { title: "Team: %s", backButton: true } },
   { path: "/admin/", name: "admin", component: MenuAdmin, meta: { title: "Admin Tools" } },
-  { path: "/admin/user/add", name: "user-add", component: MenuUserAdd, meta: { title: "Add user" } },
-  { path: "/admin/user/:username", name: "user-edit", component: MenuUserEdit, props: true, meta: { title: "Editing user !!!!" } },
-  { path: "/admin/template", name: "admin-template", component: MenuTemplateEditor, meta: { title: "Template Editor" } },
+  { path: "/admin/user/add", name: "user-add", component: MenuUserAdd, meta: { title: "Add user", backButton: true } },
+  { path: "/admin/user/:username", name: "user-edit", component: MenuUserEdit, props: true, meta: { title: "Editing user: %s", backButton: true } },
+  { path: "/admin/template", name: "admin-template", component: MenuTemplateEditor, meta: { title: "Template Editor", backButton: true } },
   { path: "/analytics", name: "analytics", component: MenuAnalytics, meta: { title: "Analytics" } },
   { path: "/tba/ranking", name: "ranking", component: MenuRanking, meta: { title: "Ranking" } },
   { path: "/tba/schedule", name: "schedule", component: MenuSchedule, meta: { title: "Schedule" } },
@@ -42,9 +42,12 @@ const router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
-  const nearestWithTitle = to.matched.slice().reverse().find(r => r.meta && r.meta.title);
+  var pageTitle = to.meta.title;
 
-  if (nearestWithTitle) document.title = "eTech: Scouting Done Right - " + nearestWithTitle.meta.title;
+  if (to.params.number) pageTitle = pageTitle.replace("%s", to.params.number);
+  if (to.params.username) pageTitle = pageTitle.replace("%s", to.params.username);
+
+  document.title = "eTech: Scouting Done Right - " + pageTitle;
 
   next();
 });
