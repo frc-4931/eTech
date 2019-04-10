@@ -26,228 +26,56 @@
         </div>
       </div>
 
-<<<<<<< HEAD
-      <TabContainer class="location-centered-small" :tabs="['Scouting', 'Comments']" :initialTab="'Scouting'">
-        <template slot="tab-panel-scouting">
-          <div>
-            <h3 class="content-centered background-box">Total Objective Points: {{ team.objectivePoints }}</h3>
-
-            <div class="background-box-input" id="scouting-select">
-              <select v-model="scoutingSelect" @change="openScoutingMenu()" class="content-input-large">
-                <option value="none">Select A Scouting Option</option>
-                <option v-if="hasEdit" value="create">--- New Scout ---</option>
-                <optgroup v-if="pitScouts.length > 0" label="Pit Scouts">
-                  <option v-for="scout in pitScouts" :key="scout" :value="scout">Pit Scout {{ getScoutNumber(scout) + 1 }}</option>
-                </optgroup>
-
-                <optgroup v-if="qualMatches.length > 0" label="Qualification Matches">
-                  <option v-for="scout in qualMatches" :key="scout" :value="scout">{{ getMatchTitle(scout) }}</option>
-                </optgroup>
-                <optgroup v-if="qfMatches.length > 0" label="Quarter-Final Matches">
-                  <option v-for="scout in qfMatches" :key="scout" :value="scout">{{ getMatchTitle(scout) }}</option>
-                </optgroup>
-                <optgroup v-if="sfMatches.length > 0" label="Semi-Final Matches">
-                  <option v-for="scout in sfMatches" :key="scout" :value="scout">{{ getMatchTitle(scout) }}</option>
-                </optgroup>
-                <optgroup v-if="finalMatches.length > 0" label="Final Matches">
-                  <option v-for="scout in finalMatches" :key="scout" :value="scout">{{ getMatchTitle(scout) }}</option>
-                </optgroup>
-                <optgroup v-if="manualMatches.length > 0" label="Practice Match Scouts">
-                  <option v-for="scout in practiceMatches" :key="scout" :value="scout">Practice Match {{ getScoutNumber(scout) + 1 }}</option>
-                </optgroup>
-                <optgroup v-if="manualMatches.length > 0" label="Manual Match Scouts">
-                  <option v-for="scout in manualMatches" :key="scout" :value="scout">Manual Match {{ getScoutNumber(scout) + 1 }}</option>
-                </optgroup>
-              </select>
-            </div>
-
-            <transition enter-active-class="content-long-fade-in" leave-active-class="content-long-fade-out">
-              <NewScout v-if="scoutingSelect == 'create'" :localdb="localdb" :localtbadb="localtbadb" :user="user" :teamNumber="teamNumber" :callback="teamCreated" :update="changeUpdateNewScout"></NewScout>
-              <ScoutMenu :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('PITSCOUT_')" :isMatchScout="false" :localdb="localdb" :docId="scoutingSelect" :callback="teamModified" :closeteam="teamClose" :shouldUpdate="shouldUpdateScoutMenu" :hasEdit="editMode"></ScoutMenu>
-              <ScoutMenu :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('MATCHSCOUT_')" :isMatchScout="true" :localdb="localdb" :docId="scoutingSelect" :callback="teamModified" :closeteam="teamClose" :shouldUpdate="shouldUpdateScoutMenu" :hasEdit="editMode"></ScoutMenu>
-            </transition>
-          </div>
-        </template>
-        <template slot="tab-panel-comments">
-          <div>
-            <h3 class="content-centered background-box">Total Comment Points: {{ team.commentPoints }}</h3>
-            <transition-group name="trans-group">
-              <component v-for="(comment, id) in comments" :locked="!hasEdit" :is="commentIs(id)" :modify="() => openCommentModifyMenu(id)" :key="id" :docId="id" :rating="comment.rating" :comment="comment.comment" :title="comment.title" :localdb="localdb" :callback="commentModified"></component>
-            </transition-group>
-
-            <div v-if="hasEdit">
-              <h3 v-if="commentAddMenu == false" @click="openCommentAddMenu()" class="background-box background-box-hover content-centered">Add comment</h3>
-
-              <MenuTeamCommentAdd id="comment-add-menu" v-else :localdb="localdb" :user="user" :teamNumber="teamNumber" :callback="commentCreated"></MenuTeamCommentAdd>
-            </div>
-          </div>
-        </template>
-      </TabContainer>
-=======
       <div class="location-left-padded">
         <h3 class="content-centered background-box">Total Objective Points: {{ team.objectivePoints }}</h3>
 
-        <div
-          class="background-box-input"
-          id="scouting-select"
-        >
-          <select
-            v-model="scoutingSelect"
-            @change="openScoutingMenu"
-            class="content-input-large"
-          >
-            <option value="">Select A Scouting Option</option>
-            <option
-              v-if="hasEdit"
-              value="create"
-            >--- New Scout ---</option>
-            <optgroup
-              v-if="pitScouts.length > 0"
-              label="Pit Scouts"
-            >
-              <option
-                v-for="scout in pitScouts"
-                :key="scout"
-                :value="scout"
-              >Pit Scout {{ getScoutNumber(scout) + 1 }}</option>
+        <div class="background-box-input" id="scouting-select">
+          <select v-model="scoutingSelect" @change="openScoutingMenu" class="content-input-large">
+            <option value>Select A Scouting Option</option>
+            <option v-if="hasEdit" value="create">--- New Scout ---</option>
+            <optgroup v-if="pitScouts.length > 0" label="Pit Scouts">
+              <option v-for="scout in pitScouts" :key="scout" :value="scout">Pit Scout {{ getScoutNumber(scout) + 1 }}</option>
             </optgroup>
 
-            <optgroup
-              v-if="qualMatches.length > 0"
-              label="Qualification Matches"
-            >
-              <option
-                v-for="scout in qualMatches"
-                :key="scout"
-                :value="scout"
-              >{{ getMatchTitle(scout) }}</option>
+            <optgroup v-if="qualMatches.length > 0" label="Qualification Matches">
+              <option v-for="scout in qualMatches" :key="scout" :value="scout">{{ getMatchTitle(scout) }}</option>
             </optgroup>
-            <optgroup
-              v-if="qfMatches.length > 0"
-              label="Quarter-Final Matches"
-            >
-              <option
-                v-for="scout in qfMatches"
-                :key="scout"
-                :value="scout"
-              >{{ getMatchTitle(scout) }}</option>
+            <optgroup v-if="qfMatches.length > 0" label="Quarter-Final Matches">
+              <option v-for="scout in qfMatches" :key="scout" :value="scout">{{ getMatchTitle(scout) }}</option>
             </optgroup>
-            <optgroup
-              v-if="sfMatches.length > 0"
-              label="Semi-Final Matches"
-            >
-              <option
-                v-for="scout in sfMatches"
-                :key="scout"
-                :value="scout"
-              >{{ getMatchTitle(scout) }}</option>
+            <optgroup v-if="sfMatches.length > 0" label="Semi-Final Matches">
+              <option v-for="scout in sfMatches" :key="scout" :value="scout">{{ getMatchTitle(scout) }}</option>
             </optgroup>
-            <optgroup
-              v-if="finalMatches.length > 0"
-              label="Final Matches"
-            >
-              <option
-                v-for="scout in finalMatches"
-                :key="scout"
-                :value="scout"
-              >{{ getMatchTitle(scout) }}</option>
+            <optgroup v-if="finalMatches.length > 0" label="Final Matches">
+              <option v-for="scout in finalMatches" :key="scout" :value="scout">{{ getMatchTitle(scout) }}</option>
             </optgroup>
-            <optgroup
-              v-if="manualMatches.length > 0"
-              label="Practice Match Scouts"
-            >
-              <option
-                v-for="scout in practiceMatches"
-                :key="scout"
-                :value="scout"
-              >Practice Match {{ getScoutNumber(scout) + 1 }}</option>
+            <optgroup v-if="manualMatches.length > 0" label="Practice Match Scouts">
+              <option v-for="scout in practiceMatches" :key="scout" :value="scout">Practice Match {{ getScoutNumber(scout) + 1 }}</option>
             </optgroup>
-            <optgroup
-              v-if="manualMatches.length > 0"
-              label="Manual Match Scouts"
-            >
-              <option
-                v-for="scout in manualMatches"
-                :key="scout"
-                :value="scout"
-              >Manual Match {{ getScoutNumber(scout) + 1 }}</option>
+            <optgroup v-if="manualMatches.length > 0" label="Manual Match Scouts">
+              <option v-for="scout in manualMatches" :key="scout" :value="scout">Manual Match {{ getScoutNumber(scout) + 1 }}</option>
             </optgroup>
           </select>
         </div>
 
-        <transition
-          enter-active-class="content-long-fade-in"
-          leave-active-class="content-long-fade-out"
-        >
-          <NewScout
-            v-if="scoutingSelect == 'create'"
-            :localdb="localdb"
-            :localtbadb="localtbadb"
-            :user="user"
-            :teamNumber="teamNumber"
-            :callback="teamCreated"
-            :update="changeUpdateNewScout"
-          ></NewScout>
-          <ScoutMenu
-            :key="scoutingSelect"
-            v-else-if="scoutingSelect.startsWith('PITSCOUT_')"
-            :isMatchScout="false"
-            :localdb="localdb"
-            :docId="scoutingSelect"
-            :callback="teamModified"
-            :closeteam="teamClose"
-            :shouldUpdate="shouldUpdateScoutMenu"
-            :hasEdit="editMode"
-          ></ScoutMenu>
-          <ScoutMenu
-            :key="scoutingSelect"
-            v-else-if="scoutingSelect.startsWith('MATCHSCOUT_')"
-            :isMatchScout="true"
-            :localdb="localdb"
-            :docId="scoutingSelect"
-            :callback="teamModified"
-            :closeteam="teamClose"
-            :shouldUpdate="shouldUpdateScoutMenu"
-            :hasEdit="editMode"
-          ></ScoutMenu>
+        <transition enter-active-class="content-long-fade-in" leave-active-class="content-long-fade-out">
+          <NewScout v-if="scoutingSelect == 'create'" :localdb="localdb" :localtbadb="localtbadb" :user="user" :teamNumber="teamNumber" :callback="teamCreated" :update="changeUpdateNewScout"></NewScout>
+          <ScoutMenu :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('PITSCOUT_')" :isMatchScout="false" :localdb="localdb" :docId="scoutingSelect" :callback="teamModified" :closeteam="teamClose" :shouldUpdate="shouldUpdateScoutMenu" :hasEdit="editMode"></ScoutMenu>
+          <ScoutMenu :key="scoutingSelect" v-else-if="scoutingSelect.startsWith('MATCHSCOUT_')" :isMatchScout="true" :localdb="localdb" :docId="scoutingSelect" :callback="teamModified" :closeteam="teamClose" :shouldUpdate="shouldUpdateScoutMenu" :hasEdit="editMode"></ScoutMenu>
         </transition>
       </div>
       <div class="location-right-padded">
         <h3 class="content-centered background-box">Total Comment Points: {{ team.commentPoints }}</h3>
         <transition-group name="trans-group">
-          <component
-            v-for="(comment, id) in comments"
-            :locked="!hasEdit"
-            :is="commentIs(id)"
-            :modify="() => openCommentModifyMenu(id)"
-            :key="id"
-            :docId="id"
-            :rating="comment.rating"
-            :comment="comment.comment"
-            :title="comment.title"
-            :localdb="localdb"
-            :callback="commentModified"
-          ></component>
+          <component v-for="(comment, id) in comments" :locked="!hasEdit" :is="commentIs(id)" :modify="() => openCommentModifyMenu(id)" :key="id" :docId="id" :rating="comment.rating" :comment="comment.comment" :title="comment.title" :localdb="localdb" :callback="commentModified"></component>
         </transition-group>
 
         <div v-if="hasEdit">
-          <h3
-            v-if="commentAddMenu == false"
-            @click="openCommentAddMenu()"
-            class="background-box background-box-hover content-centered"
-          >Add comment</h3>
+          <h3 v-if="commentAddMenu == false" @click="openCommentAddMenu()" class="background-box background-box-hover content-centered">Add comment</h3>
 
-          <MenuTeamCommentAdd
-            id="comment-add-menu"
-            v-else
-            :localdb="localdb"
-            :user="user"
-            :teamNumber="teamNumber"
-            :callback="commentCreated"
-          ></MenuTeamCommentAdd>
+          <MenuTeamCommentAdd id="comment-add-menu" v-else :localdb="localdb" :user="user" :teamNumber="teamNumber" :callback="commentCreated"></MenuTeamCommentAdd>
         </div>
       </div>
->>>>>>> b14156bbafb0625946466bd5be205a28476c9a74
     </div>
   </div>
   <Error v-else-if="!teamExists">This team does not exist!</Error>
