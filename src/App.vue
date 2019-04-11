@@ -154,6 +154,7 @@ export default {
               dThis.user.role = null;
             }
 
+            dThis.reloadSync();
             resolve(dThis.user);
           }
         });
@@ -244,9 +245,15 @@ export default {
 
     PouchDB.plugin(Authentication);
 
-    this.getLoggedIn().then(isOnline => {
-      if (isOnline) dThis.reloadSync();
-    });
+    var username = prompt("Username:");
+    var password = prompt("Password:");
+
+    this.logIn(username, password);
+
+    // FIXME UNCOMMENT ME!!!!
+    // this.getLoggedIn().then(isOnline => {
+    //   if (isOnline) dThis.reloadSync();
+    // });
 
     //this.reloadSync();
   }
