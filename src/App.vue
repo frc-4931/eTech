@@ -11,16 +11,18 @@
       leave-active-class="content-fade-out"
       mode="out-in"
     >
-      <router-view
-        :HomeSortingOptions="HomeSortingOptions"
-        :localdb="localdb"
-        :remotedb="remotedb"
-        :localtbadb="localtbadb"
-        :bluealliancedb="bluealliancedb"
-        :sync_change="sync_change"
-        :user="user"
-        :reloadSync="reloadSync"
-      ></router-view>
+      <keep-alive include="MenuHome,MenuAdmin" :max="5">
+        <router-view
+          :HomeSortingOptions="HomeSortingOptions"
+          :localdb="localdb"
+          :remotedb="remotedb"
+          :localtbadb="localtbadb"
+          :bluealliancedb="bluealliancedb"
+          :sync_change="sync_change"
+          :user="user"
+          :reloadSync="reloadSync"
+        ></router-view>
+      </keep-alive>
     </transition>
   </div>
 </template>
