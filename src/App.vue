@@ -1,16 +1,10 @@
 <template>
   <div id="app">
-    <NavigationDrawer
-      :user="user"
-      :navigationDrawerStatus="navigationDrawerStatus"
-    />
+    <NavigationDrawer :user="user" :navigationDrawerStatus="navigationDrawerStatus"/>
 
-    <TopBar
-      :user="user"
-      :navigationDrawerStatus="navigationDrawerStatus"
-    />
+    <TopBar :user="user" :navigationDrawerStatus="navigationDrawerStatus"/>
 
-    <ConnectionError v-if="isConnectionError" />
+    <ConnectionError v-if="isConnectionError"/>
 
     <transition
       enter-active-class="content-fade-in"
@@ -90,9 +84,7 @@ export default {
         onChange: function() {},
         onPaused: function() {},
         onBlueAllianceDbChange: function() {},
-        onBlueAllianceDbPaused: function() {},
-        onLogin: function() {},
-        onLogout: function() {}
+        onBlueAllianceDbPaused: function() {}
       }
     };
   },
@@ -113,6 +105,7 @@ export default {
         })
         .on("paused", function() {
           dThis.sync_change.onPaused();
+          dThis.getLoggedIn().catch(err => console.log(err));
         });
 
       dThis.tbasync = dThis.localtbadb
@@ -148,8 +141,20 @@ export default {
             }
           } else {
             //Login successful
-            console.log(response);
-            resolve();
+            dThis.user.username = response.name;
+
+            var roles = response.roles;
+            if (roles.indexOf("_admin") !== -1) {
+              dThis.user.role = "_admin";
+            } else if (roles.indexOf("edit") !== -1) {
+              dThis.user.role = "edit";
+            } else if (roles.indexOf("view") !== -1) {
+              dThis.user.role = "view";
+            } else {
+              dThis.user.role = null;
+            }
+
+            resolve(dThis.user);
           }
         });
       });
@@ -164,7 +169,7 @@ export default {
             } else {
               dThis.user.username = null;
               dThis.user.role = null;
-              dThis.getLoggedIn();
+
               resolve();
             }
           });
@@ -177,9 +182,12 @@ export default {
       return new Promise((resolve, reject) => {
         dThis.remotedb.getSession(function(err, response) {
           if (err) {
+            console.log(err);
+
             var loggedin =
               dThis.user.username != null && dThis.user.role != null;
 
+            // FIXME check error message to determine if session timed out or if the user is offline
             if (loggedin) resolve(false, dThis.user);
             else
               reject({ status: 408, message: "Could not connect to server!" });
@@ -203,6 +211,29 @@ export default {
             }
 
             resolve(true, dThis.user);
+          }
+        });
+      });
+    },
+    changePassword(password) {
+      var dThis = this;
+      new Promise((resolve, reject) => {
+        dThis.remotedb.changePassword(dThis.user.username, password, function(
+          err
+        ) {
+          if (err) {
+            if (err.name === "not_found") {
+              reject({ status: 404, message: "Could not find username." });
+            } else {
+              reject({ status: 403, message: "Failed to change password." });
+            }
+          } else {
+            dThis
+              .getLoggedIn()
+              .then(resolve)
+              .catch(err => {
+                reject(err);
+              });
           }
         });
       });
