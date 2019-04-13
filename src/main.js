@@ -14,6 +14,7 @@ import MenuSchedule from "./components/schedule/MenuSchedule.vue";
 import MenuBracket from "./components/bracket/MenuBracket.vue";
 import MenuAwards from "./components/awards/MenuAwards.vue";
 import MenuCredits from "./components/credits/MenuCredits.vue";
+import Login from "./components/user/Login.vue";
 import PageNotFound from "./components/PageNotFound.vue";
 
 Vue.config.productionTip = false;
@@ -33,12 +34,24 @@ const routes = [
   { path: "/tba/bracket", name: "bracket", component: MenuBracket, meta: { title: "Finals Bracket" } },
   { path: "/tba/awards", name: "awards", component: MenuAwards, meta: { title: "Home" } },
   { path: "/credits", name: "credits", component: MenuCredits, meta: { title: "Credits" } },
+  { path: "/login", name: "login", component: Login, meta: { title: "Login" } },
   { path: "*", name: "page-not-found", component: PageNotFound, meta: { title: "Page Not Found" } }
 ];
 
 const router = new Router({
   routes: routes,
-  mode: "history"
+  mode: "history",
+  scrollBehavior(to, from, savedPosition) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        if (savedPosition) {
+          resolve(savedPosition)
+        } else {
+          resolve({ x: 0, y: 0 })
+        }
+      }, 300)
+    })
+  }
 });
 
 router.beforeEach((to, from, next) => {

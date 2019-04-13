@@ -1,6 +1,9 @@
 <template>
   <div class="grid">
-    <div class="location-right-large" v-if="loggedin">
+    <div
+      class="location-right-large"
+      v-if="user.username != null && user.role != null"
+    >
       <div class="background-box content-centered">
         <h2>Team Leaderboard</h2>
         <p>
@@ -9,7 +12,12 @@
         </p>
       </div>
       <div class="background-box">
-        <input v-model.trim="filter" type="text" name="filter" placeholder="Search for teams...">
+        <input
+          v-model.trim="filter"
+          type="text"
+          name="filter"
+          placeholder="Search for teams..."
+        >
       </div>
       <div
         v-if="teams.length != 0"
@@ -72,15 +80,13 @@ export default {
     localdb: Object,
     remotedb: Object,
     sync_change: Object,
-    user: Object,
-    reloadSync: Function
+    user: Object
   },
   data: function() {
     return {
       filter: "",
       teams: [],
-      users: [],
-      loggedin: false
+      users: []
     };
   },
   methods: {

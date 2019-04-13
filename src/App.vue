@@ -1,17 +1,26 @@
 <template>
   <div id="app">
-    <NavigationDrawer :user="user" :navigationDrawerStatus="navigationDrawerStatus"/>
+    <NavigationDrawer
+      :user="user"
+      :navigationDrawerStatus="navigationDrawerStatus"
+    />
 
-    <TopBar :user="user" :navigationDrawerStatus="navigationDrawerStatus"/>
+    <TopBar
+      :user="user"
+      :navigationDrawerStatus="navigationDrawerStatus"
+    />
 
-    <ConnectionError v-if="isConnectionError"/>
+    <ConnectionError v-if="isConnectionError" />
 
     <transition
       enter-active-class="content-fade-in"
       leave-active-class="content-fade-out"
       mode="out-in"
     >
-      <keep-alive include="MenuHome,MenuAdmin" :max="5">
+      <keep-alive
+        include="MenuHome,MenuAdmin"
+        :max="5"
+      >
         <router-view
           :HomeSortingOptions="HomeSortingOptions"
           :localdb="localdb"
@@ -78,9 +87,9 @@ export default {
       user: {
         username: null,
         role: null,
-        logIn: logIn,
-        logOut: logOut,
-        getLoggedIn: getLoggedIn
+        logIn: this.logIn,
+        logOut: this.logOut,
+        getLoggedIn: this.getLoggedIn
       },
       sync_change: {
         onChange: function() {},
@@ -107,7 +116,15 @@ export default {
         })
         .on("paused", function() {
           dThis.sync_change.onPaused();
-          dThis.getLoggedIn().catch(err => console.log(err));
+          dThis.getLoggedIn().catch(err => {
+            console.log(err);
+            if (
+              err.status == 401 &&
+              dThis.$router.currentRoute.name != "login"
+            ) {
+              dThis.$router.push({ name: "login" });
+            }
+          });
         });
 
       dThis.tbasync = dThis.localtbadb
@@ -137,9 +154,12 @@ export default {
             dThis.user.roll = null;
 
             if (err.name === "unauthorized" || err.name === "forbidden") {
-              reject("Username or password is incorrect.");
+              reject({
+                status: 401,
+                message: "Username or password is incorrect."
+              });
             } else {
-              reject("Error, please try again.");
+              reject({ status: 408, message: "Error, please try again." });
             }
           } else {
             //Login successful
@@ -165,18 +185,16 @@ export default {
     logOut() {
       var dThis = this;
       return new Promise((resolve, reject) => {
-        if (confirm("Are you sure you would like to log out?")) {
-          dThis.remotedb.logOut(function(err) {
-            if (err) {
-              reject("Error, please try again.");
-            } else {
-              dThis.user.username = null;
-              dThis.user.role = null;
+        dThis.remotedb.logOut(function(err) {
+          if (err) {
+            reject({ status: 408, message: "Error, please try again." });
+          } else {
+            dThis.user.username = null;
+            dThis.user.role = null;
 
-              resolve();
-            }
-          });
-        }
+            resolve(dThis.user);
+          }
+        });
       });
     },
     getLoggedIn() {
@@ -190,8 +208,8 @@ export default {
             var loggedin =
               dThis.user.username != null && dThis.user.role != null;
 
-            // FIXME check error message to determine if session timed out or if the user is offline
-            if (loggedin) resolve(false, dThis.user);
+            //Status 0 == offline
+            if (loggedin && err.status == 0) resolve(false, dThis.user);
             else
               reject({ status: 408, message: "Could not connect to server!" });
           } else if (!response.userCtx.name) {
@@ -247,17 +265,29 @@ export default {
 
     PouchDB.plugin(Authentication);
 
-    var username = prompt("Username:");
-    var password = prompt("Password:");
+    // var username = prompt("Username:");
+    // var password = prompt("Password:");
 
-    this.logIn(username, password);
+    // this.logIn(username, password);
 
     // FIXME UNCOMMENT ME!!!!
-    // this.getLoggedIn().then(isOnline => {
-    //   if (isOnline) dThis.reloadSync();
-    // });
+    this.getLoggedIn()
+      .then(isOnline => {
+        if (isOnline) dThis.reloadSync();
+      })
+      .catch(err => {
+        if (err.status == 401 && dThis.$router.currentRoute.name != "login") {
+          dThis.$router.push({ name: "login" });
+        }
+      });
 
-    //this.reloadSync();
+    // if (
+    //   this.user.username == null &&
+    //   this.user.role == null &&
+    //   this.$router.currentRoute.name != "login"
+    // ) {
+    //   this.$router.push({ name: "login" });
+    // }
   }
 };
 </script>
