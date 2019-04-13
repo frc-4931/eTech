@@ -17,17 +17,21 @@
       leave-active-class="content-fade-out"
       mode="out-in"
     >
-      <router-view
-        :HomeSortingOptions="HomeSortingOptions"
-        :localdb="localdb"
-        :remotedb="remotedb"
-        :localtbadb="localtbadb"
-        :bluealliancedb="bluealliancedb"
-        :sync_change="sync_change"
-        :user="user"
-        :reloadSync="reloadSync"
-        :reloadUser="reloadUser"
-      ></router-view>
+      <keep-alive
+        include="MenuHome,MenuAdmin"
+        :max="5"
+      >
+        <router-view
+          :HomeSortingOptions="HomeSortingOptions"
+          :localdb="localdb"
+          :remotedb="remotedb"
+          :localtbadb="localtbadb"
+          :bluealliancedb="bluealliancedb"
+          :sync_change="sync_change"
+          :user="user"
+          :reloadSync="reloadSync"
+        ></router-view>
+      </keep-alive>
     </transition>
   </div>
 </template>
@@ -38,6 +42,7 @@ import PouchDB from "pouchdb";
 import Authentication from "pouchdb-authentication";
 import NavigationDrawer from "./components/NavigationDrawer.vue";
 import TopBar from "./components/TopBar.vue";
+import { resolve, reject } from "q";
 
 var url = "";
 var setup = {};
@@ -79,7 +84,13 @@ export default {
       localtbadb: new PouchDB("localtbadb"),
       sync: {},
       tbasync: {},
-      user: { username: null, role: null },
+      user: {
+        username: null,
+        role: null,
+        logIn: this.logIn,
+        logOut: this.logOut,
+        getLoggedIn: this.getLoggedIn
+      },
       sync_change: {
         onChange: function() {},
         onPaused: function() {},
@@ -105,6 +116,15 @@ export default {
         })
         .on("paused", function() {
           dThis.sync_change.onPaused();
+          dThis.getLoggedIn().catch(err => {
+            console.log(err);
+            if (
+              err.status == 401 &&
+              dThis.$router.currentRoute.name != "login"
+            ) {
+              dThis.$router.push({ name: "login" });
+            }
+          });
         });
 
       dThis.tbasync = dThis.localtbadb
@@ -122,38 +142,152 @@ export default {
           dThis.sync_change.onBlueAllianceDbPaused();
         });
     },
-    reloadUser: function(callback) {
+    logIn(username, password) {
       var dThis = this;
+      return new Promise((resolve, reject) => {
+        dThis.remotedb.logIn(username.toLowerCase(), password, function(
+          err,
+          response
+        ) {
+          if (err) {
+            dThis.user.username = null;
+            dThis.user.roll = null;
 
-      this.remotedb.getSession(function(err, response) {
-        if (err) {
-          console.log(err);
-        } else if (!response.userCtx.name) {
-          dThis.user.name = null;
-          dThis.user.username = null;
-          dThis.user.role = null;
-        } else {
-          var roles = response.userCtx.roles;
-          dThis.$set(dThis.user, "username", response.userCtx.name);
+            if (err.name === "unauthorized" || err.name === "forbidden") {
+              reject({
+                status: 401,
+                message: "Username or password is incorrect."
+              });
+            } else {
+              reject({ status: 408, message: "Error, please try again." });
+            }
+          } else {
+            //Login successful
+            dThis.user.username = response.name;
 
-          if (roles.indexOf("_admin") !== -1) {
-            dThis.$set(dThis.user, "role", "_admin");
-          } else if (roles.indexOf("edit") !== -1) {
-            dThis.$set(dThis.user, "role", "edit");
-          } else if (roles.indexOf("view") !== -1) {
-            dThis.$set(dThis.user, "role", "view");
+            var roles = response.roles;
+            if (roles.indexOf("_admin") !== -1) {
+              dThis.user.role = "_admin";
+            } else if (roles.indexOf("edit") !== -1) {
+              dThis.user.role = "edit";
+            } else if (roles.indexOf("view") !== -1) {
+              dThis.user.role = "view";
+            } else {
+              dThis.user.role = null;
+            }
+
+            dThis.reloadSync();
+            resolve(dThis.user);
           }
-        }
+        });
+      });
+    },
+    logOut() {
+      var dThis = this;
+      return new Promise((resolve, reject) => {
+        dThis.remotedb.logOut(function(err) {
+          if (err) {
+            reject({ status: 408, message: "Error, please try again." });
+          } else {
+            dThis.user.username = null;
+            dThis.user.role = null;
 
-        if (callback != null) callback();
+            resolve(dThis.user);
+          }
+        });
+      });
+    },
+    getLoggedIn() {
+      // .then( (isOnline, userObj) => {} )
+      var dThis = this;
+      return new Promise((resolve, reject) => {
+        dThis.remotedb.getSession(function(err, response) {
+          if (err) {
+            console.log(err);
+
+            var loggedin =
+              dThis.user.username != null && dThis.user.role != null;
+
+            //Status 0 == offline
+            if (loggedin && err.status == 0) resolve(false, dThis.user);
+            else
+              reject({ status: 408, message: "Could not connect to server!" });
+          } else if (!response.userCtx.name) {
+            dThis.user.username = null;
+            dThis.user.role = null;
+
+            reject({ status: 401, message: "Logged out!" });
+          } else {
+            dThis.user.username = response.userCtx.name;
+
+            var roles = response.userCtx.roles;
+            if (roles.indexOf("_admin") !== -1) {
+              dThis.user.role = "_admin";
+            } else if (roles.indexOf("edit") !== -1) {
+              dThis.user.role = "edit";
+            } else if (roles.indexOf("view") !== -1) {
+              dThis.user.role = "view";
+            } else {
+              dThis.user.role = null;
+            }
+
+            resolve(true, dThis.user);
+          }
+        });
+      });
+    },
+    changePassword(password) {
+      var dThis = this;
+      new Promise((resolve, reject) => {
+        dThis.remotedb.changePassword(dThis.user.username, password, function(
+          err
+        ) {
+          if (err) {
+            if (err.name === "not_found") {
+              reject({ status: 404, message: "Could not find username." });
+            } else {
+              reject({ status: 403, message: "Failed to change password." });
+            }
+          } else {
+            dThis
+              .getLoggedIn()
+              .then(resolve)
+              .catch(err => {
+                reject(err);
+              });
+          }
+        });
       });
     }
   },
   created: function() {
+    var dThis = this;
+
     PouchDB.plugin(Authentication);
 
-    this.reloadUser();
-    this.reloadSync();
+    // var username = prompt("Username:");
+    // var password = prompt("Password:");
+
+    // this.logIn(username, password);
+
+    // FIXME UNCOMMENT ME!!!!
+    this.getLoggedIn()
+      .then(isOnline => {
+        if (isOnline) dThis.reloadSync();
+      })
+      .catch(err => {
+        if (err.status == 401 && dThis.$router.currentRoute.name != "login") {
+          dThis.$router.push({ name: "login" });
+        }
+      });
+
+    // if (
+    //   this.user.username == null &&
+    //   this.user.role == null &&
+    //   this.$router.currentRoute.name != "login"
+    // ) {
+    //   this.$router.push({ name: "login" });
+    // }
   }
 };
 </script>

@@ -448,25 +448,27 @@ if (useBA) {
           })
         }
 
-        var getTeamInfo = new Promise(function (resolve) {
-          var i = 0;
+        var getTeamInfo = () => {
+          return new Promise(function (resolve) {
+            var i = 0;
 
-          for (let teamKey of teamKeys) {
-            var promises = [
-              // cacheToFile("team/" + teamKey + "/event/" + baEvent + "/status", "TEAMSTATUS_" + teamKey),
-              // cacheToFile("team/" + teamKey + "/event/" + baEvent + "/matches/keys", "TEAMMATCHES_" + teamKey),
-              // cacheToFile("team/" + teamKey + "/years_participated", "TEAMYEARS_" + teamKey),
-              cacheToFile("team/" + teamKey, "TEAMINFO_" + teamKey),
-              // cacheToFile("team/" + teamKey + "/event/" + baEvent + "/awards", "TEAMAWARDS_" + teamKey)
-            ];
+            for (let teamKey of teamKeys) {
+              var promises = [
+                // cacheToFile("team/" + teamKey + "/event/" + baEvent + "/status", "TEAMSTATUS_" + teamKey),
+                cacheToFile("team/" + teamKey + "/event/" + baEvent + "/matches/keys", "TEAMMATCHES_" + teamKey),
+                // cacheToFile("team/" + teamKey + "/years_participated", "TEAMYEARS_" + teamKey),
+                cacheToFile("team/" + teamKey, "TEAMINFO_" + teamKey),
+                // cacheToFile("team/" + teamKey + "/event/" + baEvent + "/awards", "TEAMAWARDS_" + teamKey)
+              ];
 
-            Promise.all(promises).then(() => {
-              i++;
+              Promise.all(promises).then(() => {
+                i++;
 
-              if (i == teamKeys.length) resolve();
-            }).catch(() => { return });
-          }
-        });
+                if (i == teamKeys.length) resolve();
+              }).catch(() => { return });
+            }
+          });
+        }
 
         getTeamKeys().then(() => {
           getMatchKeys().then(() => {
@@ -475,7 +477,7 @@ if (useBA) {
               cacheToFile("match/" + matchKey + "/simple", "MATCHSIMPLE_" + matchKey); // Simple match breakdown
             }
 
-            getTeamInfo.then(() => {
+            getTeamInfo().then(() => {
               for (let teamKey of teamKeys) {
                 addTeam(teamKey);
               }

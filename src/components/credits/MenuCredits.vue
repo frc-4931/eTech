@@ -4,8 +4,8 @@
       <h1 class="background-box content-centered">About</h1>
       <p class="background-box content-justified">eTech is an all-in-one web application that allows users to continue scouting when offline, and when the user revives their connection the information is automatically synced to all other devices, and their screens are updated in real time.</p>
       <div class="background-box">
-        <p class="background-box content-justified">
-          <a href="https://github.com/frc-4931/eTech">Github</a>
+        <p class="content-justified">
+          <a href="https://github.com/frc-4931/eTech" target="_blank">Github</a>
         </p>
       </div>
     </div>

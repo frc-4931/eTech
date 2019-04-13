@@ -1,22 +1,8 @@
 <template>
   <div class="grid">
-    <div v-bind:class="[loggedin ? 'location-left-small' : 'location-centered-small']">
-      <div class="grid">
-        <AccountPanel
-          :remotedb="remotedb"
-          :sync_change="sync_change"
-          :user="user"
-          :reloadSync="reloadSync"
-          @loggedin="loggedIn()"
-          @loggedout="loggedOut()"
-          class="location-span"
-        ></AccountPanel>
-      </div>
-    </div>
-
     <div
       class="location-right-large"
-      v-if="loggedin"
+      v-if="user.username != null && user.role != null"
     >
       <div class="background-box content-centered">
         <h2>Team Leaderboard</h2>
@@ -61,8 +47,7 @@
       <p
         v-else
         class="location-centered background-box content-centered"
-      >
-        There aren't any teams to display yet.
+      >There aren't any teams to display yet.
         <br>Ask an admin to add teams.
       </p>
 
@@ -95,15 +80,13 @@ export default {
     localdb: Object,
     remotedb: Object,
     sync_change: Object,
-    user: Object,
-    reloadSync: Function
+    user: Object
   },
   data: function() {
     return {
       filter: "",
       teams: [],
-      users: [],
-      loggedin: false
+      users: []
     };
   },
   methods: {
@@ -230,40 +213,28 @@ export default {
           if (sort) dThis.teams = tempTeams;
           dThis.toggleSorted(false, dThis.HomeSortingOptions.sortedTeamOption);
         });
-    },
-    loggedIn() {
-      var dThis = this;
-      this.loggedin = true;
-      this.loadTeams(true);
-
-      this.sync_change.onChange = function(change) {
-        if (change["direction"] == "pull") {
-          var shouldLoadTeams = false;
-
-          for (var doc of change.change.docs) {
-            if (doc["_id"].startsWith("TEAM_")) {
-              shouldLoadTeams = true;
-            }
-          }
-
-          if (shouldLoadTeams) dThis.loadTeams(true);
-        }
-      };
-      this.sync_change.onBlueAllianceDbChange = function() {
-        //Do Nothing
-      };
-    },
-    loggedOut() {
-      this.teams = [];
-      this.loggedin = false;
-
-      this.sync_change.onChange = function() {
-        // Do nothing
-      };
-      this.sync_change.onBlueAllianceDbChange = function() {
-        //Do Nothing
-      };
     }
+  },
+  created() {
+    var dThis = this;
+    this.loadTeams(true);
+
+    this.sync_change.onChange = function(change) {
+      if (change["direction"] == "pull") {
+        var shouldLoadTeams = false;
+
+        for (var doc of change.change.docs) {
+          if (doc["_id"].startsWith("TEAM_")) {
+            shouldLoadTeams = true;
+          }
+        }
+
+        if (shouldLoadTeams) dThis.loadTeams(true);
+      }
+    };
+    this.sync_change.onBlueAllianceDbChange = function() {
+      //Do Nothing
+    };
   },
   computed: {
     filteredTeams: function() {

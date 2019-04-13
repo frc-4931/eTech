@@ -1,6 +1,6 @@
 <template>
   <div>
-    <transition enter-active-class="toggle-nav-drawer-trans" leave-active-class="toggle-nav-drawer-trans">
+    <transition enter-active-class="content-fade-in" leave-active-class="content-fade-out">
       <i v-if="user.role != null" class="material-icons toggle-nav-drawer" @click="navigationDrawerStatus.active = !navigationDrawerStatus.active" :class="navigationDrawerStatus.active ? 'toggle-nav-drawer-open' : ''">menu</i>
     </transition>
 

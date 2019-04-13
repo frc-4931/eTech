@@ -25,7 +25,7 @@
         </div>
       </div>
 
-      <div class="nav-drawer-tab" @click="viewPage('home')" :class="isCurrent('home')">
+      <div class="nav-drawer-tab" @click="viewPage('home')" :class="isCurrent('')">
         <div>
           <i class="material-icons">home</i>
         </div>
@@ -41,25 +41,25 @@
 
       <div class="line"/>
 
-      <div class="nav-drawer-tab" @click="viewPage('ranking')" :class="isCurrent('ranking')">
+      <div class="nav-drawer-tab" @click="viewPage('ranking')" :class="isCurrent('tba/ranking')">
         <div>
           <i class="material-icons">swap_vert</i>
         </div>
         <p>Rankings</p>
       </div>
-      <div class="nav-drawer-tab" @click="viewPage('schedule')" :class="isCurrent('schedule')">
+      <div class="nav-drawer-tab" @click="viewPage('schedule')" :class="isCurrent('tba/schedule')">
         <div>
           <i class="material-icons">watch_later</i>
         </div>
         <p>Schedule</p>
       </div>
-      <div class="nav-drawer-tab" @click="viewPage('awards')" :class="isCurrent('awards')">
+      <div class="nav-drawer-tab" @click="viewPage('awards')" :class="isCurrent('tba/awards')">
         <div>
           <i class="material-icons">star</i>
         </div>
         <p>Awards</p>
       </div>
-      <div class="nav-drawer-tab" @click="viewPage('bracket')" :class="isCurrent('bracket')">
+      <div class="nav-drawer-tab" @click="viewPage('bracket')" :class="isCurrent('tba/bracket')">
         <div>
           <i class="material-icons">view_list</i>
         </div>
@@ -104,7 +104,13 @@ export default {
       }
     },
     isCurrent(page) {
-      return this.$router.currentRoute.name == page
+      if (page == "") {
+        return this.$router.currentRoute.path == "/"
+          ? "nav-drawer-tab-current"
+          : "";
+      }
+
+      return this.$router.currentRoute.path.startsWith("/" + page)
         ? "nav-drawer-tab-current"
         : "";
     }
@@ -122,10 +128,6 @@ export default {
   width: 100%;
   height: 100%;
   transition: 0.25s ease-in-out;
-}
-::-webkit-scrollbar {
-  width: 0px; /* Remove scrollbar space */
-  background: transparent; /* Optional: just make scrollbar invisible */
 }
 .nav-drawer-background-enter,
 .nav-drawer-background-leave-active {
@@ -189,6 +191,9 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.nav-drawer::-webkit-scrollbar {
+  display: none;
 }
 .nav-drawer .line {
   margin: 0px !important;

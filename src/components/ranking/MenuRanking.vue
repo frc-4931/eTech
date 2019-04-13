@@ -1,7 +1,10 @@
 <template>
   <Error v-if="user.role == null">You must be logged in to view this page!</Error>
 
-  <div v-else class="grid">
+  <div
+    v-else
+    class="grid"
+  >
     <h1 class="background-box content-centered location-span">Rankings</h1>
 
     <div class="location-span">
@@ -17,7 +20,13 @@
       </div>
 
       <transition-group name="trans-group">
-        <RankingTeam v-for="team in teams" :key="team.team_key" :teamData="team" :localtbadb="localtbadb" :localdb="localdb"/>
+        <RankingTeam
+          v-for="team in teams"
+          :key="team.team_key"
+          :teamData="team"
+          :localtbadb="localtbadb"
+          :localdb="localdb"
+        />
       </transition-group>
     </div>
   </div>
