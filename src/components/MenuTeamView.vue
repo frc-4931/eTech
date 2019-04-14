@@ -1,8 +1,6 @@
 <template>
   <div v-if="loggedin && teamExists">
     <div class="grid grid-shrink">
-      <BackButton />
-
       <div class="location-centered-small">
         <h2 class="content-centered background-box">
           {{ team.name }} - {{ team.number }}
@@ -195,7 +193,6 @@ import MenuTeamCommentModify from "./MenuTeamCommentModify.vue";
 import CommentField from "./scouting/CommentField.vue";
 import ScoutMenu from "./scouting/ScoutMenu.vue";
 import NewScout from "./scouting/NewScout.vue";
-import BackButton from "./BackButton.vue";
 import TabContainer from "./TabContainer.vue";
 import Error from "./Error.vue";
 import { scroller } from "vue-scrollto/src/scrollTo";
@@ -209,7 +206,6 @@ export default {
     CommentField,
     ScoutMenu,
     NewScout,
-    BackButton,
     TabContainer,
     Error
   },

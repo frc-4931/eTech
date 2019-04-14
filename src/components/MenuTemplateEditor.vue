@@ -1,29 +1,6 @@
 <template>
   <div v-if="isAdmin" id="menu-template-editor">
     <div class="grid">
-      <div class="mobile-view field-edit done-button-container">
-        <div
-          @click="goBack()"
-          class="mobile-view background-box background-box-hover content-centered"
-        >
-          <h3>Back</h3>
-        </div>
-
-        <div
-          @click="saveTemplate(curTemplate)"
-          class="mobile-view field-button background-box background-box-hover content-centered"
-        >
-          <h3>Save</h3>
-        </div>
-      </div>
-
-      <div
-        @click="goBack()"
-        class="desktop-view location-left-tiny background-box background-box-hover content-centered"
-      >
-        <h3>Back</h3>
-      </div>
-
       <Error
         v-if="isError"
         class="mobile-none-margin-top location-centered background-box content-centered"
@@ -42,12 +19,12 @@
         <h2>Template Editor</h2>
       </div>
 
-      <div
+      <h3
         @click="saveTemplate(curTemplate)"
-        class="desktop-view location-right-tiny background-box background-box-hover content-centered"
+        class="location-centered-small background-box content-centered"
       >
-        <h3>Save</h3>
-      </div>
+        Save
+      </h3>
 
       <div class="location-centered-small content-centered">
         <h3 class="background-box">Select Template to Edit:</h3>
@@ -405,15 +382,6 @@ export default {
     },
     arrayMove(arr, oldIndex, newIndex) {
       arr.splice(newIndex, 0, arr.splice(oldIndex, 1)[0]);
-    },
-    goBack() {
-      if (!this.unsaved) this.$router.push("/admin/");
-      else if (
-        confirm(
-          "You have unsaved changes.\nAre you sure you want to leave before saving?"
-        )
-      )
-        this.$router.push("/admin/");
     },
     updateAllTeamPoints() {
       //Loop through all teams and update their point values

@@ -2,15 +2,15 @@
   <div>
     <transition name="nav-drawer-background">
       <div
-        v-show="navigationDrawerStatus.active"
-        @click="navigationDrawerStatus.active = false"
+        v-show="navigationStatus.active"
+        @click="navigationStatus.active = false"
         class="nav-drawer-background"
       />
     </transition>
 
     <div
       class="nav-drawer"
-      :class="navigationDrawerStatus.active ? 'nav-drawer-active' : ''"
+      :class="navigationStatus.active ? 'nav-drawer-active' : ''"
     >
       <div class="nav-drawer-account-panel">
         <h1 class="content-centered">eTech</h1>
@@ -141,11 +141,11 @@ export default {
   name: "NavigationDrawer",
   props: {
     user: Object,
-    navigationDrawerStatus: Object
+    navigationStatus: Object
   },
   methods: {
     viewPage: function(page) {
-      this.navigationDrawerStatus.active = false;
+      this.navigationStatus.active = false;
       if (this.$router.currentRoute.name != page) {
         this.$router.push({ name: page });
       }

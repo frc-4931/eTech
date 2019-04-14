@@ -1,11 +1,8 @@
 <template>
   <div id="app">
-    <NavigationDrawer
-      :user="user"
-      :navigationDrawerStatus="navigationDrawerStatus"
-    />
+    <NavigationDrawer :user="user" :navigationStatus="navigationStatus" />
 
-    <TopBar :user="user" :navigationDrawerStatus="navigationDrawerStatus" />
+    <TopBar :user="user" :navigationStatus="navigationStatus" />
 
     <Popup :popup="popup" />
 
@@ -72,7 +69,10 @@ export default {
   data: function() {
     return {
       isConnectionError: false,
-      navigationDrawerStatus: { active: false },
+      navigationStatus: {
+        active: false,
+        backButton: false
+      },
       HomeSortingOptions: {
         sortedTeamOption: "totalPoints",
         sortedTeamFlipped: false
@@ -99,6 +99,9 @@ export default {
         onBlueAllianceDbPaused: function() {}
       }
     };
+  },
+  watch: {
+    $route: "onRouteChange"
   },
   methods: {
     reloadSync: function() {
@@ -259,6 +262,9 @@ export default {
           }
         });
       });
+    },
+    onRouteChange() {
+      this.navigationStatus.backButton = this.$route.meta.backButton;
     }
   },
   created: function() {
@@ -267,18 +273,6 @@ export default {
     PouchDB.plugin(Authentication);
 
     var dThis = this;
-
-    // setTimeout(function() {
-    //   dThis.popup
-    //     .newPopup(
-    //       "Title",
-    //       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione nulla, vero magni id nemo, iste, dignissimos vel non similique molestiae doloremque saepe libero. Ratione adipisci voluptas non distinctio assumenda asperiores.",
-    //       ["Cancel", "Save"]
-    //     )
-    //     .then(option => {
-    //       console.log(option);
-    //     });
-    // }, 50);
 
     // FIXME UNCOMMENT ME!!!!
     this.getLoggedIn()
@@ -298,6 +292,8 @@ export default {
     // ) {
     //   this.$router.push({ name: "login" });
     // }
+
+    this.onRouteChange();
   }
 };
 </script>
