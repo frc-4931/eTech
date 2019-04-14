@@ -5,19 +5,13 @@
     <div class="location-centered grid">
       <div class="location-left-small">
         <div class="background-box menu-account-tabs">
-          <h3 class="content-centered">Settings</h3>
-
-          <div class="line" />
-
           <p
             v-for="(panel, index) in panels"
             :key="index"
             @click="activePanel = index"
-          >
-            {{ panel[1] }}
-          </p>
+          >{{ panel[1] }}</p>
 
-          <div class="line" />
+          <div class="line"/>
 
           <p
             @click="
@@ -25,22 +19,23 @@
               $router.push({ name: 'login' });
             "
             class="content-centered"
-          >
-            Sign out
-          </p>
+          >Sign out</p>
         </div>
       </div>
       <div class="location-right-large">
-        <h3 class="content-centered location-span background-box">
-          {{ panels[activePanel][1] }}
-        </h3>
+        <h2 class="content-centered location-span background-box">{{ panels[activePanel][1] }}</h2>
 
         <transition
           enter-active-class="content-fade-in"
           leave-active-class="content-fade-out"
           mode="out-in"
         >
-          <component :is="panels[activePanel][0]" :user="user"></component>
+          <component
+            :is="panels[activePanel][0]"
+            :user="user"
+            :popup="popup"
+            :reloadSync="reloadSync"
+          ></component>
         </transition>
       </div>
     </div>
@@ -57,11 +52,15 @@ export default {
     AccountInfo,
     AccountPassword
   },
-  props: { user: Object },
+  props: {
+    user: Object,
+    popup: Object,
+    reloadSync: Function
+  },
   data() {
     return {
       panels: [
-        ["AccountInfo", "About Your Account"],
+        ["AccountInfo", "Your Account"],
         ["AccountPassword", "Change Password"]
       ],
       activePanel: 0

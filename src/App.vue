@@ -1,12 +1,12 @@
 <template>
   <div id="app">
-    <NavigationDrawer :user="user" :navigationStatus="navigationStatus" />
+    <NavigationDrawer :user="user" :navigationStatus="navigationStatus"/>
 
-    <TopBar :user="user" :navigationStatus="navigationStatus" />
+    <TopBar :user="user" :navigationStatus="navigationStatus"/>
 
-    <Popup :popup="popup" />
+    <Popup :popup="popup"/>
 
-    <ConnectionError v-if="isConnectionError" />
+    <ConnectionError v-if="isConnectionError"/>
 
     <transition
       enter-active-class="content-fade-in"
@@ -199,6 +199,9 @@ export default {
             dThis.user.username = null;
             dThis.user.role = null;
 
+            dThis.sync = {};
+            dThis.tbasync = {};
+
             resolve(dThis.user);
           }
         });
@@ -243,27 +246,19 @@ export default {
         });
       });
     },
-    changePassword(password) {
+    changePassword(username, password) {
       var dThis = this;
-      new Promise((resolve, reject) => {
-        dThis.remotedb.changePassword(dThis.user.username, password, function(
-          err
-        ) {
-          if (err) {
+      return new Promise((resolve, reject) => {
+        dThis.remotedb
+          .changePassword(username, password)
+          .then(resolve)
+          .catch(err => {
             if (err.name === "not_found") {
               reject({ status: 404, message: "Could not find username." });
             } else {
               reject({ status: 403, message: "Failed to change password." });
             }
-          } else {
-            dThis
-              .getLoggedIn()
-              .then(resolve)
-              .catch(err => {
-                reject(err);
-              });
-          }
-        });
+          });
       });
     },
     onRouteChange() {
@@ -287,14 +282,6 @@ export default {
           dThis.$router.push({ name: "login" });
         }
       });
-
-    // if (
-    //   this.user.username == null &&
-    //   this.user.role == null &&
-    //   this.$router.currentRoute.name != "login"
-    // ) {
-    //   this.$router.push({ name: "login" });
-    // }
 
     this.onRouteChange();
   }

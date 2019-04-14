@@ -7,7 +7,7 @@
         placeholder="Password"
         type="password"
         class="content-centered"
-      />
+      >
     </div>
     <p class="content-centered background-box location-left">Password</p>
     <div class="background-box-input location-right">
@@ -17,7 +17,7 @@
         placeholder="Confirm Password"
         type="password"
         class="content-centered"
-      />
+      >
     </div>
 
     <p
@@ -26,9 +26,7 @@
         allFieldsValid ? 'background-box-hover' : 'background-box-disabled'
       ]"
       class="location-span content-centered background-box"
-    >
-      Login
-    </p>
+    >Login</p>
   </div>
 </template>
 
@@ -38,24 +36,57 @@ export default {
   data() {
     return {
       password: "",
-      confirmPassword: ""
+      confirmPassword: "",
+      changingPassword: false
     };
   },
-  props: { user: Object },
+  props: {
+    user: Object,
+    popup: Object,
+    reloadSync: Function
+  },
   methods: {
     changePassword() {
-      this.user
-        .changePassword(this.password)
-        .then(() => {
-          this.password = "";
-          this.confirmPassword = "";
-        })
-        .catch(() => console.log("ERROR")); // TODO: Catch
+      if (this.allFieldsValid) {
+        this.user
+          .changePassword(this.user.username, this.password)
+          .then(() => {
+            //   this.user
+            //     .logIn(username, password)
+            //     .then(() => {
+            //       this.reloadSync();
+
+            this.popup.newPopup(
+              "Success",
+              "You successfully changed your password.",
+              ["Ok"]
+            );
+
+            this.reloadSync();
+            this.changingPassword = false;
+            // })
+            // .catch(err => {
+            //   this.popup.catchError(err);
+            //   this.changingPassword = false;
+            // });
+          })
+          .catch(err => {
+            this.popup.catchError(err);
+            this.changingPassword = false;
+          });
+      }
+
+      this.password = this.confirmPassword = "";
+      this.changingPassword = true;
     }
   },
   computed: {
     allFieldsValid() {
-      return this.password != "" && this.password === this.confirmPassword;
+      return (
+        this.password != "" &&
+        this.password === this.confirmPassword &&
+        !this.changingPassword
+      );
     }
   }
 };

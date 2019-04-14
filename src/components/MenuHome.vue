@@ -1,23 +1,15 @@
 <template>
-  <div class="grid">
-    <div
-      class="location-centered"
-      v-if="user.username != null && user.role != null"
-    >
+  <div class="grid grid-shrink">
+    <div class="location-centered" v-if="user.username != null && user.role != null">
       <div class="background-box content-centered">
         <h2>Team Leaderboard</h2>
         <p>
-          Teams are given a rating by combining various different pieces of
+          Teams are rated by combining various different pieces of
           information collected by team members.
         </p>
       </div>
       <div class="background-box">
-        <input
-          v-model.trim="filter"
-          type="text"
-          name="filter"
-          placeholder="Search for teams..."
-        />
+        <input v-model.trim="filter" type="text" name="filter" placeholder="Search for teams...">
       </div>
       <div
         v-if="teams.length != 0"
@@ -32,9 +24,7 @@
               : ''
           "
           @click="toggleSorted(true, 'name')"
-        >
-          Name
-        </h3>
+        >Name</h3>
         <h3
           v-bind:class="
             HomeSortingOptions.sortedTeamOption === 'number'
@@ -44,9 +34,7 @@
               : ''
           "
           @click="toggleSorted(true, 'number')"
-        >
-          Number
-        </h3>
+        >Number</h3>
         <h3
           v-bind:class="
             HomeSortingOptions.sortedTeamOption === 'objectivePoints'
@@ -56,9 +44,7 @@
               : ''
           "
           @click="toggleSorted(true, 'objectivePoints')"
-        >
-          Objective Points
-        </h3>
+        >Objective Points</h3>
         <h3
           v-bind:class="
             HomeSortingOptions.sortedTeamOption === 'commentPoints'
@@ -68,9 +54,7 @@
               : ''
           "
           @click="toggleSorted(true, 'commentPoints')"
-        >
-          Comment Points
-        </h3>
+        >Comment Points</h3>
         <h3
           v-bind:class="
             HomeSortingOptions.sortedTeamOption === 'totalPoints'
@@ -80,13 +64,11 @@
               : ''
           "
           @click="toggleSorted(true, 'totalPoints')"
-        >
-          Total Points
-        </h3>
+        >Total Points</h3>
       </div>
       <p v-else class="location-centered background-box content-centered">
         There aren't any teams to display yet.
-        <br />Ask an admin to add teams.
+        <br>Ask an admin to add teams.
       </p>
 
       <transition-group name="trans-group">

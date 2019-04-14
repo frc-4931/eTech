@@ -1,28 +1,20 @@
 <template>
   <div>
-    <transition
-      enter-active-class="content-fade-in"
-      leave-active-class="content-fade-out"
-    >
+    <transition enter-active-class="content-fade-in" leave-active-class="content-fade-out">
       <i
         v-if="user.role != null && !navigationStatus.backButton"
         class="material-icons toggle-nav-drawer"
         @click="navigationStatus.active = !navigationStatus.active"
         :class="navigationStatus.active ? 'toggle-nav-drawer-open' : ''"
-        >menu</i
-      >
+      >menu</i>
     </transition>
 
-    <transition
-      enter-active-class="content-fade-in"
-      leave-active-class="content-fade-out"
-    >
+    <transition enter-active-class="content-fade-in" leave-active-class="content-fade-out">
       <i
         v-if="user.role != null && navigationStatus.backButton"
         class="material-icons nav-back-button"
         @click="$router.go(-1)"
-        >arrow_back</i
-      >
+      >arrow_back</i>
     </transition>
 
     <h1 class="top-bar content-centered">eTech</h1>
@@ -52,9 +44,10 @@ export default {
 .nav-back-button,
 .toggle-nav-drawer {
   position: fixed;
-  left: 16px;
-  top: 16px;
+  left: 0px;
+  top: 0px;
   z-index: 100;
+  padding: 16px;
   transition: 0.25s ease-in-out;
 }
 .toggle-nav-drawer-open {
