@@ -11,7 +11,15 @@
       </li>
     </ul>
 
-    <slot :name="tabPanelSlotName" />
+    <transition
+      enter-active-class="content-fade-in"
+      leave-active-class="content-fade-out"
+      mode="out-in"
+    >
+      <keep-alive>
+        <slot :name="tabPanelSlotName" />
+      </keep-alive>
+    </transition>
   </div>
 </template>
 
@@ -29,7 +37,7 @@ export default {
   },
   computed: {
     tabPanelSlotName: function() {
-      return "tab-panel-" + this.activeTab.toLowerCase();
+      return "tab-panel-" + this.activeTab.toLowerCase().replace(" ", "-");
     }
   },
   methods: {

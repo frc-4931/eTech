@@ -3,6 +3,7 @@ import App from "./App.vue"
 import Router from "vue-router";
 
 import MenuHome from "./components/MenuHome.vue"
+import MenuTeamAdd from "./components/admin/MenuTeamAdd.vue";
 import MenuTeamView from "./components/MenuTeamView.vue";
 import MenuAdmin from "./components/admin/MenuAdmin.vue";
 import MenuTemplateEditor from "./components/MenuTemplateEditor.vue";
@@ -26,8 +27,9 @@ const routes = [
   { path: "/", name: "home", component: MenuHome, meta: { title: "Home" } },
   { path: "/team/:number", name: "team", component: MenuTeamView, props: true, meta: { title: "Team: %s", backButton: true } },
   { path: "/admin/", name: "admin", component: MenuAdmin, meta: { title: "Admin Tools" } },
-  { path: "/admin/user/add", name: "user-add", component: MenuUserAdd, meta: { title: "Add user", backButton: true } },
-  { path: "/admin/user/:username", name: "user-edit", component: MenuUserEdit, props: true, meta: { title: "Editing user: %s", backButton: true } },
+  { path: "/admin/team/add", name: "team-add", component: MenuTeamAdd, meta: { title: "Add Team", backButton: true } },
+  { path: "/admin/user/add", name: "user-add", component: MenuUserAdd, meta: { title: "Add User", backButton: true } },
+  { path: "/admin/user/:username", name: "user-edit", component: MenuUserEdit, props: true, meta: { title: "Editing User: %s", backButton: true } },
   { path: "/admin/template", name: "admin-template", component: MenuTemplateEditor, meta: { title: "Template Editor", backButton: true } },
   { path: "/analytics", name: "analytics", component: MenuAnalytics, meta: { title: "Analytics" } },
   { path: "/tba/ranking", name: "ranking", component: MenuRanking, meta: { title: "Ranking" } },
