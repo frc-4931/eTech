@@ -228,6 +228,7 @@ textarea {
   --text-color: #eceff1;
   --box-color: #37474f;
   --box-hover-color: #546e7a;
+  --box-selected-color: #607d8b;
 
   --link-color: #2196f3;
   --link-active-color: #0069c0;

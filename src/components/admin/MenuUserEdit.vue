@@ -125,6 +125,7 @@ export default {
   name: "MenuUserEdit",
   components: { Error },
   props: {
+    popup: Object,
     localdb: Object,
     remotedb: Object,
     username: String
@@ -187,26 +188,30 @@ export default {
     deleteUser() {
       var dThis = this;
 
-      if (!confirm("Are you sure you would like to delete this user?")) return;
-
-      if (this.isAdmin) {
-        this.remotedb
-          .deleteAdmin(this.username)
-          .then(function() {
-            dThis.isAdmin = false;
-          })
-          .then(function() {
-            dThis.remotedb.deleteUser(dThis.username);
-            //dThis.removeUserFromFile();
-          })
-          .catch(function(err) {
-            console.log(err);
-          });
-      } else {
-        this.remotedb.deleteUser(dThis.username);
-        //this.removeUserFromFile();
-      }
-      this.goBack();
+      this.popup
+        .newPopup(
+          "Delete User?",
+          "Are you sure you would like to delete this user?",
+          ["Cancel", "Delete"]
+        )
+        .then(option => {
+          if (option == "Delete") {
+            if (dThis.isAdmin) {
+              dThis.remotedb
+                .deleteAdmin(this.username)
+                .then(function() {
+                  dThis.isAdmin = false;
+                })
+                .then(function() {
+                  dThis.remotedb.deleteUser(dThis.username);
+                })
+                .catch(err => dThis.popup.catchError(err));
+            } else {
+              this.remotedb.deleteUser(dThis.username);
+            }
+            this.goBack();
+          }
+        });
     },
     updateUser() {
       this.fieldsChanged = 0;

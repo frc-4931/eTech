@@ -64,6 +64,6 @@ export default {
   background-color: var(--box-hover-color);
 }
 .tab-active {
-  background-color: var(--neutral) !important;
+  background-color: var(--box-selected-color) !important;
 }
 </style>

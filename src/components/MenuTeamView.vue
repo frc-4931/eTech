@@ -159,6 +159,7 @@
             :title="comment.title"
             :localdb="localdb"
             :callback="commentModified"
+            :popup="popup"
           ></component>
         </transition-group>
 
@@ -210,6 +211,7 @@ export default {
     Error
   },
   props: {
+    popup: Object,
     number: { type: [String, Number], required: true },
     localdb: Object,
     localtbadb: Object,

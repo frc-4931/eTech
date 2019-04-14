@@ -77,7 +77,10 @@ export default {
         sortedTeamOption: "totalPoints",
         sortedTeamFlipped: false
       },
-      popup: { newPopup: function() {} },
+      popup: {
+        newPopup: function() {},
+        catchError: function() {}
+      },
       localdb: new PouchDB("localdb"),
       remotedb: new PouchDB(url + "scouting", setup),
       bluealliancedb: new PouchDB(url + "bluealliance", setup),

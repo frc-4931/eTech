@@ -60,10 +60,18 @@ export default {
           }
         }, 50);
       });
+    },
+    catchError(error) {
+      this.newPopup(
+        error.name ? "Error: " + error.name : "Error",
+        error.message ? error.message : "Something went wrong.",
+        ["Ok"]
+      );
     }
   },
   created() {
     this.popup.newPopup = this.newPopup;
+    this.popup.catchError = this.catchError;
   }
 };
 </script>
@@ -72,7 +80,7 @@ export default {
 .popup-background {
   background-color: rgba(0, 0, 0, 0.5);
   position: fixed;
-  z-index: 96;
+  z-index: 149;
   left: 0;
   top: 0;
   width: 100%;
@@ -80,7 +88,7 @@ export default {
 }
 .popup-container {
   position: fixed;
-  z-index: 97;
+  z-index: 150;
   width: 100%;
   height: 100%;
   top: 0;

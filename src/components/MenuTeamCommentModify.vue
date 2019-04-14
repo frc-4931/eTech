@@ -61,6 +61,7 @@
 export default {
   name: "MenuTeamCommentModify",
   props: {
+    popup: Object,
     callback: Function,
     localdb: Object,
     docId: String
@@ -91,16 +92,22 @@ export default {
     },
     deleteComment: function() {
       var dThis = this;
-      var should_delete = confirm(
-        "Are you sure you want to delete this comment?\nThis operation cannot be undone!"
-      );
-      if (should_delete) {
-        this.localdb.get(this.docId).then(function(doc) {
-          dThis.localdb.remove(doc).then(function() {
-            dThis.callback();
-          });
+
+      this.popup
+        .newPopup(
+          "Delete Comment?",
+          "Are you sure you want to delete this comment?\nThis operation cannot be undone!",
+          ["Cancel", "Delete"]
+        )
+        .then(option => {
+          if (option == "Delete") {
+            this.localdb.get(this.docId).then(function(doc) {
+              dThis.localdb.remove(doc).then(function() {
+                dThis.callback();
+              });
+            });
+          }
         });
-      }
     }
   },
   computed: {

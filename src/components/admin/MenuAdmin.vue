@@ -108,6 +108,7 @@ export default {
     Error
   },
   props: {
+    popup: Object,
     localdb: Object,
     remotedb: Object,
     sync_change: Object
@@ -150,20 +151,24 @@ export default {
       if (teamID !== undefined) this.teams.push(team_doc["doc"]);
     },
     removeTeam(number) {
-      var shouldDelete = confirm(
-        "Are you sure you want to delete team #" +
-          number +
-          "?\n There's no going back!"
-      );
-
-      if (shouldDelete) {
-        var dThis = this;
-        this.localdb.get("TEAM_" + number).then(function(doc) {
-          dThis.localdb.remove(doc).then(function() {
-            dThis.loadTeams();
-          });
+      this.popup
+        .newPopup(
+          "Delete Team?",
+          "Are you sure you want to delete team #" +
+            number +
+            "?\n There's no going back!",
+          ["Cancel", "Delete"]
+        )
+        .then(option => {
+          if (option == "Delete") {
+            var dThis = this;
+            this.localdb.get("TEAM_" + number).then(function(doc) {
+              dThis.localdb.remove(doc).then(function() {
+                dThis.loadTeams();
+              });
+            });
+          }
         });
-      }
     },
     loadUsers() {
       var dThis = this;

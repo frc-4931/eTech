@@ -59,11 +59,7 @@ export default {
           })
           .catch(err => {
             this.password = "";
-            this.popup.newPopup(
-              "Error",
-              err.message + " - Error code " + err.status,
-              ["Ok"]
-            );
+            this.popup.catchError(err);
           });
       }
     }

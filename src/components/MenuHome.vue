@@ -1,7 +1,7 @@
 <template>
   <div class="grid">
     <div
-      class="location-right-large"
+      class="location-centered"
       v-if="user.username != null && user.role != null"
     >
       <div class="background-box content-centered">
