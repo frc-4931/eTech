@@ -39,7 +39,8 @@
 export default {
   name: "Login",
   props: {
-    user: Object
+    user: Object,
+    popup: Object
   },
   data() {
     return {
@@ -51,9 +52,19 @@ export default {
     login() {
       var dThis = this;
       if (this.allFieldsValid) {
-        this.user.logIn(this.username, this.password).then(() => {
-          dThis.$router.push({ name: "home" });
-        });
+        this.user
+          .logIn(this.username, this.password)
+          .then(() => {
+            dThis.$router.push({ name: "home" });
+          })
+          .catch(err => {
+            this.password = "";
+            this.popup.newPopup(
+              "Error",
+              err.message + " - Error code " + err.status,
+              ["Ok"]
+            );
+          });
       }
     }
   },

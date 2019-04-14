@@ -4,7 +4,9 @@
   >
 
   <div v-else class="grid">
-    <h2 class="location-span background-box content-centered">Admin Tools</h2>
+    <h2 class="location-centered-small background-box content-centered">
+      Admin Tools
+    </h2>
 
     <TabContainer
       :tabs="['Tools', 'Teams', 'Users']"
@@ -65,7 +67,7 @@
             v-for="user in users"
             :key="user.username"
             :userdata="user"
-          ></AdminUser>
+          />
         </div>
       </template>
     </TabContainer>

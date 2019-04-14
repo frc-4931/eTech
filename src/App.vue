@@ -7,6 +7,8 @@
 
     <TopBar :user="user" :navigationDrawerStatus="navigationDrawerStatus" />
 
+    <Popup :popup="popup" />
+
     <ConnectionError v-if="isConnectionError" />
 
     <transition
@@ -17,6 +19,7 @@
       <keep-alive include="MenuHome,MenuAdmin" :max="5">
         <router-view
           :HomeSortingOptions="HomeSortingOptions"
+          :popup="popup"
           :localdb="localdb"
           :remotedb="remotedb"
           :localtbadb="localtbadb"
@@ -36,6 +39,7 @@ import PouchDB from "pouchdb";
 import Authentication from "pouchdb-authentication";
 import NavigationDrawer from "./components/NavigationDrawer.vue";
 import TopBar from "./components/TopBar.vue";
+import Popup from "./components/Popup.vue";
 import { resolve, reject } from "q";
 
 var url = "";
@@ -62,6 +66,7 @@ export default {
   components: {
     ConnectionError,
     TopBar,
+    Popup,
     NavigationDrawer
   },
   data: function() {
@@ -72,6 +77,7 @@ export default {
         sortedTeamOption: "totalPoints",
         sortedTeamFlipped: false
       },
+      popup: { newPopup: function() {} },
       localdb: new PouchDB("localdb"),
       remotedb: new PouchDB(url + "scouting", setup),
       bluealliancedb: new PouchDB(url + "bluealliance", setup),
@@ -260,10 +266,19 @@ export default {
 
     PouchDB.plugin(Authentication);
 
-    // var username = prompt("Username:");
-    // var password = prompt("Password:");
+    var dThis = this;
 
-    // this.logIn(username, password);
+    // setTimeout(function() {
+    //   dThis.popup
+    //     .newPopup(
+    //       "Title",
+    //       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione nulla, vero magni id nemo, iste, dignissimos vel non similique molestiae doloremque saepe libero. Ratione adipisci voluptas non distinctio assumenda asperiores.",
+    //       ["Cancel", "Save"]
+    //     )
+    //     .then(option => {
+    //       console.log(option);
+    //     });
+    // }, 50);
 
     // FIXME UNCOMMENT ME!!!!
     this.getLoggedIn()
