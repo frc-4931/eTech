@@ -5,10 +5,7 @@
       :navigationDrawerStatus="navigationDrawerStatus"
     />
 
-    <TopBar
-      :user="user"
-      :navigationDrawerStatus="navigationDrawerStatus"
-    />
+    <TopBar :user="user" :navigationDrawerStatus="navigationDrawerStatus" />
 
     <ConnectionError v-if="isConnectionError" />
 
@@ -17,10 +14,7 @@
       leave-active-class="content-fade-out"
       mode="out-in"
     >
-      <keep-alive
-        include="MenuHome,MenuAdmin"
-        :max="5"
-      >
+      <keep-alive include="MenuHome,MenuAdmin" :max="5">
         <router-view
           :HomeSortingOptions="HomeSortingOptions"
           :localdb="localdb"
@@ -89,7 +83,8 @@ export default {
         role: null,
         logIn: this.logIn,
         logOut: this.logOut,
-        getLoggedIn: this.getLoggedIn
+        getLoggedIn: this.getLoggedIn,
+        changePassword: this.changePassword
       },
       sync_change: {
         onChange: function() {},

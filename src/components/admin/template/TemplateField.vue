@@ -1,5 +1,10 @@
 <template>
-  <div v-if="data.type == 'TitleField'" @click="clicked()" style="margin-top: 20px" class="background-box background-box-hover content-centered">
+  <div
+    v-if="data.type == 'TitleField'"
+    @click="clicked()"
+    style="margin-top: 20px"
+    class="background-box background-box-hover content-centered"
+  >
     <div>
       <h2>{{data.title}}</h2>
     </div>

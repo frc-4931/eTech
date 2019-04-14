@@ -1,5 +1,7 @@
 <template>
-  <Error v-if="user.role == null">You must be logged in to view this page!</Error>
+  <Error v-if="user.role == null"
+    >You must be logged in to view this page!</Error
+  >
 
   <div v-else class="grid grid-shrink">
     <h1 class="location-centered background-box content-centered">Awards</h1>
@@ -11,11 +13,17 @@
       </div>
 
       <transition-group name="trans-group">
-        <AwardsWinner v-for="award in awards" :key="award.award_type" :winnerData="award"/>
+        <AwardsWinner
+          v-for="award in awards"
+          :key="award.award_type"
+          :winnerData="award"
+        />
       </transition-group>
     </div>
 
-    <p v-else class="content-centered background-box location-centered">There aren't any awards to display yet</p>
+    <p v-else class="content-centered background-box location-centered">
+      There aren't any awards to display yet
+    </p>
   </div>
 </template>
 

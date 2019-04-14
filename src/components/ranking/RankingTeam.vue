@@ -1,6 +1,9 @@
 <template>
-  <div @click="viewTeam()" class="background-box background-box-hover ranking-team-container mobile-shrink">
-    <p>{{ teamData.rank}}</p>
+  <div
+    @click="viewTeam()"
+    class="background-box background-box-hover ranking-team-container mobile-shrink"
+  >
+    <p>{{ teamData.rank }}</p>
     <p>{{ teamName }}</p>
     <p>{{ teamNumber }}</p>
     <p>{{ teamData.record.wins }}</p>

@@ -1,14 +1,24 @@
 <template>
   <div>
     <transition name="nav-drawer-background">
-      <div v-show="navigationDrawerStatus.active" @click="navigationDrawerStatus.active = false" class="nav-drawer-background"/>
+      <div
+        v-show="navigationDrawerStatus.active"
+        @click="navigationDrawerStatus.active = false"
+        class="nav-drawer-background"
+      />
     </transition>
 
-    <div class="nav-drawer" :class="navigationDrawerStatus.active ? 'nav-drawer-active' : ''">
+    <div
+      class="nav-drawer"
+      :class="navigationDrawerStatus.active ? 'nav-drawer-active' : ''"
+    >
       <div class="nav-drawer-account-panel">
         <h1 class="content-centered">eTech</h1>
 
-        <div v-if="user.username != null" class="nav-drawer-account-panel-name content-centered">
+        <div
+          v-if="user.username != null"
+          class="nav-drawer-account-panel-name content-centered"
+        >
           <h3>Signed in as:</h3>
           <p>{{ user.username }}</p>
         </div>
@@ -17,7 +27,11 @@
           <p class="content-centered">Error: Not signed in</p>
         </div>
 
-        <div class="nav-drawer-tab" @click="viewPage('awards')" :class="isCurrent('account')">
+        <div
+          class="nav-drawer-tab"
+          @click="viewPage('account')"
+          :class="isCurrent('account')"
+        >
           <div>
             <i class="material-icons">person</i>
           </div>
@@ -25,41 +39,66 @@
         </div>
       </div>
 
-      <div class="nav-drawer-tab" @click="viewPage('home')" :class="isCurrent('')">
+      <div
+        class="nav-drawer-tab"
+        @click="viewPage('home')"
+        :class="isCurrent('')"
+      >
         <div>
           <i class="material-icons">home</i>
         </div>
         <p>Home</p>
       </div>
 
-      <div v-if="this.user.role === '_admin'" class="nav-drawer-tab" @click="viewPage('analytics')" :class="isCurrent('analytics')">
+      <div
+        v-if="this.user.role === '_admin'"
+        class="nav-drawer-tab"
+        @click="viewPage('analytics')"
+        :class="isCurrent('analytics')"
+      >
         <div>
           <i class="material-icons">bar_chart</i>
         </div>
         <p>Analytics</p>
       </div>
 
-      <div class="line"/>
+      <div class="line" />
 
-      <div class="nav-drawer-tab" @click="viewPage('ranking')" :class="isCurrent('tba/ranking')">
+      <div
+        class="nav-drawer-tab"
+        @click="viewPage('ranking')"
+        :class="isCurrent('tba/ranking')"
+      >
         <div>
           <i class="material-icons">swap_vert</i>
         </div>
         <p>Rankings</p>
       </div>
-      <div class="nav-drawer-tab" @click="viewPage('schedule')" :class="isCurrent('tba/schedule')">
+      <div
+        class="nav-drawer-tab"
+        @click="viewPage('schedule')"
+        :class="isCurrent('tba/schedule')"
+      >
         <div>
           <i class="material-icons">watch_later</i>
         </div>
         <p>Schedule</p>
       </div>
-      <div class="nav-drawer-tab" @click="viewPage('awards')" :class="isCurrent('tba/awards')">
+      <div
+        class="nav-drawer-tab"
+        @click="viewPage('awards')"
+        :class="isCurrent('tba/awards')"
+      >
         <div>
           <i class="material-icons">star</i>
         </div>
         <p>Awards</p>
       </div>
-      <div class="nav-drawer-tab" @click="viewPage('bracket')" :class="isCurrent('tba/bracket')">
+      <div
+        class="nav-drawer-tab"
+        @click="viewPage('bracket')"
+        :class="isCurrent('tba/bracket')"
+      >
         <div>
           <i class="material-icons">view_list</i>
         </div>
@@ -67,9 +106,13 @@
       </div>
 
       <div v-if="this.user.role === '_admin'">
-        <div class="line"/>
+        <div class="line" />
 
-        <div class="nav-drawer-tab" @click="viewPage('admin')" :class="isCurrent('admin')">
+        <div
+          class="nav-drawer-tab"
+          @click="viewPage('admin')"
+          :class="isCurrent('admin')"
+        >
           <div>
             <i class="material-icons">build</i>
           </div>
@@ -77,9 +120,13 @@
         </div>
       </div>
 
-      <div class="line"/>
+      <div class="line" />
 
-      <div class="nav-drawer-tab" @click="viewPage('credits')" :class="isCurrent('credits')">
+      <div
+        class="nav-drawer-tab"
+        @click="viewPage('credits')"
+        :class="isCurrent('credits')"
+      >
         <div>
           <i class="material-icons">info</i>
         </div>

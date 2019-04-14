@@ -9,7 +9,10 @@
     <div>
       <p>{{ user.role }}</p>
     </div>
-    <router-link :to="{name: 'user-edit', params: {username: user.username}}">Edit User</router-link>
+    <router-link
+      :to="{ name: 'user-edit', params: { username: user.username } }"
+      >Edit User</router-link
+    >
   </div>
 </template>
 

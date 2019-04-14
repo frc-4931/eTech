@@ -1,7 +1,16 @@
 <template>
   <div>
-    <transition enter-active-class="content-fade-in" leave-active-class="content-fade-out">
-      <i v-if="user.role != null" class="material-icons toggle-nav-drawer" @click="navigationDrawerStatus.active = !navigationDrawerStatus.active" :class="navigationDrawerStatus.active ? 'toggle-nav-drawer-open' : ''">menu</i>
+    <transition
+      enter-active-class="content-fade-in"
+      leave-active-class="content-fade-out"
+    >
+      <i
+        v-if="user.role != null"
+        class="material-icons toggle-nav-drawer"
+        @click="navigationDrawerStatus.active = !navigationDrawerStatus.active"
+        :class="navigationDrawerStatus.active ? 'toggle-nav-drawer-open' : ''"
+        >menu</i
+      >
     </transition>
 
     <h1 class="top-bar content-centered">eTech</h1>

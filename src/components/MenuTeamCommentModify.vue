@@ -1,14 +1,27 @@
 <template>
   <div id="menu-team-comment-modify">
-    <div class="line"/>
+    <div class="line" />
 
     <h2 class="content-centered background-box">Modify comment</h2>
 
     <div class="background-box">
-      <input v-model.trim="title" type="text" name="comment-title" placeholder="Comment Title" required>
+      <input
+        v-model.trim="title"
+        type="text"
+        name="comment-title"
+        placeholder="Comment Title"
+        required
+      />
     </div>
     <div class="background-box">
-      <textarea v-model.trim="comment" rows="10" type="text" name="comment-content" placeholder="Comment" required></textarea>
+      <textarea
+        v-model.trim="comment"
+        rows="10"
+        type="text"
+        name="comment-content"
+        placeholder="Comment"
+        required
+      ></textarea>
     </div>
     <div class="background-box">
       <select v-model="rating" name="comment-points" required>
@@ -18,11 +31,29 @@
       </select>
     </div>
 
-    <h3 @click="submitComment()" class="location-centered-small background-box content-centered" :class="[this.allFieldsValid ? 'background-box-hover' : 'background-box-disabled']">Save</h3>
-    <h3 @click="deleteComment()" class="location-centered-small background-box background-box-hover content-centered">Delete</h3>
-    <h3 @click="callback()" class="location-centered-small background-box background-box-hover content-centered">Cancel</h3>
+    <h3
+      @click="submitComment()"
+      class="location-centered-small background-box content-centered"
+      :class="[
+        this.allFieldsValid ? 'background-box-hover' : 'background-box-disabled'
+      ]"
+    >
+      Save
+    </h3>
+    <h3
+      @click="deleteComment()"
+      class="location-centered-small background-box background-box-hover content-centered"
+    >
+      Delete
+    </h3>
+    <h3
+      @click="callback()"
+      class="location-centered-small background-box background-box-hover content-centered"
+    >
+      Cancel
+    </h3>
 
-    <div class="line"/>
+    <div class="line" />
   </div>
 </template>
 

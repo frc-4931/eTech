@@ -14,7 +14,8 @@ import MenuSchedule from "./components/schedule/MenuSchedule.vue";
 import MenuBracket from "./components/bracket/MenuBracket.vue";
 import MenuAwards from "./components/awards/MenuAwards.vue";
 import MenuCredits from "./components/credits/MenuCredits.vue";
-import Login from "./components/user/Login.vue";
+import MenuLogin from "./components/user/MenuLogin.vue";
+import MenuAccount from "./components/user/MenuAccount.vue";
 import PageNotFound from "./components/PageNotFound.vue";
 
 Vue.config.productionTip = false;
@@ -34,7 +35,8 @@ const routes = [
   { path: "/tba/bracket", name: "bracket", component: MenuBracket, meta: { title: "Finals Bracket" } },
   { path: "/tba/awards", name: "awards", component: MenuAwards, meta: { title: "Home" } },
   { path: "/credits", name: "credits", component: MenuCredits, meta: { title: "Credits" } },
-  { path: "/login", name: "login", component: Login, meta: { title: "Login" } },
+  { path: "/login", name: "login", component: MenuLogin, meta: { title: "Login" } },
+  { path: "/account", name: "account", component: MenuAccount, meta: { title: "Account" } },
   { path: "*", name: "page-not-found", component: PageNotFound, meta: { title: "Page Not Found" } }
 ];
 

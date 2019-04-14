@@ -1,8 +1,5 @@
 <template>
-  <div
-    v-if="isAdmin"
-    id="menu-template-editor"
-  >
+  <div v-if="isAdmin" id="menu-template-editor">
     <div class="grid">
       <div class="mobile-view field-edit done-button-container">
         <div
@@ -30,11 +27,14 @@
       <Error
         v-if="isError"
         class="mobile-none-margin-top location-centered background-box content-centered"
-      >{{errorMessage}}</Error>
+        >{{ errorMessage }}</Error
+      >
       <p
         v-else-if="isMessage"
         class="mobile-none-margin-top location-centered background-box content-centered"
-      >{{generalMessage}}</p>
+      >
+        {{ generalMessage }}
+      </p>
       <div
         v-else
         class="mobile-none-margin-top location-centered background-box content-centered"
@@ -59,10 +59,7 @@
             id="select-template"
             class="content-input-large"
           >
-            <option
-              value="none"
-              disabled
-            >Select a Scouting Template</option>
+            <option value="none" disabled>Select a Scouting Template</option>
             <option value="TEMPLATE_PITSCOUT">Pit Scout</option>
             <option value="TEMPLATE_MATCHSCOUT">Match Scout</option>
           </select>
@@ -71,14 +68,24 @@
 
       <div class="location-centered-small">
         <!-- beautify ignore:start -->
-        <component v-for="(field, index) in fields" :key="field.field || field.title" :id="field.field || field.title.replace(/[^a-zA-Z]/g, '')" :is="fieldIs(field)" :indata="field" :data="field" @clicked="openField(field)" @save="saveField(index, ...arguments)" @close="closeField()" @delete="deleteField(index)" @move-up="moveUp(index)" @move-down="moveDown(index)"></component>
+        <component
+          v-for="(field, index) in fields"
+          :key="field.field || field.title"
+          :id="field.field || field.title.replace(/[^a-zA-Z]/g, '')"
+          :is="fieldIs(field)"
+          :indata="field"
+          :data="field"
+          @clicked="openField(field)"
+          @save="saveField(index, ...arguments)"
+          @close="closeField()"
+          @delete="deleteField(index)"
+          @move-up="moveUp(index)"
+          @move-down="moveDown(index)"
+        ></component>
         <!-- beautify ignore:end -->
         <div class="line" />
 
-        <div
-          v-if="curOpen == 'field_add'"
-          id="template-field-add"
-        >
+        <div v-if="curOpen == 'field_add'" id="template-field-add">
           <h3 class="background-box content-centered">Creating New Field</h3>
 
           <div class="field-edit">
@@ -88,7 +95,7 @@
                 type="text"
                 v-model.trim="newFieldTitle"
                 placeholder="Display Name"
-              >
+              />
             </div>
           </div>
           <div class="field-edit">

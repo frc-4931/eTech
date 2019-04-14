@@ -1,10 +1,17 @@
 <template>
   <div>
     <ul class="background-box tabs-container">
-      <li v-for="(tab) in tabs" :key="tab" @click="switchTab(tab)" :class="activeTab == tab ? 'tab-active' : ''">{{ tab }}</li>
+      <li
+        v-for="tab in tabs"
+        :key="tab"
+        @click="switchTab(tab)"
+        :class="activeTab == tab ? 'tab-active' : ''"
+      >
+        {{ tab }}
+      </li>
     </ul>
 
-    <slot :name="tabPanelSlotName"/>
+    <slot :name="tabPanelSlotName" />
   </div>
 </template>
 

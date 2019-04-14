@@ -1,16 +1,16 @@
 <template>
-  <div
-    v-if="loggedin"
-    class="grid"
-  >
+  <div v-if="loggedin" class="grid">
     <div class="location-centered-small grid-perminant">
-      <h2 class="content-centered background-box location-span">Editing user: {{username}}</h2>
+      <h2 class="content-centered background-box location-span">
+        Editing user: {{ username }}
+      </h2>
 
       <Error
         @click="isError = false"
         v-if="isError"
         class="background-box location-span"
-      >{{ errorMessage }}</Error>
+        >{{ errorMessage }}</Error
+      >
 
       <div class="location-left background-box content-centered">
         <p>Name</p>
@@ -22,7 +22,7 @@
           type="text"
           placeholder="Name"
           class="content-centered"
-        >
+        />
       </div>
 
       <div class="location-left background-box content-centered">
@@ -36,7 +36,7 @@
           placeholder="Password"
           class="content-centered"
           :disabled="lockRole"
-        >
+        />
       </div>
 
       <div class="location-left background-box content-centered">
@@ -50,7 +50,7 @@
           placeholder="Confirm Password"
           class="content-centered"
           :disabled="lockRole"
-        >
+        />
       </div>
 
       <div class="background-box content-centered location-span grid-perminant">
@@ -61,7 +61,7 @@
             value="admin"
             type="radio"
             :disabled="lockRole"
-          >
+          />
           Admin
         </label>
         <label class="location-centered-small">
@@ -71,7 +71,7 @@
             value="edit"
             type="radio"
             :disabled="lockRole"
-          >
+          />
           Edit
         </label>
         <label class="location-right-small">
@@ -81,7 +81,7 @@
             value="view"
             type="radio"
             :disabled="lockRole"
-          >
+          />
           View
         </label>
       </div>
@@ -91,18 +91,28 @@
       <h3
         @click="updateUser()"
         class="background-box content-centered"
-        v-bind:class="[this.allFieldsValid ?  'background-box-hover' : 'background-box-disabled']"
-      >Save</h3>
+        v-bind:class="[
+          this.allFieldsValid
+            ? 'background-box-hover'
+            : 'background-box-disabled'
+        ]"
+      >
+        Save
+      </h3>
 
       <h3
         @click="deleteUser()"
         class="background-box background-box-hover content-centered"
-      >Delete</h3>
+      >
+        Delete
+      </h3>
 
       <h3
         @click="goBack()"
         class="background-box background-box-hover content-centered"
-      >Cancel</h3>
+      >
+        Cancel
+      </h3>
     </div>
   </div>
   <Error v-else>You must be logged in as an admin to view this page!</Error>

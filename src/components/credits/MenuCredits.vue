@@ -2,7 +2,12 @@
   <div class="grid">
     <div class="location-centered-small">
       <h1 class="background-box content-centered">About</h1>
-      <p class="background-box content-justified">eTech is an all-in-one web application that allows users to continue scouting when offline, and when the user revives their connection the information is automatically synced to all other devices, and their screens are updated in real time.</p>
+      <p class="background-box content-justified">
+        eTech is an all-in-one web application that allows users to continue
+        scouting when offline, and when the user revives their connection the
+        information is automatically synced to all other devices, and their
+        screens are updated in real time.
+      </p>
       <div class="background-box">
         <p class="content-justified">
           <a href="https://github.com/frc-4931/eTech" target="_blank">Github</a>
@@ -11,7 +16,9 @@
     </div>
 
     <div class="location-centered-small credits-container">
-      <h1 class="location-centered-small background-box content-centered">Credits</h1>
+      <h1 class="location-centered-small background-box content-centered">
+        Credits
+      </h1>
 
       <div class="grid-perminant">
         <div class="location-left">
@@ -34,14 +41,18 @@
         </div>
         <div class="location-right">
           <p class="background-box">
-            <a href="http://evilletech.com/" target="_blank">Edwardsville Technologies</a>
+            <a href="http://evilletech.com/" target="_blank"
+              >Edwardsville Technologies</a
+            >
           </p>
         </div>
       </div>
     </div>
 
     <div class="location-centered-small credits-container">
-      <h1 class="location-centered-small background-box content-centered">Licenses</h1>
+      <h1 class="location-centered-small background-box content-centered">
+        Licenses
+      </h1>
 
       <div class="grid-perminant">
         <div class="location-left">

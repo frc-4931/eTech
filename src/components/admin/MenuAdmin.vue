@@ -1,5 +1,7 @@
 <template>
-  <Error v-if="!isAdmin">You must be logged in as an admin to view this page!</Error>
+  <Error v-if="!isAdmin"
+    >You must be logged in as an admin to view this page!</Error
+  >
 
   <div v-else class="grid">
     <h2 class="location-span background-box content-centered">Admin Tools</h2>
@@ -8,10 +10,12 @@
       <h2 class="content-centered background-box">Tools</h2>
 
       <div class="background-box">
-        <router-link :to="{name: 'user-add'}">Add User</router-link>
-        <br>
-        <router-link :to="{name: 'admin-template'}">Edit Scouting Templates</router-link>
-        <br>
+        <router-link :to="{ name: 'user-add' }">Add User</router-link>
+        <br />
+        <router-link :to="{ name: 'admin-template' }"
+          >Edit Scouting Templates</router-link
+        >
+        <br />
       </div>
     </div>
 
@@ -27,11 +31,15 @@
 
       <div v-else class="background-box content-centered">
         <p>There aren't any users to display yet.</p>
-        <router-link :to="{name: 'user-add'}">Add a user here.</router-link>
+        <router-link :to="{ name: 'user-add' }">Add a user here.</router-link>
       </div>
 
       <transition-group name="trans-group">
-        <AdminUser v-for="user in users" :key="user.username" :userdata="user"></AdminUser>
+        <AdminUser
+          v-for="user in users"
+          :key="user.username"
+          :userdata="user"
+        ></AdminUser>
       </transition-group>
     </div>
   </div>

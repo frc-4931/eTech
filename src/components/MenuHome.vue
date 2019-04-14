@@ -7,8 +7,8 @@
       <div class="background-box content-centered">
         <h2>Team Leaderboard</h2>
         <p>
-          Teams are given a rating by combining various different pieces of information collected by team
-          members.
+          Teams are given a rating by combining various different pieces of
+          information collected by team members.
         </p>
       </div>
       <div class="background-box">
@@ -17,43 +17,81 @@
           type="text"
           name="filter"
           placeholder="Search for teams..."
-        >
+        />
       </div>
       <div
         v-if="teams.length != 0"
         class="background-box leaderboard-team leaderboard-container mobile-shrink"
       >
         <h3
-          v-bind:class="HomeSortingOptions.sortedTeamOption === 'name' ? (HomeSortingOptions.sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''"
+          v-bind:class="
+            HomeSortingOptions.sortedTeamOption === 'name'
+              ? HomeSortingOptions.sortedTeamFlipped
+                ? 'sorting-option-up sorting-option-selected'
+                : 'sorting-option-down sorting-option-selected'
+              : ''
+          "
           @click="toggleSorted(true, 'name')"
-        >Name</h3>
+        >
+          Name
+        </h3>
         <h3
-          v-bind:class="HomeSortingOptions.sortedTeamOption === 'number' ? (HomeSortingOptions.sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''"
+          v-bind:class="
+            HomeSortingOptions.sortedTeamOption === 'number'
+              ? HomeSortingOptions.sortedTeamFlipped
+                ? 'sorting-option-up sorting-option-selected'
+                : 'sorting-option-down sorting-option-selected'
+              : ''
+          "
           @click="toggleSorted(true, 'number')"
-        >Number</h3>
+        >
+          Number
+        </h3>
         <h3
-          v-bind:class="HomeSortingOptions.sortedTeamOption === 'objectivePoints' ? (HomeSortingOptions.sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''"
+          v-bind:class="
+            HomeSortingOptions.sortedTeamOption === 'objectivePoints'
+              ? HomeSortingOptions.sortedTeamFlipped
+                ? 'sorting-option-up sorting-option-selected'
+                : 'sorting-option-down sorting-option-selected'
+              : ''
+          "
           @click="toggleSorted(true, 'objectivePoints')"
-        >Objective Points</h3>
+        >
+          Objective Points
+        </h3>
         <h3
-          v-bind:class="HomeSortingOptions.sortedTeamOption === 'commentPoints' ? (HomeSortingOptions.sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''"
+          v-bind:class="
+            HomeSortingOptions.sortedTeamOption === 'commentPoints'
+              ? HomeSortingOptions.sortedTeamFlipped
+                ? 'sorting-option-up sorting-option-selected'
+                : 'sorting-option-down sorting-option-selected'
+              : ''
+          "
           @click="toggleSorted(true, 'commentPoints')"
-        >Comment Points</h3>
+        >
+          Comment Points
+        </h3>
         <h3
-          v-bind:class="HomeSortingOptions.sortedTeamOption === 'totalPoints' ? (HomeSortingOptions.sortedTeamFlipped ? 'sorting-option-up sorting-option-selected' : 'sorting-option-down sorting-option-selected') : ''"
+          v-bind:class="
+            HomeSortingOptions.sortedTeamOption === 'totalPoints'
+              ? HomeSortingOptions.sortedTeamFlipped
+                ? 'sorting-option-up sorting-option-selected'
+                : 'sorting-option-down sorting-option-selected'
+              : ''
+          "
           @click="toggleSorted(true, 'totalPoints')"
-        >Total Points</h3>
+        >
+          Total Points
+        </h3>
       </div>
-      <p
-        v-else
-        class="location-centered background-box content-centered"
-      >There aren't any teams to display yet.
-        <br>Ask an admin to add teams.
+      <p v-else class="location-centered background-box content-centered">
+        There aren't any teams to display yet.
+        <br />Ask an admin to add teams.
       </p>
 
       <transition-group name="trans-group">
         <LeaderboardTeam
-          v-for="(teamData) in filteredTeams"
+          v-for="teamData in filteredTeams"
           v-bind:key="teamData['_id']"
           :teamdata="teamData"
           class="leaderboard-team"
@@ -67,13 +105,11 @@
 import LeaderboardTeam from "./LeaderboardTeam.vue";
 import lodashOrderBy from "lodash.orderby";
 import lodashFilter from "lodash.filter";
-import AccountPanel from "./user/AccountPanel.vue";
 
 export default {
   name: "MenuMain",
   components: {
-    LeaderboardTeam,
-    AccountPanel
+    LeaderboardTeam
   },
   props: {
     HomeSortingOptions: Object,
@@ -257,7 +293,6 @@ export default {
         if (cur.endsWith('"')) shouldCombine = false;
       }
 
-      var dThis = this;
       return lodashFilter(this.teams, function(team) {
         var shouldInclude = 0;
         filterWords.forEach(function(f) {

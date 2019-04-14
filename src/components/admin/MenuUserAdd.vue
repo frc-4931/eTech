@@ -1,22 +1,16 @@
 <template>
   <div>
-    <Error v-show="user.role != '_admin'">You must be logged in as an admin to view this page!</Error>
-    <div
-      v-show="
-      user.role=='_admin'"
-      class="
-      grid
-      grid-shrink"
+    <Error v-show="user.role != '_admin'"
+      >You must be logged in as an admin to view this page!</Error
     >
+    <div v-show="user.role == '_admin'" class="grid grid-shrink">
       <div class="location-centered-small grid-perminant">
-        <Error
-          v-if="isError"
-          class="background=box location-span"
-        >{{ errorMessage }}</Error>
-        <h2
-          v-else
-          class="content-centered background-box location-span"
-        >Add User</h2>
+        <Error v-if="isError" class="background=box location-span">{{
+          errorMessage
+        }}</Error>
+        <h2 v-else class="content-centered background-box location-span">
+          Add User
+        </h2>
 
         <div class="location-left background-box content-centered">
           <p>Name</p>
@@ -28,7 +22,7 @@
             type="text"
             placeholder="Name"
             class="content-centered"
-          >
+          />
         </div>
 
         <div class="location-left background-box content-centered">
@@ -41,7 +35,7 @@
             type="text"
             placeholder="Username"
             class="content-centered"
-          >
+          />
         </div>
 
         <div class="location-left background-box content-centered">
@@ -54,7 +48,7 @@
             type="password"
             placeholder="Password"
             class="content-centered"
-          >
+          />
         </div>
 
         <div class="location-left background-box content-centered">
@@ -67,17 +61,19 @@
             type="password"
             placeholder="Confirm Password"
             class="content-centered"
-          >
+          />
         </div>
 
-        <div class="background-box content-centered location-span grid-perminant">
+        <div
+          class="background-box content-centered location-span grid-perminant"
+        >
           <label class="location-left-small">
             <input
               class="radio-button"
               v-model="role"
               value="admin"
               type="radio"
-            >
+            />
             Admin
           </label>
           <label class="location-centered-small">
@@ -86,7 +82,7 @@
               v-model="role"
               value="edit"
               type="radio"
-            >
+            />
             Edit
           </label>
           <label class="location-right-small">
@@ -95,7 +91,7 @@
               v-model="role"
               value="view"
               type="radio"
-            >
+            />
             View
           </label>
         </div>
@@ -105,13 +101,21 @@
         <h3
           @click="addUser()"
           class="background-box content-centered"
-          v-bind:class="[this.allFieldsValid ?  'background-box-hover' : 'background-box-disabled']"
-        >Add</h3>
+          v-bind:class="[
+            this.allFieldsValid
+              ? 'background-box-hover'
+              : 'background-box-disabled'
+          ]"
+        >
+          Add
+        </h3>
 
         <h3
           @click="goBack()"
           class="background-box background-box-hover content-centered"
-        >Cancel</h3>
+        >
+          Cancel
+        </h3>
       </div>
     </div>
   </div>
