@@ -5,26 +5,6 @@
         Editing user: {{ username }}
       </h2>
 
-      <Error
-        @click="isError = false"
-        v-if="isError"
-        class="background-box location-span"
-        >{{ errorMessage }}</Error
-      >
-
-      <div class="location-left background-box content-centered">
-        <p>Name</p>
-      </div>
-
-      <div class="location-right background-box-input">
-        <input
-          v-model.trim="name"
-          type="text"
-          placeholder="Name"
-          class="content-centered"
-        />
-      </div>
-
       <div class="location-left background-box content-centered">
         <p>Password</p>
       </div>
@@ -133,16 +113,12 @@ export default {
   data() {
     return {
       loggedin: true,
-      name: "",
-      isError: false,
-      errorMessage: "",
       role: "edit",
       editingUser: "",
       lockRole: false,
       isAdmin: false,
       password: "",
       confirmPassword: "",
-      o_name: "",
       o_role: "",
       fieldsChanged: 0
     };
@@ -155,7 +131,7 @@ export default {
         if (this.role !== "admin" && this.isAdmin == true) values++;
         if (this.role === "admin" && this.isAdmin == false) values++;
         if (this.password != "") values++;
-        if (this.o_role !== this.role || this.o_name !== this.name) values++;
+        if (this.o_role !== this.role) values++;
 
         if (values == newValue) {
           this.goBack();
@@ -179,9 +155,6 @@ export default {
             dThis.role = "view";
           }
           dThis.o_role = dThis.role;
-
-          dThis.name = response.realName || "";
-          dThis.o_name = dThis.name;
         }
       });
     },
@@ -235,9 +208,11 @@ export default {
                 }
               });
           } else {
-            this.isError = true;
-            this.errorMessage =
-              "You must change the password when making a user an admin.";
+            dThis.popup.newPopup(
+              "Error while editing user",
+              "You must change the password when making a user an admin.",
+              ["Ok"]
+            );
             return;
           }
         }
@@ -256,7 +231,7 @@ export default {
             });
         }
 
-        if (this.o_role !== this.role || this.o_name !== this.name) {
+        if (this.o_role !== this.role) {
           this.remotedb
             .putUser(
               this.username,
@@ -286,9 +261,11 @@ export default {
             });
         }
       } else {
-        this.isError = true;
-        this.errorMessage =
-          "You didn't change any values or passwords do not match!";
+        this.popup.newPopup(
+          "Error",
+          "You didn't change any values or passwords do not match!",
+          ["Ok"]
+        );
       }
     },
     goBack() {
@@ -317,11 +294,8 @@ export default {
   computed: {
     allFieldsValid() {
       return (
-        this.name.length !== 0 &&
         this.password === this.confirmPassword &&
-        (this.password.length !== 0 ||
-          this.o_name !== this.name ||
-          this.o_role !== this.role)
+        (this.password.length !== 0 || this.o_role !== this.role)
       );
     }
   }

@@ -1,9 +1,6 @@
 <template>
   <div class="background-box admin-user">
     <div>
-      <p>{{ user.name }}</p>
-    </div>
-    <div>
       <p>{{ user.username }}</p>
     </div>
     <div>

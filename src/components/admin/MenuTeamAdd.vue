@@ -8,8 +8,6 @@
       <div class="location-centered-small grid-perminant">
         <h2 class="background-box location-span content-centered">Add team</h2>
 
-        <Error v-if="isError" class="location-span">{{ errorMessage }}</Error>
-
         <p class="location-left background-box content-centered">Team Name</p>
 
         <div class="location-right background-box-input">
@@ -70,6 +68,7 @@ export default {
     Error
   },
   props: {
+    popup: Object,
     localdb: Object,
     remotedb: Object,
     reloadUser: Function,
@@ -78,9 +77,7 @@ export default {
   data: function() {
     return {
       number: "",
-      name: "",
-      isError: false,
-      errorMessage: "Error"
+      name: ""
     };
   },
   methods: {
@@ -101,12 +98,13 @@ export default {
           })
           .catch(function(err) {
             if (err.name === "conflict") {
-              dThis.isError = true;
-              dThis.errorMessage =
-                "There was a conflict when adding team! Maybe the team number is already used?";
+              dThis.popup.newPopup(
+                "Error while adding team!",
+                "There was a conflict when adding this team! Maybe the team number is already used?",
+                ["Ok"]
+              );
             } else {
-              dThis.isError = true;
-              dThis.errorMessage = "An unknown error occurred";
+              dThis.popup.catchError(err);
             }
           });
       }

@@ -5,25 +5,9 @@
     >
     <div v-show="user.role == '_admin'" class="grid grid-shrink">
       <div class="location-centered-small grid-perminant">
-        <Error v-if="isError" class="background=box location-span">{{
-          errorMessage
-        }}</Error>
-        <h2 v-else class="content-centered background-box location-span">
+        <h2 class="content-centered background-box location-span">
           Add User
         </h2>
-
-        <div class="location-left background-box content-centered">
-          <p>Name</p>
-        </div>
-
-        <div class="location-right background-box-input">
-          <input
-            v-model.trim="name"
-            type="text"
-            placeholder="Name"
-            class="content-centered"
-          />
-        </div>
 
         <div class="location-left background-box content-centered">
           <p>Username</p>
@@ -128,18 +112,16 @@ export default {
   name: "MenuUserAdd",
   components: { Error },
   props: {
+    popup: Object,
     localdb: Object,
     remotedb: Object,
     user: Object
   },
   data() {
     return {
-      name: "",
       username: "",
       password: "",
       confrimPassword: "",
-      isError: false,
-      errorMessage: false,
       role: "edit"
     };
   },
@@ -149,26 +131,29 @@ export default {
         var dThis = this;
 
         if (this.role === "admin") {
-          this.remotedb.signUpAdmin(
-            this.username.toLowerCase(),
-            this.password,
-            {
-              metadata: { realName: dThis.name }
-            }
-          );
+          this.remotedb.signUpAdmin(this.username.toLowerCase(), this.password);
         }
+
         this.remotedb.signUp(
           this.username.toLowerCase(),
           this.password,
-          { roles: [this.role], metadata: { realName: dThis.name } },
+          { roles: [this.role] },
           function(err) {
             if (err) {
               if (err.name === "conflict") {
-                alert("conflict");
+                dThis.popup.newPopup(
+                  "Error while adding user",
+                  "The username you tried to add already exists!",
+                  ["Ok"]
+                );
               } else if (err.name === "forbidden") {
-                alert("Invalid username");
+                dThis.popup.newPopup(
+                  "Error while adding user",
+                  "You do not have permission to add a user!",
+                  ["Ok"]
+                );
               } else {
-                // HTTP error, cosmic rays, etc.
+                dThis.popup.catchError(err);
               }
             } else {
               dThis.goBack();
@@ -176,8 +161,11 @@ export default {
           }
         );
       } else {
-        this.isError = true;
-        this.errorMessage = "You must be an admin to add users!";
+        This.popup.newPopup(
+          "Error while adding user",
+          "You must be an admin to add users!",
+          ["Ok"]
+        );
       }
     },
     goBack() {
@@ -187,7 +175,6 @@ export default {
   computed: {
     allFieldsValid() {
       return (
-        this.name != "" &&
         this.username != "" &&
         !this.username.includes(" ") &&
         !this.username.includes("_") &&
