@@ -4,89 +4,89 @@
       <label class="location-left content-padding-left">
         <input
           class="radio-button"
-          v-model="seleted"
+          v-model="selected"
           value="PitScout"
           type="radio"
           name="r_scout_select"
-        >
+        />
         Pit Scout
       </label>
 
       <label class="location-right content-right content-padding-right">
         <input
           class="radio-button"
-          v-model="seleted"
+          v-model="selected"
           value="MatchScout"
           type="radio"
           name="r_scout_select"
-        >
+        />
         Match Scout
       </label>
     </div>
 
     <div
-      v-if="seleted == 'MatchScout'"
+      v-if="selected == 'MatchScout'"
       class="background-box-input"
       id="match-select"
     >
-      <select
-        v-model="matchID"
-        class="content-input-large"
-      >
+      <select v-model="matchID" class="content-input-large">
         <option value="">Select A Match</option>
-        <optgroup
-          v-if="qualMatches.length > 0"
-          label="Qualification Matches"
-        >
+        <optgroup v-if="qualMatches.length > 0" label="Qualification Matches">
           <option
             v-for="match in qualMatches"
             :key="match"
-            :value="'TBA-'+match"
-          >{{ getMatchTitle(match) }}</option>
+            :value="'TBA-' + match"
+            >{{ getMatchTitle(match) }}</option
+          >
         </optgroup>
-        <optgroup
-          v-if="qfMatches.length > 0"
-          label="Quarter-Final Matches"
-        >
+        <optgroup v-if="qfMatches.length > 0" label="Quarter-Final Matches">
           <option
             v-for="match in qfMatches"
             :key="match"
-            :value="'TBA-'+match"
-          >{{ getMatchTitle(match) }}</option>
+            :value="'TBA-' + match"
+            >{{ getMatchTitle(match) }}</option
+          >
         </optgroup>
-        <optgroup
-          v-if="sfMatches.length > 0"
-          label="Semi-Final Matches"
-        >
+        <optgroup v-if="sfMatches.length > 0" label="Semi-Final Matches">
           <option
             v-for="match in sfMatches"
             :key="match"
-            :value="'TBA-'+match"
-          >{{ getMatchTitle(match) }}</option>
+            :value="'TBA-' + match"
+            >{{ getMatchTitle(match) }}</option
+          >
         </optgroup>
-        <optgroup
-          v-if="finalMatches.length > 0"
-          label="Final Matches"
-        >
+        <optgroup v-if="finalMatches.length > 0" label="Final Matches">
           <option
             v-for="match in finalMatches"
             :key="match"
-            :value="'TBA-'+match"
-          >{{ getMatchTitle(match) }}</option>
+            :value="'TBA-' + match"
+            >{{ getMatchTitle(match) }}</option
+          >
         </optgroup>
         <optgroup label="Practice Matches">
           <option value="PRACTICE">Practice Match</option>
         </optgroup>
         <optgroup label="Mnaual Matches">
-          <option value="MANUAL">Manual Match (Not recommended in most circumstances)</option>
+          <option value="MANUAL"
+            >Manual Match (Not recommended in most circumstances)</option
+          >
         </optgroup>
       </select>
     </div>
 
     <h3
       @click="createScout()"
-      class="location-centered-small background-box background-box-hover content-centered"
-    >Create</h3>
+      class="location-centered-small background-box content-centered"
+      :class="
+        selected == 'none'
+          ? 'background-box-disabled'
+          : selected == 'MatchScout' && matchID == ''
+          ? 'background-box-disabled'
+          : 'background-box-hover'
+      "
+    >
+      Create
+    </h3>
   </div>
   <Error v-else>You must be logged in to create a new scout!</Error>
 </template>
@@ -110,7 +110,7 @@ export default {
   },
   data: function() {
     return {
-      seleted: "none",
+      selected: "none",
       pitScoutPrefix: "PITSCOUT_",
       matchScoutPrefix: "MATCHSCOUT_",
       pitTemplate: Object,
@@ -143,7 +143,7 @@ export default {
     createScout() {
       var dThis = this;
 
-      if (this.seleted == "PitScout") {
+      if (this.selected == "PitScout") {
         this.localdb
           .allDocs({
             include_docs: false,
@@ -161,7 +161,7 @@ export default {
 
             dThis.createPitScout(pitScoutNumber);
           });
-      } else if (this.seleted == "MatchScout") {
+      } else if (this.selected == "MatchScout") {
         var id = this.matchScoutPrefix + this.teamNumber + "_";
 
         if (this.matchID == "MANUAL") {
@@ -238,8 +238,6 @@ export default {
         } else {
           //ERROR SCOUT NOT SELECTED
         }
-      } else {
-        alert("You must choose a scouting type!");
       }
     },
     createPitScout(number) {
