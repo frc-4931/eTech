@@ -119,9 +119,6 @@ export default {
     allFieldsValid() {
       return this.name.length !== 0 && this.number > 0;
     }
-  },
-  created: function() {
-    this.reloadUser();
   }
 };
 </script> 

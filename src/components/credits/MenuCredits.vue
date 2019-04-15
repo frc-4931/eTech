@@ -10,7 +10,11 @@
       </p>
       <div class="background-box">
         <p class="content-justified">
-          <a href="https://github.com/frc-4931/eTech" target="_blank">Github</a>
+          If you would like to contribute to eTech or get in contact with us
+          regarding anything, you can over at our
+          <a href="https://github.com/frc-4931/eTech" target="_blank"
+            >Github repository</a
+          >.
         </p>
       </div>
     </div>
@@ -34,17 +38,6 @@
         </div>
         <div class="location-right">
           <p class="background-box">Damian Kocher</p>
-        </div>
-
-        <div class="location-left">
-          <p class="background-box">!</p>
-        </div>
-        <div class="location-right">
-          <p class="background-box">
-            <a href="http://evilletech.com/" target="_blank"
-              >Edwardsville Technologies</a
-            >
-          </p>
         </div>
       </div>
     </div>
