@@ -50,6 +50,7 @@
         <p>Home</p>
       </div>
 
+      <!--
       <div
         v-if="this.user.role === '_admin'"
         class="nav-drawer-tab"
@@ -61,6 +62,7 @@
         </div>
         <p>Analytics</p>
       </div>
+           -->
 
       <div class="line" />
 
@@ -94,6 +96,8 @@
         </div>
         <p>Awards</p>
       </div>
+
+      <!--
       <div
         class="nav-drawer-tab"
         @click="viewPage('bracket')"
@@ -104,6 +108,7 @@
         </div>
         <p>Finals Bracket</p>
       </div>
+      -->
 
       <div v-if="this.user.role === '_admin'">
         <div class="line" />
