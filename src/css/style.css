@@ -72,7 +72,7 @@ body {
 .background-box-hover:hover,
 .background-box-hover:focus {
   background-color: var(--box-hover-color);
-  box-shadow: var(--shadow-hover);  
+  box-shadow: var(--shadow-hover);
 }
 .line {
   background: linear-gradient(
@@ -173,23 +173,13 @@ a:hover {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
   }
-  .mobile-view {
-    display: none;
-  }
 }
 @media (max-width: 700px) {
   .grid > * {
     margin-bottom: 20px;
   }
-  .desktop-view {
-    display: none;
-  }
   .mobile-none-margin-top {
     margin-top: 0px;
-  }
-  .done-button-container {
-    margin-left: 25px;
-    margin-right: 25px;
   }
 }
 @keyframes fade-in {
@@ -228,7 +218,6 @@ textarea {
   --text-color: #eceff1;
   --box-color: #37474f;
   --box-hover-color: #546e7a;
-  --box-selected-color: #607d8b;
 
   --link-color: #2196f3;
   --link-active-color: #0069c0;
@@ -239,9 +228,8 @@ textarea {
 
   --tba-alliance-blue: #2196f3;
   --tba-alliance-red: #f44335;
-  
 
-/* Light theme
+  /* Light theme
 --shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5);
 
 --background-color: #cfd8dc;
@@ -276,13 +264,25 @@ textarea {
 .trans-group-item {
   transition: all 0.5s;
 }
-.trans-group-enter, .trans-group-leave-to {
+.trans-group-enter,
+.trans-group-leave-to {
   opacity: 0;
 }
 .trans-group-leave-active {
   position: absolute;
 }
 
-html::-webkit-scrollbar { 
-  display: none; 
+html::-webkit-scrollbar {
+  display: none;
+}
+
+.small-margin {
+  padding: 5px;
+}
+.small-margin div,
+.small-margin p,
+.small-margin h1,
+.small-margin h2,
+.small-margin h3 {
+  margin: 5px;
 }

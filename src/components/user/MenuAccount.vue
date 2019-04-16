@@ -8,6 +8,7 @@
           <p
             v-for="(panel, index) in panels"
             :key="index"
+            :class="{'menu-account-tab-active': index == activePanel}"
             @click="activePanel = index"
           >{{ panel[1] }}</p>
 
@@ -35,6 +36,7 @@
             :user="user"
             :popup="popup"
             :reloadSync="reloadSync"
+            class="menu-account-small"
           ></component>
         </transition>
       </div>
@@ -90,5 +92,9 @@ export default {
 .menu-account-tabs p:focus {
   background-color: var(--box-hover-color);
   box-shadow: var(--shadow);
+}
+.menu-account-tab-active {
+  background-color: var(--link-color) !important;
+  box-shadow: none !important;
 }
 </style>

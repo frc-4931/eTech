@@ -1,23 +1,27 @@
 <template>
-  <div class="grid-perminant menu-account-small">
-    <p class="content-centered background-box location-left">Username</p>
-    <div class="background-box-input location-right">
-      <input
-        v-model.trim="password"
-        placeholder="Password"
-        type="password"
-        class="content-centered"
-      >
-    </div>
-    <p class="content-centered background-box location-left">Password</p>
-    <div class="background-box-input location-right">
-      <input
-        v-on:keydown.enter="changePassword()"
-        v-model="confirmPassword"
-        placeholder="Confirm Password"
-        type="password"
-        class="content-centered"
-      >
+  <div>
+    <div class="location-span small-margin grid-perminant">
+      <p class="content-centered background-box location-left">Password</p>
+      <div class="background-box-input location-right">
+        <input
+          v-model.trim="password"
+          placeholder="Password"
+          type="password"
+          class="content-centered"
+        />
+      </div>
+      <p class="content-centered background-box location-left">
+        Confirm Password
+      </p>
+      <div class="background-box-input location-right">
+        <input
+          v-on:keydown.enter="changePassword()"
+          v-model="confirmPassword"
+          placeholder="Confirm Password"
+          type="password"
+          class="content-centered"
+        />
+      </div>
     </div>
 
     <p
@@ -25,8 +29,10 @@
       v-bind:class="[
         allFieldsValid ? 'background-box-hover' : 'background-box-disabled'
       ]"
-      class="location-span content-centered background-box"
-    >Login</p>
+      class="content-centered background-box"
+    >
+      Login
+    </p>
   </div>
 </template>
 

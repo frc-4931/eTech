@@ -1,7 +1,7 @@
 <template>
   <div class="grid-perminant">
-    <div class="location-span background-box content-centered">
-      <h2>Hello, {{ user.username != null ? user.username : "ERROR" }}!</h2>
+    <div class="location-span background-box">
+      <h2 class="content-centered">Hello, {{ user.username != null ? user.username : "ERROR" }}!</h2>
       <p>
         In the account menu you can change your password and see your account
         permissions.

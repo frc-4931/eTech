@@ -6,9 +6,7 @@
         :key="tab"
         @click="switchTab(tab)"
         :class="activeTab == tab ? 'tab-active' : ''"
-      >
-        {{ tab }}
-      </li>
+      >{{ tab }}</li>
     </ul>
 
     <transition
@@ -17,7 +15,7 @@
       mode="out-in"
     >
       <keep-alive>
-        <slot :name="tabPanelSlotName" />
+        <slot :name="tabPanelSlotName"/>
       </keep-alive>
     </transition>
   </div>
@@ -62,8 +60,10 @@ export default {
 }
 .tabs-container li:hover {
   background-color: var(--box-hover-color);
+  box-shadow: var(--shadow);
 }
 .tab-active {
-  background-color: var(--box-selected-color) !important;
+  background-color: var(--link-color) !important;
+  box-shadow: none !important;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="pit-scout-div">
+  <div class="scout-div">
     <div class="background-box content-centered scouting-title-field">
       <h2>{{ data.title }}</h2>
     </div>

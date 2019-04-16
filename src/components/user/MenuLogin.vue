@@ -1,8 +1,10 @@
 <template>
   <div class="grid">
-    <div class="location-centered-small grid-perminant">
-      <h3 class="content-centered location-span background-box">Sign in</h3>
+    <h3 class="content-centered location-centered-small background-box">
+      Sign in
+    </h3>
 
+    <div class="location-centered-small grid-perminant small-margin">
       <p class="content-centered background-box location-left">Username</p>
       <div class="background-box-input location-right">
         <input
@@ -22,12 +24,14 @@
           class="content-centered"
         />
       </div>
+    </div>
+    <div class="location-centered-small">
       <p
         @click="login()"
         v-bind:class="[
           allFieldsValid ? 'background-box-hover' : 'background-box-disabled'
         ]"
-        class="location-span content-centered background-box"
+        class="content-centered background-box"
       >
         Login
       </p>

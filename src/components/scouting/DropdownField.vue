@@ -1,5 +1,5 @@
 <template>
-  <div class="grid-perminant pit-scout-div">
+  <div class="grid-perminant scout-div">
     <div class="pitscout-label background-box location-left">
       <p>{{ data.title }}</p>
     </div>

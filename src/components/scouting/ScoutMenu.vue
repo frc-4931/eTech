@@ -11,10 +11,7 @@
       ></component>
     </div>
 
-    <div
-      v-if="hasEdit"
-      class="grid-perminant"
-    >
+    <div v-if="hasEdit" class="grid-perminant">
       <SaveButton
         class="location-span pitscout-label"
         :unsavedChanges="unsaved"
@@ -29,18 +26,13 @@
         @click="close()"
         class="location-right background-box background-box-hover content-centered"
         style="margin-top: 0px; margin-left: 5px;"
-      >Close
-      </h3>
+      >Close</h3>
     </div>
-    <div
-      v-else
-      class="grid-perminant"
-    >
+    <div v-else class="grid-perminant">
       <h3
         @click="close()"
         class="location-span background-box background-box-hover content-centered"
-      >Close
-      </h3>
+      >Close</h3>
     </div>
   </div>
 </template>
@@ -262,14 +254,14 @@ export default {
 </script>
 
 <style>
-.pit-scout-div div {
+.scout-div div {
   margin: 5px;
 }
 .scouting-menu-fields {
   padding: 5px;
   padding-top: 0px;
 }
-.pit-scout-div:first-child {
+.scout-div:first-child {
   margin-top: 0px;
 }
 .pitscout-label {
