@@ -5,56 +5,58 @@
     >
 
     <div v-show="user.role == '_admin'" class="grid grid-shrink">
-      <div class="location-centered-small grid-perminant">
-        <h2 class="background-box location-span content-centered">Add team</h2>
+      <div class="location-centered-small">
+        <h2 class="background-box content-centered">Add team</h2>
 
-        <p class="location-left background-box content-centered">Team Name</p>
+        <div class="grid-perminant small-margin">
+          <p class="location-left background-box content-centered">Team Name</p>
 
-        <div class="location-right background-box-input">
-          <input
-            v-model.trim="name"
-            type="text"
-            name="team-name"
-            placeholder="Team Name"
-            class="content-centered"
-          />
+          <div class="location-right background-box-input">
+            <input
+              v-model.trim="name"
+              type="text"
+              name="team-name"
+              placeholder="Team Name"
+              class="content-centered"
+            />
+          </div>
+
+          <p class="location-left background-box content-centered">
+            Team Number
+          </p>
+
+          <div class="location-right background-box-input">
+            <input
+              v-model.number="number"
+              type="number"
+              pattern="[0-9]*"
+              max="9999"
+              min="1"
+              name="team-number"
+              placeholder="Team Number"
+              class="content-centered"
+            />
+          </div>
         </div>
 
-        <p class="location-left background-box content-centered">Team Number</p>
+        <h3
+          @click="submitTeam()"
+          class="background-box content-centered"
+          :class="[
+            this.allFieldsValid
+              ? 'background-box-hover'
+              : 'background-box-disabled'
+          ]"
+        >
+          Add
+        </h3>
 
-        <div class="location-right background-box-input">
-          <input
-            v-model.number="number"
-            type="number"
-            pattern="[0-9]*"
-            max="9999"
-            min="1"
-            name="team-number"
-            placeholder="Team Number"
-            class="content-centered"
-          />
-        </div>
-
-        <div class="location-span">
-          <h3
-            @click="submitTeam()"
-            class="background-box content-centered"
-            :class="[
-              this.allFieldsValid
-                ? 'background-box-hover'
-                : 'background-box-disabled'
-            ]"
-          >
-            Add
-          </h3>
-
-          <h3
-            @click="goBack()"
-            class="background-box background-box-hover content-centered"
-          >
-            Cancel
-          </h3>
-        </div>
+        <h3
+          @click="goBack()"
+          class="background-box background-box-hover content-centered"
+        >
+          Cancel
+        </h3>
       </div>
     </div>
   </div>
@@ -74,14 +76,14 @@ export default {
     reloadUser: Function,
     user: Object
   },
-  data: function() {
+  data() {
     return {
       number: "",
       name: ""
     };
   },
   methods: {
-    submitTeam: function() {
+    submitTeam() {
       var dThis = this;
       if (this.allFieldsValid) {
         var team = {

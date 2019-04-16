@@ -4,84 +4,80 @@
       >You must be logged in as an admin to view this page!</Error
     >
     <div v-show="user.role == '_admin'" class="grid grid-shrink">
-      <div class="location-centered-small grid-perminant">
-        <h2 class="content-centered background-box location-span">
+      <div class="location-centered-small">
+        <h2 class="content-centered background-box">
           Add User
         </h2>
 
-        <div class="location-left background-box content-centered">
-          <p>Username</p>
-        </div>
+        <div class="grid-perminant small-margin">
+          <p class="location-left background-box content-centered">Username</p>
 
-        <div class="location-right background-box-input">
-          <input
-            v-model.trim="username"
-            type="text"
-            placeholder="Username"
-            class="content-centered"
-          />
-        </div>
-
-        <div class="location-left background-box content-centered">
-          <p>Password</p>
-        </div>
-
-        <div class="location-right background-box-input">
-          <input
-            v-model="password"
-            type="password"
-            placeholder="Password"
-            class="content-centered"
-          />
-        </div>
-
-        <div class="location-left background-box content-centered">
-          <p>Confirm Password</p>
-        </div>
-
-        <div class="location-right background-box-input">
-          <input
-            v-model="confrimPassword"
-            type="password"
-            placeholder="Confirm Password"
-            class="content-centered"
-          />
-        </div>
-
-        <div
-          class="background-box content-centered location-span grid-perminant"
-        >
-          <label class="location-left-small">
+          <div class="location-right background-box-input">
             <input
-              class="radio-button"
-              v-model="role"
-              value="admin"
-              type="radio"
+              v-model.trim="username"
+              type="text"
+              placeholder="Username"
+              class="content-centered"
             />
-            Admin
-          </label>
-          <label class="location-centered-small">
-            <input
-              class="radio-button"
-              v-model="role"
-              value="edit"
-              type="radio"
-            />
-            Edit
-          </label>
-          <label class="location-right-small">
-            <input
-              class="radio-button"
-              v-model="role"
-              value="view"
-              type="radio"
-            />
-            View
-          </label>
-        </div>
-      </div>
+          </div>
 
-      <div class="location-centered-small">
+          <p class="location-left background-box content-centered">Password</p>
+
+          <div class="location-right background-box-input">
+            <input
+              v-model="password"
+              type="password"
+              placeholder="Password"
+              class="content-centered"
+            />
+          </div>
+
+          <p class="location-left background-box content-centered">
+            Confirm Password
+          </p>
+
+          <div class="location-right background-box-input">
+            <input
+              v-model="confrimPassword"
+              type="password"
+              placeholder="Confirm Password"
+              class="content-centered"
+            />
+          </div>
+
+          <div
+            class="background-box content-centered grid-perminant location-span"
+          >
+            <label class="location-left-small">
+              <input
+                class="radio-button"
+                v-model="role"
+                value="admin"
+                type="radio"
+              />
+              Admin
+            </label>
+            <label class="location-centered-small">
+              <input
+                class="radio-button"
+                v-model="role"
+                value="edit"
+                type="radio"
+              />
+              Edit
+            </label>
+            <label class="location-right-small">
+              <input
+                class="radio-button"
+                v-model="role"
+                value="view"
+                type="radio"
+              />
+              View
+            </label>
+          </div>
+        </div>
+
         <h3
           @click="addUser()"
           class="background-box content-centered"

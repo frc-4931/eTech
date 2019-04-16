@@ -1,73 +1,75 @@
 <template>
   <div v-if="loggedin" class="grid">
-    <div class="location-centered-small grid-perminant">
-      <h2 class="content-centered background-box location-span">
+    <div class="location-centered-small">
+      <h2 class="content-centered background-box">
         Editing user: {{ username }}
       </h2>
 
-      <div class="location-left background-box content-centered">
-        <p>Password</p>
-      </div>
+      <div class="grid-perminant small-margin">
+        <div class="location-left background-box content-centered">
+          <p>Password</p>
+        </div>
 
-      <div class="location-right background-box-input">
-        <input
-          v-model="password"
-          type="password"
-          placeholder="Password"
-          class="content-centered"
-          :disabled="lockRole"
-        />
-      </div>
-
-      <div class="location-left background-box content-centered">
-        <p>Confirm Password</p>
-      </div>
-
-      <div class="location-right background-box-input">
-        <input
-          v-model="confirmPassword"
-          type="password"
-          placeholder="Confirm Password"
-          class="content-centered"
-          :disabled="lockRole"
-        />
-      </div>
-
-      <div class="background-box content-centered location-span grid-perminant">
-        <label class="location-left-small">
+        <div class="location-right background-box-input">
           <input
-            class="radio-button"
-            v-model="role"
-            value="admin"
-            type="radio"
+            v-model="password"
+            type="password"
+            placeholder="Password"
+            class="content-centered"
             :disabled="lockRole"
           />
-          Admin
-        </label>
-        <label class="location-centered-small">
-          <input
-            class="radio-button"
-            v-model="role"
-            value="edit"
-            type="radio"
-            :disabled="lockRole"
-          />
-          Edit
-        </label>
-        <label class="location-right-small">
-          <input
-            class="radio-button"
-            v-model="role"
-            value="view"
-            type="radio"
-            :disabled="lockRole"
-          />
-          View
-        </label>
-      </div>
-    </div>
+        </div>
 
-    <div class="location-centered-small">
+        <div class="location-left background-box content-centered">
+          <p>Confirm Password</p>
+        </div>
+
+        <div class="location-right background-box-input">
+          <input
+            v-model="confirmPassword"
+            type="password"
+            placeholder="Confirm Password"
+            class="content-centered"
+            :disabled="lockRole"
+          />
+        </div>
+
+        <div
+          class="background-box content-centered location-span grid-perminant"
+        >
+          <label class="location-left-small">
+            <input
+              class="radio-button"
+              v-model="role"
+              value="admin"
+              type="radio"
+              :disabled="lockRole"
+            />
+            Admin
+          </label>
+          <label class="location-centered-small">
+            <input
+              class="radio-button"
+              v-model="role"
+              value="edit"
+              type="radio"
+              :disabled="lockRole"
+            />
+            Edit
+          </label>
+          <label class="location-right-small">
+            <input
+              class="radio-button"
+              v-model="role"
+              value="view"
+              type="radio"
+              :disabled="lockRole"
+            />
+            View
+          </label>
+        </div>
+      </div>
+
       <h3
         @click="updateUser()"
         class="background-box content-centered"
