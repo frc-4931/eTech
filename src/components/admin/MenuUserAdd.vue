@@ -144,13 +144,13 @@ export default {
                 dThis.popup.newPopup(
                   "Error while adding user",
                   "The username you tried to add already exists!",
-                  ["Ok"]
+                  undefined
                 );
               } else if (err.name === "forbidden") {
                 dThis.popup.newPopup(
                   "Error while adding user",
                   "You do not have permission to add a user!",
-                  ["Ok"]
+                  undefined
                 );
               } else {
                 dThis.popup.catchError(err);
@@ -164,7 +164,7 @@ export default {
         This.popup.newPopup(
           "Error while adding user",
           "You must be an admin to add users!",
-          ["Ok"]
+          undefined
         );
       }
     },

@@ -101,7 +101,7 @@ export default {
               dThis.popup.newPopup(
                 "Error while adding team!",
                 "There was a conflict when adding this team! Maybe the team number is already used?",
-                ["Ok"]
+                undefined
               );
             } else {
               dThis.popup.catchError(err);

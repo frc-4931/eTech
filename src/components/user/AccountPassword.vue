@@ -65,7 +65,7 @@ export default {
             this.popup.newPopup(
               "Success",
               "You successfully changed your password.",
-              ["Ok"]
+              undefined
             );
 
             this.reloadSync();

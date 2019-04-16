@@ -38,14 +38,26 @@
 export default {
   name: "Popup",
   data() {
-    return { clicked: -1, title: "", text: "", options: [], showPopup: false };
+    return {
+      clicked: -1,
+      title: "",
+      text: "",
+      options: [],
+      showPopup: false,
+      defualtOptions: ["Ok"]
+    };
   },
   props: { popup: Object },
   methods: {
     newPopup(newTitle, newText, newOptions) {
-      this.title = newTitle;
-      this.text = newText;
-      this.options = newOptions;
+      this.title = newTitle == undefined ? "Error" : newTitle;
+      this.text = newText == undefined ? "Something went wrong." : newText;
+      this.options =
+        newOptions != undefined
+          ? newOptions.length == 0
+            ? this.defualtOptions
+            : newOptions
+          : this.defualtOptions;
       this.clicked = -1;
       this.showPopup = true;
 
@@ -62,11 +74,7 @@ export default {
       });
     },
     catchError(error) {
-      this.newPopup(
-        error.name ? "Error: " + error.name : "Error",
-        error.message ? error.message : "Something went wrong.",
-        ["Ok"]
-      );
+      this.newPopup(error.name, error.message, ["Ok"]);
     }
   },
   created() {

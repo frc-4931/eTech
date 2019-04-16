@@ -1,30 +1,9 @@
 <template>
-  <div v-if="isAdmin" id="menu-template-editor">
+  <div v-if="isAdmin">
     <div class="grid">
-      <Error
-        v-if="isError"
-        class="mobile-none-margin-top location-centered background-box content-centered"
-        >{{ errorMessage }}</Error
-      >
-      <p
-        v-else-if="isMessage"
-        class="mobile-none-margin-top location-centered background-box content-centered"
-      >
-        {{ generalMessage }}
-      </p>
-      <div
-        v-else
-        class="mobile-none-margin-top location-centered background-box content-centered"
-      >
+      <div class="location-centered-small background-box content-centered">
         <h2>Template Editor</h2>
       </div>
-
-      <h3
-        @click="saveTemplate(curTemplate)"
-        class="location-centered-small background-box content-centered"
-      >
-        Save
-      </h3>
 
       <div class="location-centered-small content-centered">
         <h3 class="background-box">Select Template to Edit:</h3>
@@ -60,9 +39,10 @@
           @move-down="moveDown(index)"
         ></component>
         <!-- beautify ignore:end -->
-        <div class="line" />
 
         <div v-if="curOpen == 'field_add'" id="template-field-add">
+          <div class="line" />
+
           <h3 class="background-box content-centered">Creating New Field</h3>
 
           <div class="field-edit">
@@ -103,12 +83,27 @@
         </div>
 
         <div
-          v-else-if="curTemplate != 'none'"
-          @click="openFieldAdd()"
-          style="margin-top: 30px;"
-          class="location-centered-small background-box background-box-hover content-centered"
+          v-else-if="curTemplate != 'none' && curOpen == 'none'"
+          class="location-centered-small content-centered"
         >
-          <h3>Create new field</h3>
+          <div class="line" />
+
+          <div
+            @click="openFieldAdd()"
+            class=" background-box background-box-hover"
+          >
+            <h3>Create New field</h3>
+          </div>
+
+          <h3
+            @click="saveTemplate(curTemplate)"
+            class="location-centered-small background-box"
+            :class="
+              this.unsaved ? 'background-box-hover' : 'background-box-disabled'
+            "
+          >
+            Save
+          </h3>
         </div>
       </div>
     </div>
@@ -135,6 +130,7 @@ import { scroller } from "vue-scrollto/src/scrollTo";
 export default {
   name: "MenuTemplateEditor",
   props: {
+    popup: Object,
     localdb: Object,
     remotedb: Object
   },
@@ -153,10 +149,6 @@ export default {
       curOpen: "none",
       newFieldTitle: "",
       newFieldType: "TitleField",
-      isError: false,
-      isMessage: false,
-      errorMessage: "An error has occurred!",
-      generalMessage: "",
       curTemplate: "none",
       scrollTo: scroller(),
       isAdmin: true,
@@ -287,11 +279,18 @@ export default {
       this.curOpen = "none";
     },
     deleteField(index) {
-      var confirmDelete = confirm(
-        "You are about to delete '" + this.fields[index].title + "'"
-      );
-      if (confirmDelete) this.fields.splice(index, 1);
-      this.unsaved = true;
+      this.popup
+        .newPopup(
+          "Delete field?",
+          "You are about to delete '" + this.fields[index].title + "'",
+          ["Cancel", "Delete"]
+        )
+        .then(option => {
+          if (option == "Delete") {
+            this.fields.splice(index, 1);
+            this.unsaved = true;
+          }
+        });
     },
     moveUp(index) {
       if (index > 0) this.arrayMove(this.fields, index, index - 1);
@@ -304,8 +303,6 @@ export default {
     },
     loadTemplate(template) {
       var dThis = this;
-      this.isError = false;
-      this.isMessage = false;
       this.fields = [];
       if (template == "none") return;
       this.localdb
@@ -315,24 +312,25 @@ export default {
         })
         .catch(function(err) {
           if (err.status == 404) {
-            dThis.isError = true;
-            dThis.errorMessage =
-              "Failed to load template... creating a blank template. If there is an existing template saving will overwrite it!";
+            dThis.popup.newPopup(
+              "Failed to load template",
+              "Creating a blank template instead. If there is an existing template saving will overwrite it!",
+              undefined
+            );
           }
         });
     },
     saveTemplate(template) {
       var dThis = this;
 
-      if (this.curTemplate === "none") {
-        this.isError = true;
-        this.errorMessage = "No template is open.";
-        return;
-      }
+      if (this.curTemplate === "none") return;
 
       if (this.fields.length < 1) {
-        this.isError = true;
-        this.errorMessage = "You must have at least one field!";
+        dThis.popup.newPopup(
+          undefined,
+          "You must have at least one field!",
+          undefined
+        );
         return;
       }
 
@@ -341,42 +339,59 @@ export default {
           i.type === "DropdownField" &&
           (i.options.length < 1 || i.points.length < 1)
         ) {
-          var errorMessage = "Dropdown field '" + i.title + "' has no options.";
-          this.isError = true;
-          this.errorMessage = errorMessage;
+          this.popup.newPopup(
+            undefined,
+            "Dropdown field '" + i.title + "' has no options.",
+            undefined
+          );
 
           return;
         }
       }
 
-      this.isError = false;
-      this.isMessage = false;
-
       this.localdb
         .get(template)
         .then(function(doc) {
           doc.fields = dThis.fields;
-          dThis.localdb.put(doc).then(function() {
-            dThis.isMessage = true;
-            dThis.generalMessage = "Push successful!";
-            dThis.unsaved = false;
-            dThis.updateAllTeamPoints();
-          });
+          dThis.localdb
+            .put(doc)
+            .then(function() {
+              dThis.popup.newPopup(
+                "Saved",
+                "Successfully saved to the database!",
+                undefined
+              );
+              dThis.unsaved = false;
+              dThis.updateAllTeamPoints();
+            })
+            .catch(err => {
+              dThis.popup.catchError(err);
+            });
         })
         .catch(function(err) {
           if (err.status == 404) {
-            var forcePush = confirm(
-              "Failed to retrive an existing template.\nPush anyway?\n\nWarning: Pushing will overwrite any existing template!"
-            );
-            if (forcePush) {
-              var doc = { _id: template, fields: dThis.fields };
-              dThis.localdb.put(doc).then(function() {
-                dThis.isMessage = true;
-                dThis.generalMessage = "Push successful!";
-                dThis.unsaved = false;
-                dThis.updateAllTeamPoints();
+            dThis.popup.newPopup("");
+
+            dThis.popup
+              .newPopup(
+                "Failed to load template",
+                "Failed to retrive an existing template.\nPush anyway?\n\nWarning: Pushing will overwrite any existing template!",
+                ["Cancel", "Save"]
+              )
+              .then(option => {
+                if (option == "Save") {
+                  var doc = { _id: template, fields: dThis.fields };
+                  dThis.localdb.put(doc).then(function() {
+                    dThis.popup.newPopup(
+                      "Saved",
+                      "Successfully saved to the database!",
+                      undefined
+                    );
+                    dThis.unsaved = false;
+                    dThis.updateAllTeamPoints();
+                  });
+                }
               });
-            }
           }
         });
     },
@@ -546,6 +561,20 @@ export default {
         dThis.isAdmin = false;
       }
     });
+  },
+  beforeRouteLeave(to, from, next) {
+    if (this.unsaved)
+      this.popup
+        .newPopup(
+          "Unsaved Changes",
+          "Are you sure you would like to leave this page, you have unsaved changes!",
+          ["Leave", "Stay"]
+        )
+        .then(option => {
+          if (option == "Leave") next();
+          if (option == "Stay") next(false);
+        });
+    else next();
   }
 };
 </script>

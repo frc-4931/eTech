@@ -178,9 +178,6 @@ a:hover {
   .grid > * {
     margin-bottom: 20px;
   }
-  .mobile-none-margin-top {
-    margin-top: 0px;
-  }
 }
 @keyframes fade-in {
   from {

@@ -211,7 +211,7 @@ export default {
             dThis.popup.newPopup(
               "Error while editing user",
               "You must change the password when making a user an admin.",
-              ["Ok"]
+              undefined
             );
             return;
           }
@@ -262,9 +262,9 @@ export default {
         }
       } else {
         this.popup.newPopup(
-          "Error",
+          undefined,
           "You didn't change any values or passwords do not match!",
-          ["Ok"]
+          undefined
         );
       }
     },
