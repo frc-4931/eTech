@@ -276,10 +276,18 @@ html::-webkit-scrollbar {
 .small-margin {
   padding: 5px;
 }
-.small-margin div,
-.small-margin p,
-.small-margin h1,
-.small-margin h2,
-.small-margin h3 {
+.small-margin .small-margin-sub > div,
+.small-margin .small-margin-sub > p,
+.small-margin .small-margin-sub > h1,
+.small-margin .small-margin-sub > h2,
+.small-margin .small-margin-sub > h3,
+.small-margin > div,
+.small-margin > p,
+.small-margin > h1,
+.small-margin > h2,
+.small-margin > h3 {
   margin: 5px;
+}
+.small-margin-sub {
+  margin: 0px !important;
 }

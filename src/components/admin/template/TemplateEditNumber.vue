@@ -3,53 +3,77 @@
     <div class="line"></div>
 
     <Error v-if="isError">All Fields Are Required!</Error>
-    <div v-else class="background-box content-centered">
-      <h3>Edit Number Field</h3>
-    </div>
+    <h3 v-else class="background-box content-centered">Edit Number Field</h3>
 
-    <div class="field-edit">
+    <div class="field-edit small-margin">
       <p class="background-box">Title</p>
       <div class="background-box-input">
-        <input type="text" placeholder="Title" v-model.trim="data.title">
+        <input type="text" placeholder="Title" v-model.trim="data.title" />
       </div>
 
       <p class="background-box">Default Value</p>
       <div class="background-box-input">
-        <input type="number" placeholder="Default Number" v-model.number="data.default">
+        <input
+          type="number"
+          placeholder="Default Number"
+          v-model.number="data.default"
+        />
       </div>
 
       <p class="background-box">Points Per Value</p>
       <div class="background-box-input">
-        <input type="number" placeholder="Points Per 1 Entered" v-model.number="data.points">
+        <input
+          type="number"
+          placeholder="Points Per 1 Entered"
+          v-model.number="data.points"
+        />
       </div>
 
       <p class="background-box">Minimum</p>
       <div class="background-box-input">
-        <input type="number" placeholder="Minimum" v-model.number="data.min">
-      </div>
-    </div>
-    <div class="grid-perminant content-centered">
-      <div @click="deleteField()" class="location-left-small background-box background-box-hover">
-        <p>Delete</p>
-      </div>
-      <div @click="moveUp()" class="location-centered-small background-box background-box-hover">
-        <p>Move Up</p>
-      </div>
-      <div @click="moveDown()" class="location-right-small background-box background-box-hover">
-        <p>Move Down</p>
-      </div>
-
-      <div class="location-span">
-        <div @click="save()" class="background-box background-box-hover">
-          <p>Save</p>
-        </div>
-        <div @click="close()" class="background-box background-box-hover">
-          <p>Cancel</p>
-        </div>
+        <input type="number" placeholder="Minimum" v-model.number="data.min" />
       </div>
     </div>
 
-    <div class="line"></div>
+    <div class="grid-perminant content-centered small-margin">
+      <p
+        @click="deleteField()"
+        class="location-left-small background-box background-box-hover"
+      >
+        Delete
+      </p>
+
+      <p
+        @click="moveUp()"
+        class="location-centered-small background-box background-box-hover"
+      >
+        Move Up
+      </p>
+
+      <p
+        @click="moveDown()"
+        class="location-right-small background-box background-box-hover"
+      >
+        Move Down
+      </p>
+    </div>
+
+    <div class="grid-perminant content-centered small-margin">
+      <p
+        @click="save()"
+        class="background-box background-box-hover location-span"
+      >
+        Save
+      </p>
+      <p
+        @click="close()"
+        class="background-box background-box-hover location-span"
+      >
+        Cancel
+      </p>
+    </div>
+
+    <div class="line" />
   </div>
 </template>
 

@@ -55,7 +55,7 @@
               />
             </div>
           </div>
-          <div class="field-edit">
+          <div class="field-edit small-margin">
             <p class="background-box">Type</p>
             <div class="background-box-input">
               <select v-model="newFieldType">
@@ -324,6 +324,8 @@ export default {
       var dThis = this;
 
       if (this.curTemplate === "none") return;
+
+      if (!this.unsaved) return;
 
       if (this.fields.length < 1) {
         dThis.popup.newPopup(
