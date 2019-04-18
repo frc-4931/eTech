@@ -11,19 +11,28 @@
     <div class="location-span background-box">
       <h2 class="content-centered">Permissions</h2>
 
-      <div class="account-info-permission" :class="hasPermissionClass(hasView)">
+      <div
+        class="account-info-permission"
+        :class="hasPermissionClass(hasView)"
+      >
         <i class="material-icons">{{ hasPermissionIcon(hasView) }}</i>
 
         <p>You can view data collected by team members and from The Blue Alliance.</p>
       </div>
 
-      <div class="account-info-permission" :class="hasPermissionClass(hasEdit)">
+      <div
+        class="account-info-permission"
+        :class="hasPermissionClass(hasEdit)"
+      >
         <i class="material-icons">{{ hasPermissionIcon(hasEdit) }}</i>
 
         <p>You can add, edit and remove data.</p>
       </div>
 
-      <div class="account-info-permission" :class="hasPermissionClass(hasAdmin)">
+      <div
+        class="account-info-permission"
+        :class="hasPermissionClass(hasAdmin)"
+      >
         <i class="material-icons">{{ hasPermissionIcon(hasAdmin) }}</i>
 
         <p>You can access the Admin Tools to add users, edit scouting templates and more</p>
@@ -36,10 +45,14 @@
 export default {
   name: "AccountInfo",
   props: {
-    user: Object,
-    hasView: false,
-    hasEdit: false,
-    hasAdmin: false
+    user: Object
+  },
+  data() {
+    return {
+      hasView: false,
+      hasEdit: false,
+      hasAdmin: false
+    };
   },
   watch: {
     user: {

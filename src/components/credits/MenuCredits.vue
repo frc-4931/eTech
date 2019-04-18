@@ -16,9 +16,10 @@
       <p class="content-justified background-box">
         If you would like to contribute to eTech or get in contact with us
         regarding anything, you can at our
-        <a href="https://github.com/frc-4931/eTech" target="_blank"
-          >Github repository</a
-        >.
+        <a
+          href="https://github.com/frc-4931/eTech"
+          target="_blank"
+        >Github repository</a>.
       </p>
     </div>
 
@@ -27,9 +28,17 @@
         Credits
       </h1>
 
-      <div v-for="(credit) in credits" :key="credit" class="grid-perminant small-margin-sub">
+      <div
+        v-for="(credit) in credits"
+        :key="credit"
+        class="grid-perminant small-margin-sub"
+      >
         <p class="background-box location-left">{{ credit[0]}}</p>
-        <p v-for="recipient in credit[1]" :key="recipient" class="background-box location-right content-right">{{ recipient }}</p>
+        <p
+          v-for="recipient in credit[1]"
+          :key="recipient"
+          class="background-box location-right content-right"
+        >{{ recipient }}</p>
       </div>
     </div>
 
@@ -38,10 +47,15 @@
         Licenses
       </h1>
 
-      <div v-for="license in licenses" :key="license" class="grid-perminant small-margin-sub">
+      <div
+        v-for="license in licenses"
+        :key="license"
+        class="grid-perminant small-margin-sub"
+      >
         <p class="background-box location-left">{{ license[0]}}</p>
         <p class="background-box location-right content-right">{{ license[1]}}</p>
       </div>
+    </div>
   </div>
 </template>
 

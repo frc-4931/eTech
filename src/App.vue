@@ -1,19 +1,28 @@
 <template>
   <div id="app">
-    <NavigationDrawer :user="user" :navigationStatus="navigationStatus"/>
+    <NavigationDrawer
+      :user="user"
+      :navigationStatus="navigationStatus"
+    />
 
-    <TopBar :user="user" :navigationStatus="navigationStatus"/>
+    <TopBar
+      :user="user"
+      :navigationStatus="navigationStatus"
+    />
 
-    <Popup :popup="popup"/>
+    <Popup :popup="popup" />
 
-    <ConnectionError v-if="isConnectionError"/>
+    <ConnectionError v-if="isConnectionError" />
 
     <transition
       enter-active-class="content-fade-in"
       leave-active-class="content-fade-out"
       mode="out-in"
     >
-      <keep-alive include="MenuHome,MenuAdmin" :max="5">
+      <keep-alive
+        include="MenuHome,MenuAdmin"
+        :max="5"
+      >
         <router-view
           :HomeSortingOptions="HomeSortingOptions"
           :popup="popup"
@@ -90,6 +99,7 @@ export default {
       user: {
         username: null,
         role: null,
+        online: null,
         logIn: this.logIn,
         logOut: this.logOut,
         getLoggedIn: this.getLoggedIn,
@@ -110,10 +120,13 @@ export default {
     reloadSync: function() {
       var dThis = this;
 
+      if (dThis.sync.removeAllListeners) dThis.sync.removeAllListeners();
+      if (dThis.sync.cancel) dThis.sync.cancel();
       dThis.sync = dThis.localdb
         .sync(dThis.remotedb, {
           live: true,
-          retry: true
+          retry: true,
+          heartbeat: 5000
         })
         .on("error", function(err) {
           console.log(err);
@@ -134,10 +147,13 @@ export default {
           });
         });
 
+      if (dThis.tbasync.removeAllListeners) dThis.tbasync.removeAllListeners();
+      if (dThis.tbasync.cancel) dThis.tbasync.cancel();
       dThis.tbasync = dThis.localtbadb
         .sync(dThis.bluealliancedb, {
           live: true,
-          retry: true
+          retry: true,
+          heartbeat: 5000
         })
         .on("error", function(err) {
           console.log(err);
@@ -158,7 +174,8 @@ export default {
         ) {
           if (err) {
             dThis.user.username = null;
-            dThis.user.roll = null;
+            dThis.user.role = null;
+            dThis.user.online = null;
 
             if (err.name === "unauthorized" || err.name === "forbidden") {
               reject({
@@ -171,6 +188,7 @@ export default {
           } else {
             //Login successful
             dThis.user.username = response.name;
+            dThis.user.online = true;
 
             var roles = response.roles;
             if (roles.indexOf("_admin") !== -1) {
@@ -198,6 +216,7 @@ export default {
           } else {
             dThis.user.username = null;
             dThis.user.role = null;
+            dThis.user.online = null;
 
             dThis.sync = {};
             dThis.tbasync = {};
@@ -219,16 +238,20 @@ export default {
               dThis.user.username != null && dThis.user.role != null;
 
             //Status 0 == offline
-            if (loggedin && err.status == 0) resolve(false, dThis.user);
-            else
+            if (loggedin && err.status == 0) {
+              dThis.user.online = false;
+              resolve(false, dThis.user);
+            } else
               reject({ status: 408, message: "Could not connect to server!" });
           } else if (!response.userCtx.name) {
             dThis.user.username = null;
             dThis.user.role = null;
+            dThis.user.online = null;
 
             reject({ status: 401, message: "Logged out!" });
           } else {
             dThis.user.username = response.userCtx.name;
+            dThis.user.online = true;
 
             var roles = response.userCtx.roles;
             if (roles.indexOf("_admin") !== -1) {

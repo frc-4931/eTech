@@ -53,37 +53,37 @@ export default {
   },
   methods: {
     changePassword() {
+      var dThis = this;
+      var password = this.password;
       if (this.allFieldsValid) {
         this.user
           .changePassword(this.user.username, this.password)
           .then(() => {
-            //   this.user
-            //     .logIn(username, password)
-            //     .then(() => {
-            //       this.reloadSync();
+            dThis.user
+              .logIn(dThis.user.username, password)
+              .then(() => {
+                dThis.popup.newPopup(
+                  "Success",
+                  "You successfully changed your password.",
+                  undefined
+                );
 
-            this.popup.newPopup(
-              "Success",
-              "You successfully changed your password.",
-              undefined
-            );
-
-            this.reloadSync();
-            this.changingPassword = false;
-            // })
-            // .catch(err => {
-            //   this.popup.catchError(err);
-            //   this.changingPassword = false;
-            // });
+                dThis.reloadSync();
+                dThis.changingPassword = false;
+              })
+              .catch(err => {
+                dThis.popup.catchError(err);
+                dThis.changingPassword = false;
+              });
           })
           .catch(err => {
-            this.popup.catchError(err);
-            this.changingPassword = false;
+            dThis.popup.catchError(err);
+            dThis.changingPassword = false;
           });
-      }
 
-      this.password = this.confirmPassword = "";
-      this.changingPassword = true;
+        this.password = this.confirmPassword = "";
+        this.changingPassword = true;
+      }
     }
   },
   computed: {

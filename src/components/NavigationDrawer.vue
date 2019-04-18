@@ -16,7 +16,15 @@
         <h1 class="content-centered">eTech</h1>
 
         <div
-          v-if="user.username != null"
+          v-if="!user.online"
+          class="nav-drawer-account-panel-name content-centered"
+        >
+          <h3>Offline as:</h3>
+          <p>{{ user.username }}</p>
+        </div>
+
+        <div
+          v-else-if="user.username != null"
           class="nav-drawer-account-panel-name content-centered"
         >
           <h3>Signed in as:</h3>
