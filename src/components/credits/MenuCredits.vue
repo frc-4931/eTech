@@ -30,7 +30,7 @@
 
       <div
         v-for="(credit) in credits"
-        :key="credit"
+        :key="credit[0]"
         class="grid-perminant small-margin-sub"
       >
         <p class="background-box location-left">{{ credit[0]}}</p>
@@ -49,7 +49,7 @@
 
       <div
         v-for="license in licenses"
-        :key="license"
+        :key="license[0]"
         class="grid-perminant small-margin-sub"
       >
         <p class="background-box location-left">{{ license[0]}}</p>
