@@ -307,6 +307,22 @@ export default {
       });
 
     this.onRouteChange();
+
+    // Remove all beforeEach router calls and replace it with this one.
+    this.$router.beforeHooks.splice(0, this.$router.beforeHooks.length);
+    this.$router.beforeEach((to, from, next) => {
+      var pageTitle = to.meta.title;
+
+      if (to.params.number)
+        pageTitle = pageTitle.replace("%s", to.params.number);
+      if (to.params.username)
+        pageTitle = pageTitle.replace("%s", to.params.username);
+
+      document.title = "eTech: Scouting Done Right - " + pageTitle;
+
+      console.log(dThis.user.role);
+      next();
+    });
   }
 };
 </script>
