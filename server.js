@@ -11,21 +11,18 @@ pouchdb.plugin(require("pouchdb-authentication"));
 
 const request = require("request");
 
-const optionDefinitions = [
-  {
+const optionDefinitions = [{
     name: "cache-files",
     alias: "c",
     type: Boolean,
-    description:
-      'Cache files in memory (EXPERIMENTAL)'
+    description: 'Cache files in memory (EXPERIMENTAL)'
   },
   {
     name: "directory",
     alias: "d",
     type: String,
     defaultValue: "dist",
-    description:
-      'The location of the directory to stream content from. (Defaults to "dist")'
+    description: 'The location of the directory to stream content from. (Defaults to "dist")'
   },
   {
     name: "port",
@@ -39,16 +36,14 @@ const optionDefinitions = [
     alias: "a",
     type: String,
     defaultValue: "http://localhost",
-    description:
-      'Address on which the server redirects database requests to. (Defaults to "http://localhost")'
+    description: 'Address on which the server redirects database requests to. (Defaults to "http://localhost")'
   },
   {
     name: "database-port",
     alias: "o",
     type: Number,
     defaultValue: 5984,
-    description:
-      'Port on which the server redirects database requests to. (Defaults to "5984")'
+    description: 'Port on which the server redirects database requests to. (Defaults to "5984")'
   },
   {
     name: "log-file-requests",
@@ -66,8 +61,12 @@ const optionDefinitions = [
     name: "use-ssl",
     alias: "s",
     type: Boolean,
-    description:
-      "Enable SSL. Read how to use it here: https://github.com/frc-4931/eTech#enable-ssl"
+    description: "Enable SSL. Read how to use it here: https://github.com/frc-4931/eTech#enable-ssl"
+  },
+  {
+    name: "force-db-refresh",
+    type: Boolean,
+    description: "Forces all clients to delete local databases before syncing."
   },
   {
     name: "tba-disabled",
@@ -114,19 +113,16 @@ const options = commandLineArgs(optionDefinitions, {
 });
 
 if (options.help) {
-  const usage = commandLineUsage([
-    {
+  const usage = commandLineUsage([{
       header: "eTech: Scouting Done Right - Server",
-      content:
-        "eTech is an all-in-one web application that allows users to continue scouting when offline, and when the user revives their connection the information is automatically synced to all other devices, and their screens are updated in real time."
+      content: "eTech is an all-in-one web application that allows users to continue scouting when offline, and when the user revives their connection the information is automatically synced to all other devices, and their screens are updated in real time."
     },
     {
       header: "Launch options",
       optionList: optionDefinitions
     },
     {
-      content:
-        "Read more at: {underline https://github.com/frc-4931/eTech/blob/master/README.md}"
+      content: "Read more at: {underline https://github.com/frc-4931/eTech/blob/master/README.md}"
     }
   ]);
   console.log(usage);
@@ -143,7 +139,9 @@ const proxy = httpProxy.createProxyServer({});
 const fileCache = new Map();
 
 var getTime = function () {
-  return chalk.white(new Date().toLocaleString([], { hour12: false })) + "   ";
+  return chalk.white(new Date().toLocaleString([], {
+    hour12: false
+  })) + "   ";
 }
 
 proxy.on("error", function (err, req, response) {
@@ -203,17 +201,23 @@ const handler = function (request, response) {
       fs.readFile(DIRECTORY + file, "utf8", (err, fileContents) => {
         if (err) {
           if (options.logFileRequests) console.log(getTime() + chalk.gray("Cannot open file: " + file));
-          response.writeHead(200, { "Content-Type": "text/plain" });
+          response.writeHead(200, {
+            "Content-Type": "text/plain"
+          });
           response.end("The requested URL " + url + " was not found on this server");
         } else {
           if (options.cacheFiles) fileCache.set(file, fileContents);
 
-          response.writeHead(200, { "Content-Type": type });
+          response.writeHead(200, {
+            "Content-Type": type
+          });
           response.end(fileContents);
         }
       });
     } else {
-      response.writeHead(200, { "Content-Type": type });
+      response.writeHead(200, {
+        "Content-Type": type
+      });
       response.end(content);
     }
   }
@@ -264,6 +268,50 @@ if (options.useSsl) {
       process.exit();
     })
     .listen(PORT);
+}
+
+// Check DB for CUR_DB_VERSION => If not exisits create with version 1
+var verifyDBVersion = (db) => {
+  return new Promise((resolve, reject) => {
+    db.get("CUR_DB_VERSION").then((doc) => {
+      if (doc.db_version) resolve();
+      else {
+        doc.db_version = 1;
+        db.put(doc).then(resolve).catch(reject);
+      }
+    }).catch(err => {
+      if (err.status == 404) {
+        var doc = {
+          _id: "CUR_DB_VERSION",
+          db_version: 1
+        }
+        db.put(doc).then(resolve).catch(reject);
+      } else {
+        reject(err);
+      }
+    });
+  })
+}
+
+// Force increment CUR_DB_VERSION (Will force all clients to delete local repos before pushing)
+var forceDBRefresh = (db) => {
+  return new Promise((resolve, reject) => {
+    db.get("CUR_DB_VERSION").then((doc) => {
+      if (!doc.db_version) doc.db_version = 1;
+      else doc.db_version += 1;
+      db.put(doc).then(resolve).catch(reject);
+    }).catch(err => {
+      if (err.status == 404) {
+        var doc = {
+          _id: "CUR_DB_VERSION",
+          db_version: 1
+        }
+        db.put(doc).then(resolve).catch(reject);
+      } else {
+        reject(err);
+      }
+    });
+  })
 }
 
 // The Blue Alliance Intigration
@@ -416,8 +464,14 @@ if (useBA) {
                   }
                 })
                 .catch(function () {
-                  var doc = { _id: file, json: data, lastModified: date };
-                  tbaDB.put(doc).then(() => { resolve() }).catch(function (err) {
+                  var doc = {
+                    _id: file,
+                    json: data,
+                    lastModified: date
+                  };
+                  tbaDB.put(doc).then(() => {
+                    resolve()
+                  }).catch(function (err) {
                     console.log(err);
                     reject();
                   });
@@ -429,7 +483,9 @@ if (useBA) {
         var addTeam = (teamKey) => {
           var teamNumber = teamKey.replace("frc", "");
 
-          scoutingDB.get("TEAM_" + teamNumber).then(() => { return }).catch(() => {
+          scoutingDB.get("TEAM_" + teamNumber).then(() => {
+            return
+          }).catch(() => {
             tbaDB.get("TEAMINFO_frc" + teamNumber).then(function (doc) {
 
               var file = {
@@ -443,8 +499,12 @@ if (useBA) {
               scoutingDB.put(file).then(() => {
                 if (options.tbaLog)
                   console.log(getTime() + chalk.blue("Adding team: ") + chalk.gray(file.number))
-              }).catch(() => { return });
-            }).catch(() => { return });
+              }).catch(() => {
+                return
+              });
+            }).catch(() => {
+              return
+            });
           })
         }
 
@@ -465,7 +525,9 @@ if (useBA) {
                 i++;
 
                 if (i == teamKeys.length) resolve();
-              }).catch(() => { return });
+              }).catch(() => {
+                return
+              });
             }
           });
         }
@@ -489,6 +551,23 @@ if (useBA) {
           });
         });
       };
+
+      if (options.forceDbRefresh) {
+        forceDBRefresh(tbaDB).catch(err => {
+          console.log(chalk.redBright("Error while updating the TBA database version."));
+        });
+        forceDBRefresh(scoutingDB).catch(err => {
+          console.log(chalk.redBright("Error while updating the TBA database version."));
+        });
+      } else {
+        verifyDBVersion(tbaDB).catch(err => {
+          console.log(chalk.redBright("Error while verifying the scouting database version."));
+          console.log(err);
+        });
+        verifyDBVersion(scoutingDB).catch(err => {
+          console.log(chalk.redBright("Error while verifying the scouting database version."));
+        });
+      }
 
       var intervalTime = options.tbaInterval * 1000;
       setInterval(runBA, intervalTime);
