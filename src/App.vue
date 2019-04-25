@@ -1,28 +1,19 @@
 <template>
   <div id="app">
-    <NavigationDrawer
-      :user="user"
-      :navigationStatus="navigationStatus"
-    />
+    <NavigationDrawer :user="user" :navigationStatus="navigationStatus"/>
 
-    <TopBar
-      :user="user"
-      :navigationStatus="navigationStatus"
-    />
+    <TopBar :user="user" :navigationStatus="navigationStatus"/>
 
-    <Popup :popup="popup" />
+    <Popup :popup="popup"/>
 
-    <ConnectionError v-if="isConnectionError" />
+    <ConnectionError v-if="isConnectionError"/>
 
     <transition
       enter-active-class="content-fade-in"
       leave-active-class="content-fade-out"
       mode="out-in"
     >
-      <keep-alive
-        include="MenuHome,MenuAdmin"
-        :max="5"
-      >
+      <keep-alive include="MenuHome,MenuAdmin" :max="5">
         <router-view
           :HomeSortingOptions="HomeSortingOptions"
           :popup="popup"
@@ -120,13 +111,23 @@ export default {
     reloadSync: function() {
       var dThis = this;
 
+      dThis.remotedb.get("CUR_DB_VERSION").then(doc => {
+        dThis.localdb.put(doc);
+      });
+
       if (dThis.sync.removeAllListeners) dThis.sync.removeAllListeners();
       if (dThis.sync.cancel) dThis.sync.cancel();
       dThis.sync = dThis.localdb
         .sync(dThis.remotedb, {
           live: true,
           retry: true,
-          heartbeat: 5000
+          heartbeat: 5000,
+          filter: doc => {
+            if (doc._id === "CUR_DB_VERSION") {
+              console.log("CUR dbv: " + doc.db_version);
+              return false;
+            } else return true;
+          }
         })
         .on("error", function(err) {
           console.log(err);
@@ -153,7 +154,10 @@ export default {
         .sync(dThis.bluealliancedb, {
           live: true,
           retry: true,
-          heartbeat: 5000
+          heartbeat: 5000,
+          filter: doc => {
+            return doc._id !== "CUR_DB_VERSION";
+          }
         })
         .on("error", function(err) {
           console.log(err);
