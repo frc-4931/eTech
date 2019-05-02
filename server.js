@@ -270,6 +270,7 @@ if (options.useSsl) {
     .listen(PORT);
 }
 
+// FIXME (change to) check for DB_HASH => if not exisits create with random hash
 // Check DB for CUR_DB_VERSION => If not exisits create with version 1
 var verifyDBVersion = (db) => {
   return new Promise((resolve, reject) => {
@@ -293,6 +294,7 @@ var verifyDBVersion = (db) => {
   })
 }
 
+// FIXME remove this. Chaning to hash prefix instead.
 // Force increment CUR_DB_VERSION (Will force all clients to delete local repos before pushing)
 var forceDBRefresh = (db) => {
   return new Promise((resolve, reject) => {

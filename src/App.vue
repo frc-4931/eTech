@@ -111,9 +111,21 @@ export default {
     reloadSync: function() {
       var dThis = this;
 
-      dThis.remotedb.get("CUR_DB_VERSION").then(doc => {
-        dThis.localdb.put(doc);
-      });
+      // // set global var = locDoc.db_hash
+      // dThis.remotedb.get("DB_HASH").then(doc => {
+      //   dThis.localdb
+      //     .get("LOCAL_DB_HASH")
+      //     .then(locDoc => {
+      //       if (locDoc.db_hash === doc.db_hash) {
+      //         // DB is up to date and safe to replicate
+      //       } else {
+      //         // DB is not up to date and needs to be destroyed and repulled
+      //       }
+      //     })
+      //     .catch(() => {
+      //       //No hash file, set hash file in local => destroy localdb repull.
+      //     });
+      // });
 
       if (dThis.sync.removeAllListeners) dThis.sync.removeAllListeners();
       if (dThis.sync.cancel) dThis.sync.cancel();
@@ -123,10 +135,7 @@ export default {
           retry: true,
           heartbeat: 5000,
           filter: doc => {
-            if (doc._id === "CUR_DB_VERSION") {
-              console.log("CUR dbv: " + doc.db_version);
-              return false;
-            } else return true;
+            return doc._id !== "LOCAL_DB_HASH" && doc._id !== "DB_HASH";
           }
         })
         .on("error", function(err) {
@@ -156,7 +165,7 @@ export default {
           retry: true,
           heartbeat: 5000,
           filter: doc => {
-            return doc._id !== "CUR_DB_VERSION";
+            return doc._id !== "LOCAL_DB_HASH" && doc._id !== "DB_HASH";
           }
         })
         .on("error", function(err) {
