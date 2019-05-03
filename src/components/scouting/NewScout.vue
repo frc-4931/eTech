@@ -29,47 +29,56 @@
       class="background-box-input"
       id="match-select"
     >
-      <select v-model="matchID" class="content-input-large">
+      <select
+        v-model="matchID"
+        class="content-input-large"
+      >
         <option value="">Select A Match</option>
-        <optgroup v-if="qualMatches.length > 0" label="Qualification Matches">
+        <optgroup
+          v-if="qualMatches.length > 0"
+          label="Qualification Matches"
+        >
           <option
             v-for="match in qualMatches"
             :key="match"
             :value="'TBA-' + match"
-            >{{ getMatchTitle(match) }}</option
-          >
+          >{{ getMatchTitle(match) }}</option>
         </optgroup>
-        <optgroup v-if="qfMatches.length > 0" label="Quarter-Final Matches">
+        <optgroup
+          v-if="qfMatches.length > 0"
+          label="Quarter-Final Matches"
+        >
           <option
             v-for="match in qfMatches"
             :key="match"
             :value="'TBA-' + match"
-            >{{ getMatchTitle(match) }}</option
-          >
+          >{{ getMatchTitle(match) }}</option>
         </optgroup>
-        <optgroup v-if="sfMatches.length > 0" label="Semi-Final Matches">
+        <optgroup
+          v-if="sfMatches.length > 0"
+          label="Semi-Final Matches"
+        >
           <option
             v-for="match in sfMatches"
             :key="match"
             :value="'TBA-' + match"
-            >{{ getMatchTitle(match) }}</option
-          >
+          >{{ getMatchTitle(match) }}</option>
         </optgroup>
-        <optgroup v-if="finalMatches.length > 0" label="Final Matches">
+        <optgroup
+          v-if="finalMatches.length > 0"
+          label="Final Matches"
+        >
           <option
             v-for="match in finalMatches"
             :key="match"
             :value="'TBA-' + match"
-            >{{ getMatchTitle(match) }}</option
-          >
+          >{{ getMatchTitle(match) }}</option>
         </optgroup>
         <optgroup label="Practice Matches">
           <option value="PRACTICE">Practice Match</option>
         </optgroup>
         <optgroup label="Mnaual Matches">
-          <option value="MANUAL"
-            >Manual Match (Not recommended in most circumstances)</option
-          >
+          <option value="MANUAL">Manual Match (Not recommended in most circumstances)</option>
         </optgroup>
       </select>
     </div>
@@ -147,8 +156,16 @@ export default {
         this.localdb
           .allDocs({
             include_docs: false,
-            startkey: dThis.pitScoutPrefix + dThis.teamNumber + "_0",
-            endkey: dThis.pitScoutPrefix + dThis.teamNumber + "_\ufff0"
+            startkey:
+              this.user.scoutingHash.hash +
+              dThis.pitScoutPrefix +
+              dThis.teamNumber +
+              "_0",
+            endkey:
+              this.user.scoutingHash.hash +
+              dThis.pitScoutPrefix +
+              dThis.teamNumber +
+              "_\ufff0"
           })
           .then(function(docs) {
             var pitScoutNumber = 0;
@@ -168,8 +185,16 @@ export default {
           this.localdb
             .allDocs({
               include_docs: false,
-              startkey: dThis.matchScoutPrefix + dThis.teamNumber + "_0",
-              endkey: dThis.matchScoutPrefix + dThis.teamNumber + "_\ufff0"
+              startkey:
+                this.user.scoutingHash.hash +
+                dThis.matchScoutPrefix +
+                dThis.teamNumber +
+                "_0",
+              endkey:
+                this.user.scoutingHash.hash +
+                dThis.matchScoutPrefix +
+                dThis.teamNumber +
+                "_\ufff0"
             })
             .then(function(docs) {
               var matchScoutNumber = 0;
@@ -190,8 +215,16 @@ export default {
           this.localdb
             .allDocs({
               include_docs: false,
-              startkey: dThis.matchScoutPrefix + dThis.teamNumber + "_0",
-              endkey: dThis.matchScoutPrefix + dThis.teamNumber + "_\ufff0"
+              startkey:
+                this.user.scoutingHash.hash +
+                dThis.matchScoutPrefix +
+                dThis.teamNumber +
+                "_0",
+              endkey:
+                this.user.scoutingHash.hash +
+                dThis.matchScoutPrefix +
+                dThis.teamNumber +
+                "_\ufff0"
             })
             .then(function(docs) {
               var matchScoutNumber = 0;
@@ -213,12 +246,14 @@ export default {
             .allDocs({
               include_docs: false,
               startkey:
+                this.user.scoutingHash.hash +
                 dThis.matchScoutPrefix +
                 dThis.teamNumber +
                 "_" +
                 dThis.matchID +
                 "_",
               endkey:
+                this.user.scoutingHash.hash +
                 dThis.matchScoutPrefix +
                 dThis.teamNumber +
                 "_" +
@@ -244,6 +279,7 @@ export default {
       var dThis = this;
       var doc = {
         _id:
+          this.user.scoutingHash.hash +
           this.pitScoutPrefix +
           this.teamNumber +
           "_" +
@@ -270,7 +306,7 @@ export default {
     createMatchScout(id) {
       var dThis = this;
       var doc = {
-        _id: id + "_" + this.user.username
+        _id: this.user.scoutingHash.hash + id + "_" + this.user.username
       };
 
       var totalPoints = 0;
@@ -311,48 +347,50 @@ export default {
     getTBAMatches() {
       var dThis = this;
 
-      this.localtbadb.get("TEAMMATCHES_frc" + this.teamNumber).then(doc => {
-        let matches = doc.json;
+      this.localtbadb
+        .get(this.user.tbaHash.hash + "TEAMMATCHES_frc" + this.teamNumber)
+        .then(doc => {
+          let matches = doc.json;
 
-        matches = orderBy(
-          matches,
-          [
-            match => {
-              match = match.substring(match.indexOf("_") + 1);
+          matches = orderBy(
+            matches,
+            [
+              match => {
+                match = match.substring(match.indexOf("_") + 1);
 
-              if (match.startsWith("qm")) return 0;
-              else if (match.startsWith("qf")) return 1;
-              else if (match.startsWith("sf")) return 2;
-              else if (match.startsWith("f")) return 3;
-              else return -1;
-            },
-            match => {
-              match = match.substring(match.indexOf("_") + 1);
+                if (match.startsWith("qm")) return 0;
+                else if (match.startsWith("qf")) return 1;
+                else if (match.startsWith("sf")) return 2;
+                else if (match.startsWith("f")) return 3;
+                else return -1;
+              },
+              match => {
+                match = match.substring(match.indexOf("_") + 1);
 
-              if (match.startsWith("qm")) match = match.replace("qm", "");
-              else if (match.startsWith("qf"))
-                match = match
-                  .replace("qf", "")
-                  .substring(0, match.indexOf("m") - 2);
-              else if (match.startsWith("sf"))
-                match = match
-                  .replace("sf", "")
-                  .substring(0, match.indexOf("m") - 2);
-              else if (match.startsWith("f"))
-                match = match
-                  .replace("f", "")
-                  .substring(0, match.indexOf("m") - 2);
-              else return -1;
+                if (match.startsWith("qm")) match = match.replace("qm", "");
+                else if (match.startsWith("qf"))
+                  match = match
+                    .replace("qf", "")
+                    .substring(0, match.indexOf("m") - 2);
+                else if (match.startsWith("sf"))
+                  match = match
+                    .replace("sf", "")
+                    .substring(0, match.indexOf("m") - 2);
+                else if (match.startsWith("f"))
+                  match = match
+                    .replace("f", "")
+                    .substring(0, match.indexOf("m") - 2);
+                else return -1;
 
-              return parseInt(match);
-            }
-          ],
-          ["asc", "asc"]
-        );
+                return parseInt(match);
+              }
+            ],
+            ["asc", "asc"]
+          );
 
-        dThis.allTBAMatches.splice(0, dThis.allTBAMatches.length);
-        dThis.allTBAMatches.push(...matches);
-      });
+          dThis.allTBAMatches.splice(0, dThis.allTBAMatches.length);
+          dThis.allTBAMatches.push(...matches);
+        });
     },
     getMatchTitle(matchString) {
       matchString = matchString.substring(matchString.indexOf("_") + 1);
@@ -386,14 +424,25 @@ export default {
       this.localdb
         .allDocs({
           include_docs: false,
-          startkey: dThis.matchScoutPrefix + dThis.teamNumber + "_TBA-",
-          endkey: dThis.matchScoutPrefix + dThis.teamNumber + "_TBA-\ufff0"
+          startkey:
+            this.user.scoutingHash.hash +
+            dThis.matchScoutPrefix +
+            dThis.teamNumber +
+            "_TBA-",
+          endkey:
+            this.user.scoutingHash.hash +
+            dThis.matchScoutPrefix +
+            dThis.teamNumber +
+            "_TBA-\ufff0"
         })
         .then(docs => {
           dThis.allTBAScouted.splice(0, dThis.allTBAScouted.length);
           docs["rows"].forEach(doc => {
             let temp = doc.id.replace(
-              this.matchScoutPrefix + this.teamNumber + "_TBA-",
+              this.user.tbaHash.hash +
+                this.matchScoutPrefix +
+                this.teamNumber +
+                "_TBA-",
               ""
             );
             temp = temp.slice(0, temp.lastIndexOf("_"));

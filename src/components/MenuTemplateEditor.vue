@@ -15,9 +15,12 @@
             id="select-template"
             class="content-input-large"
           >
-            <option value="none" disabled>Select a Scouting Template</option>
-            <option value="TEMPLATE_PITSCOUT">Pit Scout</option>
-            <option value="TEMPLATE_MATCHSCOUT">Match Scout</option>
+            <option
+              value="none"
+              disabled
+            >Select a Scouting Template</option>
+            <option :value=" user.scoutingHash.hash + 'TEMPLATE_PITSCOUT'">Pit Scout</option>
+            <option :value=" user.scoutingHash.hash +  'TEMPLATE_MATCHSCOUT'">Match Scout</option>
           </select>
         </div>
       </div>
@@ -40,7 +43,10 @@
         ></component>
         <!-- beautify ignore:end -->
 
-        <div v-if="curOpen == 'field_add'" id="template-field-add">
+        <div
+          v-if="curOpen == 'field_add'"
+          id="template-field-add"
+        >
           <div class="line" />
 
           <h3 class="background-box content-centered">Creating New Field</h3>
@@ -132,7 +138,8 @@ export default {
   props: {
     popup: Object,
     localdb: Object,
-    remotedb: Object
+    remotedb: Object,
+    user: Object
   },
   components: {
     TemplateEditTitle,
@@ -406,8 +413,8 @@ export default {
       this.localdb
         .allDocs({
           include_docs: false,
-          startkey: "TEAM_0",
-          endkey: "TEAM_\ufff0"
+          startkey: this.user.scoutingHash.hash + "TEAM_0",
+          endkey: this.user.scoutingHash.hash + "TEAM_\ufff0"
         })
         .then(function(result) {
           // Loop through all team docs
@@ -426,12 +433,12 @@ export default {
       this.localdb
         .allDocs({
           include_docs: true,
-          startkey: "PITSCOUT_" + team + "_0",
-          endkey: "PITSCOUT_" + team + "_\ufff0"
+          startkey: this.user.scoutingHash.hash + "PITSCOUT_" + team + "_0",
+          endkey: this.user.scoutingHash.hash + "PITSCOUT_" + team + "_\ufff0"
         })
         .then(function(docs) {
           return dThis.localdb
-            .get("TEMPLATE_PITSCOUT")
+            .get(this.user.scoutingHash.hash + "TEMPLATE_PITSCOUT")
             .then(function(doc) {
               return doc["fields"];
             })
@@ -458,13 +465,14 @@ export default {
         .then(function() {
           return dThis.localdb.allDocs({
             include_docs: true,
-            startkey: "MATCHSCOUT_" + team + "_",
-            endkey: "MATCHSCOUT_" + team + "_\ufff0"
+            startkey: dThis.user.scoutingHash.hash + "MATCHSCOUT_" + team + "_",
+            endkey:
+              dThis.user.scoutingHash.hash + "MATCHSCOUT_" + team + "_\ufff0"
           });
         })
         .then(function(docs) {
           return dThis.localdb
-            .get("TEMPLATE_MATCHSCOUT")
+            .get(this.user.scoutingHash.hash + "TEMPLATE_MATCHSCOUT")
             .then(function(doc) {
               return doc["fields"];
             })
@@ -489,22 +497,24 @@ export default {
             });
         })
         .then(function() {
-          dThis.localdb.get("TEAM_" + team).then(function(doc) {
-            var matchPoints =
-              dPoints.mPoints / (dPoints.mAmount > 0 ? dPoints.mAmount : 1);
+          dThis.localdb
+            .get(this.user.scoutingHash.hash + "TEAM_" + team)
+            .then(function(doc) {
+              var matchPoints =
+                dPoints.mPoints / (dPoints.mAmount > 0 ? dPoints.mAmount : 1);
 
-            var pitPoints =
-              dPoints.pPoints / (dPoints.pAmount > 0 ? dPoints.pAmount : 1);
+              var pitPoints =
+                dPoints.pPoints / (dPoints.pAmount > 0 ? dPoints.pAmount : 1);
 
-            var points = matchPoints + pitPoints;
+              var points = matchPoints + pitPoints;
 
-            points = Math.floor(points);
+              points = Math.floor(points);
 
-            if (doc.objectivePoints != points) {
-              doc.objectivePoints = points;
-              dThis.localdb.put(doc);
-            }
-          });
+              if (doc.objectivePoints != points) {
+                doc.objectivePoints = points;
+                dThis.localdb.put(doc);
+              }
+            });
         });
     },
     setScoutingPoints(doc, fields) {

@@ -20,7 +20,8 @@ export default {
   props: {
     teamData: Object,
     localtbadb: Object,
-    localdb: Object
+    localdb: Object,
+    user: Object
   },
   data: function() {
     return {
@@ -52,9 +53,11 @@ export default {
   created: function() {
     var dThis = this;
 
-    this.localdb.get("TEAM_" + this.teamNumber).then(function(doc) {
-      dThis.teamName = doc.name;
-    });
+    this.localdb
+      .get(this.user.scoutingHash.hash + "TEAM_" + this.teamNumber)
+      .then(function(doc) {
+        dThis.teamName = doc.name;
+      });
   }
 };
 </script>

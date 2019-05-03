@@ -108,7 +108,7 @@
       ></NewScout>
       <ScoutMenu
         :key="scoutingSelect"
-        v-else-if="scoutingSelect.startsWith('PITSCOUT_')"
+        v-else-if="scoutingSelect.startsWith(user.scoutingHash.hash + 'PITSCOUT_')"
         :isMatchScout="false"
         :localdb="localdb"
         :docId="scoutingSelect"
@@ -119,7 +119,7 @@
       ></ScoutMenu>
       <ScoutMenu
         :key="scoutingSelect"
-        v-else-if="scoutingSelect.startsWith('MATCHSCOUT_')"
+        v-else-if="scoutingSelect.startsWith(user.scoutingHash.hash + 'MATCHSCOUT_')"
         :isMatchScout="true"
         :localdb="localdb"
         :docId="scoutingSelect"

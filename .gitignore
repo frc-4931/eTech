@@ -19,3 +19,7 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw*
+config.json
+log.txt
+run.bash
+dist-v0.1.zip

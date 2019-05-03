@@ -99,9 +99,6 @@
 </template>
 
 <script>
-import MenuTeamCommentAdd from "./MenuTeamCommentAdd.vue";
-import MenuTeamCommentModify from "./MenuTeamCommentModify.vue";
-import CommentField from "./scouting/CommentField.vue";
 import TabContainer from "./TabContainer.vue";
 import CommentTab from "./CommentTab.vue";
 import ScoutingTab from "./ScoutingTab.vue";
@@ -186,8 +183,13 @@ export default {
       this.localdb
         .allDocs({
           include_docs: true,
-          startkey: "COMMENT_" + dThis.teamNumber + "_0",
-          endkey: "COMMENT_" + dThis.teamNumber + "_\ufff0"
+          startkey:
+            this.user.scoutingHash.hash + "COMMENT_" + dThis.teamNumber + "_0",
+          endkey:
+            this.user.scoutingHash.hash +
+            "COMMENT_" +
+            dThis.teamNumber +
+            "_\ufff0"
         })
         .then(function(docs) {
           dThis.comments = {};
@@ -207,12 +209,14 @@ export default {
 
           dThis.$set(dThis.team, "commentPoints", totalCommentRating);
 
-          dThis.localdb.get("TEAM_" + dThis.teamNumber).then(function(doc) {
-            if (doc.commentPoints != totalCommentRating) {
-              doc.commentPoints = totalCommentRating;
-              dThis.localdb.put(doc);
-            }
-          });
+          dThis.localdb
+            .get(this.user.scoutingHash.hash + "TEAM_" + dThis.teamNumber)
+            .then(function(doc) {
+              if (doc.commentPoints != totalCommentRating) {
+                doc.commentPoints = totalCommentRating;
+                dThis.localdb.put(doc);
+              }
+            });
         });
     },
     openCommentAddMenu() {
@@ -280,8 +284,8 @@ export default {
       this.localdb
         .allDocs({
           include_docs: true,
-          startkey: "PITSCOUT_" + team + "_0",
-          endkey: "PITSCOUT_" + team + "_\ufff0"
+          startkey: this.user.scoutingHash.hash + "PITSCOUT_" + team + "_0",
+          endkey: this.user.scoutingHash.hash + "PITSCOUT_" + team + "_\ufff0"
         })
         .then(function(docs) {
           var points = 0;
@@ -314,8 +318,9 @@ export default {
         .then(function() {
           return dThis.localdb.allDocs({
             include_docs: true,
-            startkey: "MATCHSCOUT_" + team + "_",
-            endkey: "MATCHSCOUT_" + team + "_\ufff0"
+            startkey: this.user.scoutingHash.hash + "MATCHSCOUT_" + team + "_",
+            endkey:
+              this.user.scoutingHash.hash + "MATCHSCOUT_" + team + "_\ufff0"
           });
         })
         .then(function(docs) {
@@ -349,24 +354,26 @@ export default {
           return;
         })
         .then(function() {
-          dThis.localdb.get("TEAM_" + team).then(function(doc) {
-            var matchPoints =
-              dPoints.mPoints / (dPoints.mAmount > 0 ? dPoints.mAmount : 1);
+          dThis.localdb
+            .get(this.user.scoutingHash.hash + "TEAM_" + team)
+            .then(function(doc) {
+              var matchPoints =
+                dPoints.mPoints / (dPoints.mAmount > 0 ? dPoints.mAmount : 1);
 
-            var pitPoints =
-              dPoints.pPoints / (dPoints.pAmount > 0 ? dPoints.pAmount : 1);
+              var pitPoints =
+                dPoints.pPoints / (dPoints.pAmount > 0 ? dPoints.pAmount : 1);
 
-            var points = matchPoints + pitPoints;
+              var points = matchPoints + pitPoints;
 
-            points = Math.floor(points);
+              points = Math.floor(points);
 
-            dThis.$set(dThis.team, "objectivePoints", points);
+              dThis.$set(dThis.team, "objectivePoints", points);
 
-            if (doc.objectivePoints != points) {
-              doc.objectivePoints = points;
-              dThis.localdb.put(doc);
-            }
-          });
+              if (doc.objectivePoints != points) {
+                doc.objectivePoints = points;
+                dThis.localdb.put(doc);
+              }
+            });
         });
     },
     goBack() {
@@ -376,7 +383,7 @@ export default {
       var dThis = this;
 
       this.localdb
-        .get("TEAM_" + this.teamNumber)
+        .get(this.user.scoutingHash.hash + "TEAM_" + this.teamNumber)
         .then(function(doc) {
           dThis.$set(dThis.team, "name", doc.name);
           dThis.$set(dThis.team, "number", doc.number);
@@ -390,7 +397,7 @@ export default {
         });
 
       this.localtbadb
-        .get("TEAMINFO_frc" + this.number)
+        .get(this.user.tbaHash.hash + "TEAMINFO_frc" + this.number)
         .then(doc => {
           dThis.teaminfo = doc.json;
         })
@@ -405,7 +412,7 @@ export default {
 
           for (var doc of change.change.docs) {
             if (
-              doc["_id"].startsWith("MATCH") &&
+              doc["_id"].startsWith(dThis.user.tbaHash.hash + "MATCH") &&
               doc["_id"].endsWith(
                 dThis.trimScout(dThis.scoutingSelect).replace("TBA-", "")
               )
@@ -424,13 +431,26 @@ export default {
           var shouldLoadComments = false;
 
           for (var doc of change.change.docs) {
-            if (doc["_id"].startsWith("PITSCOUT_" + dThis.number + "_")) {
-              shouldLoadScouting = true;
-            } else if (
-              doc["_id"].startsWith("MATCHSCOUT_" + dThis.number + "_")
+            if (
+              doc["_id"].startsWith(
+                dThis.user.scoutingHash.hash + "PITSCOUT_" + dThis.number + "_"
+              )
             ) {
               shouldLoadScouting = true;
-            } else if (doc["_id"].startsWith("COMMENT_" + dThis.number + "_")) {
+            } else if (
+              doc["_id"].startsWith(
+                dThis.user.scoutingHash.hash +
+                  "MATCHSCOUT_" +
+                  dThis.number +
+                  "_"
+              )
+            ) {
+              shouldLoadScouting = true;
+            } else if (
+              doc["_id"].startsWith(
+                dThis.user.scoutingHash.hash + "COMMENT_" + dThis.number + "_"
+              )
+            ) {
               shouldLoadComments = true;
             }
           }
@@ -544,7 +564,7 @@ export default {
       temp = temp.replace("TBA-", "");
 
       this.localtbadb
-        .get("MATCHSIMPLE_" + temp)
+        .get(this.user.tbaHash.hash + "MATCHSIMPLE_" + temp)
         .then(doc => {
           dThis.matchInfo = doc.json;
           dThis.isTBAMatch = true;

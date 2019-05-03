@@ -1,9 +1,10 @@
 <template>
-  <Error v-if="user.role == null"
-    >You must be logged in to view this page!</Error
-  >
+  <Error v-if="user.role == null">You must be logged in to view this page!</Error>
 
-  <div v-else class="grid">
+  <div
+    v-else
+    class="grid"
+  >
     <h1 class="background-box content-centered location-span">Rankings</h1>
 
     <div class="location-span">
@@ -25,6 +26,7 @@
           :teamData="team"
           :localtbadb="localtbadb"
           :localdb="localdb"
+          :user="user"
         />
       </transition-group>
     </div>
@@ -57,9 +59,11 @@ export default {
     reloadTeams() {
       var dThis = this;
 
-      this.localtbadb.get("RANKINGS").then(function(doc) {
-        dThis.teams = doc.json.rankings;
-      });
+      this.localtbadb
+        .get(this.user.tbaHash.hash + "RANKINGS")
+        .then(function(doc) {
+          dThis.teams = doc.json.rankings;
+        });
     }
   },
   created: function() {

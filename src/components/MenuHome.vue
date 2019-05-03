@@ -1,6 +1,9 @@
 <template>
   <div class="grid grid-shrink">
-    <div class="location-centered" v-if="user.username != null && user.role != null">
+    <div
+      class="location-centered"
+      v-if="user.username != null && user.role != null"
+    >
       <div class="background-box content-centered">
         <h2>Team Leaderboard</h2>
         <p>
@@ -9,7 +12,12 @@
         </p>
       </div>
       <div class="background-box">
-        <input v-model.trim="filter" type="text" name="filter" placeholder="Search for teams...">
+        <input
+          v-model.trim="filter"
+          type="text"
+          name="filter"
+          placeholder="Search for teams..."
+        >
       </div>
       <div
         v-if="teams.length != 0"
@@ -66,7 +74,10 @@
           @click="toggleSorted(true, 'totalPoints')"
         >Total Points</h3>
       </div>
-      <p v-else class="location-centered background-box content-centered">
+      <p
+        v-else
+        class="location-centered background-box content-centered"
+      >
         There aren't any teams to display yet.
         <br>Ask an admin to add teams.
       </p>
@@ -217,8 +228,8 @@ export default {
       this.localdb
         .allDocs({
           include_docs: true,
-          startkey: "TEAM_",
-          endkey: "TEAM_\ufff0"
+          startkey: this.user.scoutingHash.hash + "TEAM_",
+          endkey: this.user.scoutingHash.hash + "TEAM_\ufff0"
         })
         .then(function(result) {
           var tempTeams = [];
@@ -242,7 +253,7 @@ export default {
         var shouldLoadTeams = false;
 
         for (var doc of change.change.docs) {
-          if (doc["_id"].startsWith("TEAM_")) {
+          if (doc["_id"].startsWith(dThis.user.scoutingHash.hash + "TEAM_")) {
             shouldLoadTeams = true;
           }
         }

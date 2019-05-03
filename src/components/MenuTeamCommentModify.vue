@@ -24,7 +24,11 @@
       ></textarea>
     </div>
     <div class="background-box">
-      <select v-model="rating" name="comment-points" required>
+      <select
+        v-model="rating"
+        name="comment-points"
+        required
+      >
         <option value="1">Positive</option>
         <option value="0">Neutral</option>
         <option value="-1">Negative</option>
@@ -120,9 +124,11 @@ export default {
   },
   created() {
     var dThis = this;
-    this.localdb.get("TEAM_" + dThis.number).then(function(doc) {
-      dThis.name = doc.name || "";
-    });
+    this.localdb
+      .get(this.user.scoutingHash.hash + "TEAM_" + dThis.number)
+      .then(function(doc) {
+        dThis.name = doc.name || "";
+      });
 
     this.localdb.get(this.docId).then(function(doc) {
       dThis.title = doc.title || "";

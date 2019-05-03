@@ -1,9 +1,10 @@
 <template>
-  <Error v-if="!isAdmin"
-    >You must be logged in as an admin to view this page!</Error
-  >
+  <Error v-if="!isAdmin">You must be logged in as an admin to view this page!</Error>
 
-  <div v-else class="grid">
+  <div
+    v-else
+    class="grid"
+  >
     <h2 class="location-centered-small background-box content-centered">
       Admin Tools
     </h2>
@@ -19,22 +20,26 @@
           <br />
           <router-link :to="{ name: 'user-add' }">Add User</router-link>
           <br />
-          <router-link :to="{ name: 'admin-template' }"
-            >Edit Scouting Templates</router-link
-          >
+          <router-link :to="{ name: 'admin-template' }">Edit Scouting Templates</router-link>
           <br />
         </div>
       </template>
 
       <template slot="tab-panel-teams">
         <div>
-          <div v-if="teams.length != 0" class="background-box admin-team">
+          <div
+            v-if="teams.length != 0"
+            class="background-box admin-team"
+          >
             <p>Team Number</p>
             <p>Team Name</p>
             <p>Remove Team</p>
           </div>
 
-          <div v-else class="location-centered background-box content-centered">
+          <div
+            v-else
+            class="location-centered background-box content-centered"
+          >
             <p>There aren't any teams to display.</p>
           </div>
 
@@ -49,17 +54,21 @@
 
       <template slot="tab-panel-users">
         <div>
-          <div v-if="users.length != 0" class="background-box admin-user">
+          <div
+            v-if="users.length != 0"
+            class="background-box admin-user"
+          >
             <p>Username</p>
             <p>Role</p>
             <p>Edit User</p>
           </div>
 
-          <div v-else class="background-box content-centered">
+          <div
+            v-else
+            class="background-box content-centered"
+          >
             <p>There aren't any users to display yet.</p>
-            <router-link :to="{ name: 'user-add' }"
-              >Add a user here.</router-link
-            >
+            <router-link :to="{ name: 'user-add' }">Add a user here.</router-link>
           </div>
 
           <AdminUser
@@ -126,8 +135,8 @@ export default {
       this.localdb
         .allDocs({
           include_docs: true,
-          startkey: "TEAM_0",
-          endkey: "TEAM_\ufff0"
+          startkey: this.user.scoutingHash.hash + "TEAM_0",
+          endkey: this.user.scoutingHash.hash + "TEAM_\ufff0"
         })
         .then(function(result) {
           dThis.teams = [];
@@ -161,11 +170,13 @@ export default {
         .then(option => {
           if (option == "Delete") {
             var dThis = this;
-            this.localdb.get("TEAM_" + number).then(function(doc) {
-              dThis.localdb.remove(doc).then(function() {
-                dThis.loadTeams();
+            this.localdb
+              .get(this.user.scoutingHash.hash + "TEAM_" + number)
+              .then(function(doc) {
+                dThis.localdb.remove(doc).then(function() {
+                  dThis.loadTeams();
+                });
               });
-            });
           }
         });
     },
