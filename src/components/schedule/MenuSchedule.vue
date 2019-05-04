@@ -7,6 +7,14 @@
       class="grid"
     >
       <h1 class="background-box content-centered location-span">Schedule</h1>
+      <div class="background-box location-span">
+        <input
+          v-model.trim="filter"
+          type="text"
+          name="filter"
+          placeholder="Search for teams..."
+        >
+      </div>
 
       <div class="location-span">
         <div class="background-box ranking-team-container mobile-shrink schedule-match-description">
@@ -33,6 +41,7 @@
 <script>
 import Error from "../Error.vue";
 import orderBy from "lodash.orderby";
+import lodashFilter from "lodash.filter";
 import ScheduleMatch from "./ScheduleMatch.vue";
 
 export default {
@@ -43,7 +52,8 @@ export default {
   },
   data: function() {
     return {
-      matches: []
+      matches: [],
+      filter: ""
     };
   },
   props: {
@@ -94,6 +104,59 @@ export default {
         }
       }
     };
+  },
+  computed: {
+    filteredMatches: function() {
+      if (this.filter == "") return this.matches;
+
+      var filterWords = this.filter.toLowerCase().split(" ");
+
+      let shouldCombine = false;
+      let index = 0;
+      for (let i in filterWords) {
+        let cur = filterWords[i];
+        if (shouldCombine)
+          filterWords[index] =
+            filterWords[index] + " " + filterWords.splice(i, 1);
+
+        if (cur.startsWith('"') || cur.startsWith('!"')) {
+          shouldCombine = true;
+          index = i;
+        }
+        if (cur.endsWith('"')) shouldCombine = false;
+      }
+
+      return lodashFilter(this.matches, function(match) {
+        var shouldInclude = 0;
+        filterWords.forEach(function(f) {
+          let invert = false;
+          let shouldInc = false;
+
+          if (f.startsWith("!")) {
+            f = f.replace("!", "");
+            invert = true;
+          }
+
+          if (f.startsWith('"') && f.endsWith('"') && f.length >= 2) {
+            f = f.substring(0, f.length - 1).replace('"', "");
+
+            if (team.name.toLowerCase() == f || team.number.toString() == f)
+              shouldInc = true;
+          } else if (
+            team.name.toLowerCase().includes(f) ||
+            team.number.toString().includes(f)
+          ) {
+            shouldInc = true;
+          }
+
+          if (invert) shouldInc = !shouldInc;
+
+          if (shouldInc) shouldInclude++;
+        });
+
+        return shouldInclude == filterWords.length;
+      });
+    }
   }
 };
 </script>
