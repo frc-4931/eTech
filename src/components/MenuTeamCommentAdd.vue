@@ -122,9 +122,13 @@ export default {
         if (docs["rows"].length !== 0) {
           var lastCommentIDN = 0;
 
-          for (let doc in docs["rows"]) {
+          for (let doc of docs["rows"]) {
             var id = doc["id"];
             var curIDN = id.replace("COMMENT_" + dThis.teamNumber + "_", "");
+            if (curIDN.includes("_")) {
+              var inx = curIDN.indexOf("_");
+              curIDN = curIDN.slice(0, inx);
+            }
             var num = parseInt(curIDN);
             if (num > lastCommentIDN) lastCommentIDN = num;
           }

@@ -5,12 +5,12 @@
     </h3>
     <transition-group name="trans-group">
       <component
-        v-for="(comment, id) in comments"
+        v-for="comment in comments"
         :locked="!hasEdit"
-        :is="commentIs(id)"
-        :modify="() => openCommentModifyMenu(id)"
-        :key="id"
-        :docId="id"
+        :is="commentIs(comment._id)"
+        :modify="() => openCommentModifyMenu(comment._id)"
+        :key="comment._id"
+        :docId="comment._id"
         :rating="comment.rating"
         :comment="comment.comment"
         :title="comment.title"
@@ -65,7 +65,7 @@ export default {
     openCommentModifyMenu: Function,
     commentIs: Function,
     hasEdit: Boolean,
-    comments: Object,
+    comments: Array,
     team: Object
   }
 };

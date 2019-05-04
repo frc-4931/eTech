@@ -152,9 +152,9 @@ export default {
         commentPoints: 0
       },
       openAddCommentMenu: false,
-      comments: {
+      comments: [
         //Change to array of _id's and make CommentField load the comment itself. Maybe?
-      },
+      ],
       pitScouts: [
         //List of pit scouts in order
       ],
@@ -190,20 +190,31 @@ export default {
           endkey: "COMMENT_" + dThis.teamNumber + "_\ufff0"
         })
         .then(function(docs) {
-          dThis.comments = {};
+          dThis.comments.splice(0, dThis.comments.length);
           var totalCommentRating = 0;
 
           for (var docID in docs["rows"]) {
             var doc = docs["rows"][docID]["doc"];
             var comment = {
+              _id: doc["_id"],
               comment: doc.comment,
               rating: parseInt(doc.rating),
               title: doc.title
             };
             totalCommentRating += comment.rating;
 
-            dThis.$set(dThis.comments, doc["_id"], comment);
+            dThis.comments.push(comment);
           }
+
+          dThis.comments = orderBy(
+            dThis.comments,
+            [
+              comment => {
+                return dThis.getCommentNumber(comment._id);
+              }
+            ],
+            ["asc"]
+          );
 
           dThis.$set(dThis.team, "commentPoints", totalCommentRating);
 
@@ -457,6 +468,16 @@ export default {
       }
 
       return parseInt(scoutString);
+    },
+    getCommentNumber(id) {
+      var commentString = id.replace("COMMENT_" + this.teamNumber + "_", "");
+
+      if (commentString.includes("_")) {
+        var inx = commentString.indexOf("_");
+        commentString = commentString.slice(0, inx);
+      }
+
+      return parseInt(commentString);
     },
     trimScout(id) {
       let scoutString = id
