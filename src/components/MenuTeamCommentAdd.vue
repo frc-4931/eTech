@@ -130,6 +130,7 @@ export default {
 
           for (let doc in docs["rows"]) {
             var id = doc["id"].replace(dThis.user.scoutingHash.hash, "");
+            var id = doc["id"];
             var curIDN = id.replace("COMMENT_" + dThis.teamNumber + "_", "");
             var num = parseInt(curIDN);
             if (num > lastCommentIDN) lastCommentIDN = num;
