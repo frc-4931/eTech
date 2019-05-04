@@ -278,46 +278,44 @@ export default {
     reloadAlliances() {
       var dThis = this;
 
-      this.localtbadb
-        .get(this.user.tbaHash.hash + "ALLIANCES")
-        .then(function(doc) {
-          for (let alliance in doc.json) {
-            var allianceData = doc.json[alliance];
+      this.localtbadb.get("ALLIANCES").then(function(doc) {
+        for (let alliance in doc.json) {
+          var allianceData = doc.json[alliance];
 
-            var eliminatedLevel = allianceData.status.level;
-            var allianceId = parseInt(allianceData.name.split(" ")[1]);
-            var teams = [];
+          var eliminatedLevel = allianceData.status.level;
+          var allianceId = parseInt(allianceData.name.split(" ")[1]);
+          var teams = [];
 
-            allianceData.picks.forEach(function(team) {
-              teams.push(team.replace("frc", ""));
-            });
+          allianceData.picks.forEach(function(team) {
+            teams.push(team.replace("frc", ""));
+          });
 
-            if (eliminatedLevel == "f" && allianceData.status.status == "won")
-              eliminatedLevel = "w";
+          if (eliminatedLevel == "f" && allianceData.status.status == "won")
+            eliminatedLevel = "w";
 
-            var locations = {
-              alliance1: 0,
-              alliance8: 1,
-              alliance4: 2,
-              alliance5: 3,
-              alliance3: 4,
-              alliance6: 5,
-              alliance2: 6,
-              alliance7: 7
-            };
+          var locations = {
+            alliance1: 0,
+            alliance8: 1,
+            alliance4: 2,
+            alliance5: 3,
+            alliance3: 4,
+            alliance6: 5,
+            alliance2: 6,
+            alliance7: 7
+          };
 
-            var location =
-              locations[allianceData.name.toLowerCase().replace(" ", "")];
+          var location =
+            locations[allianceData.name.toLowerCase().replace(" ", "")];
 
-            dThis.addToBracketData(
-              "qf",
-              eliminatedLevel,
-              location,
-              allianceId,
-              teams
-            );
-          }
-        });
+          dThis.addToBracketData(
+            "qf",
+            eliminatedLevel,
+            location,
+            allianceId,
+            teams
+          );
+        }
+      });
     }
   },
   created: function() {

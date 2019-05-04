@@ -1,11 +1,10 @@
 <template>
   <div>
-    <Error v-show="user.role != '_admin'">You must be logged in as an admin to view this page!</Error>
-
-    <div
-      v-show="user.role == '_admin'"
-      class="grid grid-shrink"
+    <Error v-show="user.role != '_admin'"
+      >You must be logged in as an admin to view this page!</Error
     >
+
+    <div v-show="user.role == '_admin'" class="grid grid-shrink">
       <div class="location-centered-small">
         <h2 class="background-box content-centered">Add team</h2>
 
@@ -92,7 +91,7 @@ export default {
           number: parseInt(this.number),
           objectivePoints: 0,
           commentPoints: 0,
-          _id: dThis.user.scoutingHash.hash + "TEAM_" + this.number
+          _id: "TEAM_" + this.number
         };
         this.localdb
           .put(team)

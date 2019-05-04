@@ -1,15 +1,16 @@
 <template>
   <div>
-    <Error v-if="user.role == null">You must be logged in to view this page!</Error>
-
-    <div
-      v-else
-      class="grid"
+    <Error v-if="user.role == null"
+      >You must be logged in to view this page!</Error
     >
+
+    <div v-else class="grid">
       <h1 class="background-box content-centered location-span">Schedule</h1>
 
       <div class="location-span">
-        <div class="background-box ranking-team-container mobile-shrink schedule-match-description">
+        <div
+          class="background-box ranking-team-container mobile-shrink schedule-match-description"
+        >
           <h3>Match</h3>
           <h3>Blue</h3>
           <h3>Red</h3>
@@ -58,8 +59,8 @@ export default {
       this.localtbadb
         .allDocs({
           include_docs: true,
-          startkey: this.user.tbaHash.hash + "MATCHSIMPLE_",
-          endkey: this.user.tbaHash.hash + "MATCHSIMPLE_\ufff0"
+          startkey: "MATCHSIMPLE_",
+          endkey: "MATCHSIMPLE_\ufff0"
         })
         .then(function(result) {
           dThis.matches = [];

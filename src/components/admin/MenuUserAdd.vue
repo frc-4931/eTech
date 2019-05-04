@@ -1,10 +1,9 @@
 <template>
   <div>
-    <Error v-show="user.role != '_admin'">You must be logged in as an admin to view this page!</Error>
-    <div
-      v-show="user.role == '_admin'"
-      class="grid grid-shrink"
+    <Error v-show="user.role != '_admin'"
+      >You must be logged in as an admin to view this page!</Error
     >
+    <div v-show="user.role == '_admin'" class="grid grid-shrink">
       <div class="location-centered-small">
         <h2 class="content-centered background-box">
           Add User
@@ -46,7 +45,9 @@
             />
           </div>
 
-          <div class="background-box content-centered grid-perminant location-span">
+          <div
+            class="background-box content-centered grid-perminant location-span"
+          >
             <label class="location-left-small">
               <input
                 class="radio-button"
@@ -156,7 +157,7 @@ export default {
           }
         );
       } else {
-        this.popup.newPopup(
+        This.popup.newPopup(
           "Error while adding user",
           "You must be an admin to add users!",
           undefined

@@ -56,7 +56,7 @@ export default {
   },
   watch: {
     user: {
-      handler() {
+      handler(newValue, oldValue) {
         this.updatePermissions();
       },
       deep: true
