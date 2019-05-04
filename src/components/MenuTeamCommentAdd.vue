@@ -90,7 +90,6 @@ export default {
             rating: parseInt(this.rating),
             title: this.title,
             _id:
-              this.user.scoutingHash.hash +
               "COMMENT_" +
               this.teamNumber +
               "_" +
@@ -116,20 +115,14 @@ export default {
     this.localdb
       .allDocs({
         include_docs: false,
-        startkey:
-          this.user.scoutingHash.hash + "COMMENT_" + dThis.teamNumber + "_0",
-        endkey:
-          this.user.scoutingHash.hash +
-          "COMMENT_" +
-          dThis.teamNumber +
-          "_\ufff0"
+        startkey: "COMMENT_" + dThis.teamNumber + "_0",
+        endkey: "COMMENT_" + dThis.teamNumber + "_\ufff0"
       })
       .then(function(docs) {
         if (docs["rows"].length !== 0) {
           var lastCommentIDN = 0;
 
           for (let doc in docs["rows"]) {
-            var id = doc["id"].replace(dThis.user.scoutingHash.hash, "");
             var id = doc["id"];
             var curIDN = id.replace("COMMENT_" + dThis.teamNumber + "_", "");
             var num = parseInt(curIDN);
