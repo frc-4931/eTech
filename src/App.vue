@@ -1,19 +1,28 @@
 <template>
   <div id="app">
-    <NavigationDrawer :user="user" :navigationStatus="navigationStatus"/>
+    <NavigationDrawer
+      :user="user"
+      :navigationStatus="navigationStatus"
+    />
 
-    <TopBar :user="user" :navigationStatus="navigationStatus"/>
+    <TopBar
+      :user="user"
+      :navigationStatus="navigationStatus"
+    />
 
-    <Popup :popup="popup"/>
+    <Popup :popup="popup" />
 
-    <ConnectionError v-if="isConnectionError"/>
+    <ConnectionError v-if="isConnectionError" />
 
     <transition
       enter-active-class="content-fade-in"
       leave-active-class="content-fade-out"
       mode="out-in"
     >
-      <keep-alive include="MenuHome,MenuAdmin" :max="5">
+      <keep-alive
+        include="MenuHome,MenuAdmin"
+        :max="5"
+      >
         <router-view
           :HomeSortingOptions="HomeSortingOptions"
           :popup="popup"
@@ -37,7 +46,6 @@ import Authentication from "pouchdb-authentication";
 import NavigationDrawer from "./components/NavigationDrawer.vue";
 import TopBar from "./components/TopBar.vue";
 import Popup from "./components/Popup.vue";
-import { resolve, reject } from "q";
 
 var url = "";
 var setup = {};
@@ -94,7 +102,13 @@ export default {
         logIn: this.logIn,
         logOut: this.logOut,
         getLoggedIn: this.getLoggedIn,
-        changePassword: this.changePassword
+        changePassword: this.changePassword,
+        scoutingHash: {
+          hash: ""
+        },
+        tbaHash: {
+          hash: ""
+        }
       },
       sync_change: {
         onChange: function() {},
@@ -108,24 +122,55 @@ export default {
     $route: "onRouteChange"
   },
   methods: {
+    loadHash(locDB, remDB, obj, nameString) {
+      var dThis = this;
+      return new Promise(resolve => {
+        remDB.get("DB_HASH").then(doc => {
+          locDB
+            .get("LOCAL_DB_HASH")
+            .then(locDoc => {
+              if (locDoc.db_hash === doc.db_hash) {
+                obj.hash = doc.db_hash + "_";
+                resolve();
+              } else {
+                obj.hash = doc.db_hash + "_";
+                // DB is not up to date and needs to be destroyed and repulled
+                locDB.destroy().then(() => {
+                  dThis[nameString] = new PouchDB(nameString);
+                  locDB = dThis[nameString];
+                  locDB
+                    .put({
+                      _id: "LOCAL_DB_HASH",
+                      db_hash: doc.db_hash
+                    })
+                    .then(info => {
+                      console.log(info);
+                      resolve();
+                    });
+                });
+              }
+            })
+            .catch(() => {
+              obj.hash = doc.db_hash + "_";
+              //No hash file, set hash file in local => destroy localdb repull.
+              locDB.destroy().then(() => {
+                dThis[nameString] = new PouchDB(nameString);
+                locDB = dThis[nameString];
+                locDB
+                  .put({
+                    _id: "LOCAL_DB_HASH",
+                    db_hash: doc.db_hash
+                  })
+                  .then(() => {
+                    resolve();
+                  });
+              });
+            });
+        });
+      });
+    },
     reloadSync: function() {
       var dThis = this;
-
-      // // set global var = locDoc.db_hash
-      // dThis.remotedb.get("DB_HASH").then(doc => {
-      //   dThis.localdb
-      //     .get("LOCAL_DB_HASH")
-      //     .then(locDoc => {
-      //       if (locDoc.db_hash === doc.db_hash) {
-      //         // DB is up to date and safe to replicate
-      //       } else {
-      //         // DB is not up to date and needs to be destroyed and repulled
-      //       }
-      //     })
-      //     .catch(() => {
-      //       //No hash file, set hash file in local => destroy localdb repull.
-      //     });
-      // });
 
       if (dThis.sync.removeAllListeners) dThis.sync.removeAllListeners();
       if (dThis.sync.cancel) dThis.sync.cancel();
@@ -134,9 +179,7 @@ export default {
           live: true,
           retry: true,
           heartbeat: 5000,
-          filter: doc => {
-            return doc._id !== "LOCAL_DB_HASH" && doc._id !== "DB_HASH";
-          }
+          filter: "general/filterbyhash"
         })
         .on("error", function(err) {
           console.log(err);
@@ -164,9 +207,7 @@ export default {
           live: true,
           retry: true,
           heartbeat: 5000,
-          filter: doc => {
-            return doc._id !== "LOCAL_DB_HASH" && doc._id !== "DB_HASH";
-          }
+          filter: "general/filterbyhash"
         })
         .on("error", function(err) {
           console.log(err);
@@ -306,12 +347,28 @@ export default {
 
     PouchDB.plugin(Authentication);
 
-    var dThis = this;
-
-    // FIXME UNCOMMENT ME!!!!
     this.getLoggedIn()
       .then(isOnline => {
-        if (isOnline) dThis.reloadSync();
+        if (isOnline)
+          dThis
+            .loadHash(
+              dThis.localdb,
+              dThis.remotedb,
+              dThis.user.scoutingHash,
+              "localdb"
+            )
+            .then(() => {
+              return dThis.loadHash(
+                dThis.localtbadb,
+                dThis.bluealliancedb,
+                dThis.user.tbaHash,
+                "localtbadb"
+              );
+            })
+            .then(() => {
+              console.log("INTIAL SYNC LOAD");
+              dThis.reloadSync();
+            });
       })
       .catch(err => {
         if (err.status == 401 && dThis.$router.currentRoute.name != "login") {
