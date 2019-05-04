@@ -412,6 +412,7 @@ export default {
     },
     onRouteChange() {
       this.navigationStatus.backButton = this.$route.meta.backButton;
+      //console.log("Route change");
     }
   },
   created: function() {
@@ -458,7 +459,7 @@ export default {
 
       document.title = "eTech: Scouting Done Right - " + pageTitle;
 
-      console.log(dThis.user.role);
+      //console.log(dThis.user.role);
       next();
     });
   }
