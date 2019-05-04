@@ -46,6 +46,7 @@ import Authentication from "pouchdb-authentication";
 import NavigationDrawer from "./components/NavigationDrawer.vue";
 import TopBar from "./components/TopBar.vue";
 import Popup from "./components/Popup.vue";
+import { Promise, async } from "q";
 
 var url = "";
 var setup = {};
@@ -122,24 +123,70 @@ export default {
     $route: "onRouteChange"
   },
   methods: {
-    loadHash(locDB, remDB, obj, nameString) {
+    setMethods(locDB, hashObj) {
+      if (!locDB.putRAW) locDB.putRAW = locDB.put;
+      if (!locDB.getRAW) locDB.getRAW = locDB.get;
+      if (!locDB.allDocsRAW) locDB.allDocsRAW = locDB.allDocs;
+
+      locDB.put = function(doc) {
+        doc._id = hashObj.hash + doc._id;
+        return locDB.putRAW(doc);
+      };
+
+      locDB.get = function(docID) {
+        docID = hashObj.hash + docID;
+
+        return new Promise((resolve, reject) => {
+          locDB
+            .getRAW(docID)
+            .then(doc => {
+              doc._id = doc._id.replace(hashObj.hash, "");
+              resolve(doc);
+            })
+            .catch(reject);
+        });
+      };
+
+      locDB.allDocs = function(opts) {
+        opts.startkey = hashObj.hash + opts.startkey;
+        opts.endkey = hashObj.hash + opts.endkey;
+
+        return new Promise((resolve, reject) => {
+          locDB
+            .allDocsRAW(opts)
+            .then(docs => {
+              for (let doc of docs.rows) {
+                doc.id = doc.id.replace(hashObj.hash, "");
+
+                if (doc.doc)
+                  doc.doc._id = doc.doc._id.replace(hashObj.hash, "");
+              }
+              resolve(docs);
+            })
+            .catch(reject);
+        });
+      };
+    },
+    loadHash(remDB, obj, nameString) {
       var dThis = this;
       return new Promise(resolve => {
+        let tempGet = dThis[nameString].getRAW || dThis[nameString].get;
+
         remDB.get("DB_HASH").then(doc => {
-          locDB
-            .get("LOCAL_DB_HASH")
+          tempGet("LOCAL_DB_HASH")
             .then(locDoc => {
               if (locDoc.db_hash === doc.db_hash) {
                 obj.hash = doc.db_hash + "_";
+                dThis.setMethods(dThis[nameString], obj);
                 resolve();
               } else {
                 obj.hash = doc.db_hash + "_";
                 // DB is not up to date and needs to be destroyed and repulled
-                locDB.destroy().then(() => {
+                dThis[nameString].destroy().then(() => {
                   dThis[nameString] = new PouchDB(nameString);
-                  locDB = dThis[nameString];
-                  locDB
-                    .put({
+                  dThis.setMethods(dThis[nameString], obj);
+                  dThis[nameString]
+                    .putRAW({
                       _id: "LOCAL_DB_HASH",
                       db_hash: doc.db_hash
                     })
@@ -153,11 +200,11 @@ export default {
             .catch(() => {
               obj.hash = doc.db_hash + "_";
               //No hash file, set hash file in local => destroy localdb repull.
-              locDB.destroy().then(() => {
+              dThis[nameString].destroy().then(() => {
                 dThis[nameString] = new PouchDB(nameString);
-                locDB = dThis[nameString];
-                locDB
-                  .put({
+                dThis.setMethods(dThis[nameString], obj);
+                dThis[nameString]
+                  .putRAW({
                     _id: "LOCAL_DB_HASH",
                     db_hash: doc.db_hash
                   })
@@ -185,6 +232,10 @@ export default {
           console.log(err);
         })
         .on("change", function(change) {
+          for (let doc of change.change.docs)
+            doc._id = doc._id.replace(dThis.user.scoutingHash.hash, "");
+
+          console.log(change);
           dThis.sync_change.onChange(change);
         })
         .on("paused", function() {
@@ -213,6 +264,9 @@ export default {
           console.log(err);
         })
         .on("change", function(change) {
+          for (let doc of change.change.docs)
+            doc._id = doc._id.replace(dThis.user.scoutingHash.hash, "");
+
           dThis.sync_change.onBlueAllianceDbChange(change);
         })
         .on("paused", function() {
@@ -351,15 +405,9 @@ export default {
       .then(isOnline => {
         if (isOnline)
           dThis
-            .loadHash(
-              dThis.localdb,
-              dThis.remotedb,
-              dThis.user.scoutingHash,
-              "localdb"
-            )
+            .loadHash(dThis.remotedb, dThis.user.scoutingHash, "localdb")
             .then(() => {
               return dThis.loadHash(
-                dThis.localtbadb,
                 dThis.bluealliancedb,
                 dThis.user.tbaHash,
                 "localtbadb"
