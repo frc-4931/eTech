@@ -24,7 +24,11 @@
       ></textarea>
     </div>
     <div class="background-box">
-      <select v-model="rating" name="comment-points" required>
+      <select
+        v-model="rating"
+        name="comment-points"
+        required
+      >
         <option value="1">Positive</option>
         <option value="0">Neutral</option>
         <option value="-1">Negative</option>
@@ -79,12 +83,12 @@ export default {
     submitComment: function() {
       var dThis = this;
       if (this.allFieldsValid) {
-        this.localdb.get(this.docId).then(function(doc) {
+        this.localdb.getHASH(this.docId).then(function(doc) {
           doc.title = dThis.title;
           doc.comment = dThis.comment;
           doc.rating = parseInt(dThis.rating);
 
-          dThis.localdb.put(doc).then(function() {
+          dThis.localdb.putHASH(doc).then(function() {
             dThis.callback();
           });
         });
@@ -101,7 +105,7 @@ export default {
         )
         .then(option => {
           if (option == "Delete") {
-            this.localdb.get(this.docId).then(function(doc) {
+            this.localdb.getHASH(this.docId).then(function(doc) {
               dThis.localdb.remove(doc).then(function() {
                 dThis.callback();
               });
@@ -120,11 +124,11 @@ export default {
   },
   created() {
     var dThis = this;
-    this.localdb.get("TEAM_" + dThis.number).then(function(doc) {
+    this.localdb.getHASH("TEAM_" + dThis.number).then(function(doc) {
       dThis.name = doc.name || "";
     });
 
-    this.localdb.get(this.docId).then(function(doc) {
+    this.localdb.getHASH(this.docId).then(function(doc) {
       dThis.title = doc.title || "";
       dThis.comment = doc.comment || "";
       dThis.rating = doc.rating;

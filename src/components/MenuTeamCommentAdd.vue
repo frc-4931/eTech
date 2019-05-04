@@ -97,7 +97,7 @@ export default {
               "_" +
               this.user.username
           };
-          this.localdb.put(comment).then(function() {
+          this.localdb.putHASH(comment).then(function() {
             dThis.callback();
           });
         }
@@ -113,7 +113,7 @@ export default {
     var dThis = this;
 
     this.localdb
-      .allDocs({
+      .allDocsHASH({
         include_docs: false,
         startkey: "COMMENT_" + dThis.teamNumber + "_0",
         endkey: "COMMENT_" + dThis.teamNumber + "_\ufff0"

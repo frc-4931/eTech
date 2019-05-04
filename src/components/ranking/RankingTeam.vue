@@ -52,7 +52,7 @@ export default {
   created: function() {
     var dThis = this;
 
-    this.localdb.get("TEAM_" + this.teamNumber).then(function(doc) {
+    this.localdb.getHASH("TEAM_" + this.teamNumber).then(function(doc) {
       dThis.teamName = doc.name;
     });
   }

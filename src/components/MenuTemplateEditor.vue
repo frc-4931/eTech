@@ -15,7 +15,10 @@
             id="select-template"
             class="content-input-large"
           >
-            <option value="none" disabled>Select a Scouting Template</option>
+            <option
+              value="none"
+              disabled
+            >Select a Scouting Template</option>
             <option value="TEMPLATE_PITSCOUT">Pit Scout</option>
             <option value="TEMPLATE_MATCHSCOUT">Match Scout</option>
           </select>
@@ -40,7 +43,10 @@
         ></component>
         <!-- beautify ignore:end -->
 
-        <div v-if="curOpen == 'field_add'" id="template-field-add">
+        <div
+          v-if="curOpen == 'field_add'"
+          id="template-field-add"
+        >
           <div class="line" />
 
           <h3 class="background-box content-centered">Creating New Field</h3>
@@ -306,7 +312,7 @@ export default {
       this.fields = [];
       if (template == "none") return;
       this.localdb
-        .get(template)
+        .getHASH(template)
         .then(function(doc) {
           dThis.fields = doc.fields;
         })
@@ -352,11 +358,11 @@ export default {
       }
 
       this.localdb
-        .get(template)
+        .getHASH(template)
         .then(function(doc) {
           doc.fields = dThis.fields;
           dThis.localdb
-            .put(doc)
+            .putHASH(doc)
             .then(function() {
               dThis.popup.newPopup(
                 "Saved",
@@ -383,7 +389,7 @@ export default {
               .then(option => {
                 if (option == "Save") {
                   var doc = { _id: template, fields: dThis.fields };
-                  dThis.localdb.put(doc).then(function() {
+                  dThis.localdb.putHASH(doc).then(function() {
                     dThis.popup.newPopup(
                       "Saved",
                       "Successfully saved to the database!",
@@ -404,7 +410,7 @@ export default {
       //Loop through all teams and update their point values
       var dThis = this;
       this.localdb
-        .allDocs({
+        .allDocsHASH({
           include_docs: false,
           startkey: "TEAM_0",
           endkey: "TEAM_\ufff0"
@@ -424,14 +430,14 @@ export default {
       var dPoints = { pPoints: 0, pAmount: 0, mPoints: 0, mAmount: 0 };
 
       this.localdb
-        .allDocs({
+        .allDocsHASH({
           include_docs: true,
           startkey: "PITSCOUT_" + team + "_0",
           endkey: "PITSCOUT_" + team + "_\ufff0"
         })
         .then(function(docs) {
           return dThis.localdb
-            .get("TEMPLATE_PITSCOUT")
+            .getHASH("TEMPLATE_PITSCOUT")
             .then(function(doc) {
               return doc["fields"];
             })
@@ -456,7 +462,7 @@ export default {
             });
         })
         .then(function() {
-          return dThis.localdb.allDocs({
+          return dThis.localdb.allDocsHASH({
             include_docs: true,
             startkey: "MATCHSCOUT_" + team + "_",
             endkey: "MATCHSCOUT_" + team + "_\ufff0"
@@ -464,7 +470,7 @@ export default {
         })
         .then(function(docs) {
           return dThis.localdb
-            .get("TEMPLATE_MATCHSCOUT")
+            .getHASH("TEMPLATE_MATCHSCOUT")
             .then(function(doc) {
               return doc["fields"];
             })
@@ -489,7 +495,7 @@ export default {
             });
         })
         .then(function() {
-          dThis.localdb.get("TEAM_" + team).then(function(doc) {
+          dThis.localdb.getHASH("TEAM_" + team).then(function(doc) {
             var matchPoints =
               dPoints.mPoints / (dPoints.mAmount > 0 ? dPoints.mAmount : 1);
 
@@ -502,7 +508,7 @@ export default {
 
             if (doc.objectivePoints != points) {
               doc.objectivePoints = points;
-              dThis.localdb.put(doc);
+              dThis.localdb.putHASH(doc);
             }
           });
         });

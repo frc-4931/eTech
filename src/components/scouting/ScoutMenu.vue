@@ -11,7 +11,10 @@
       ></component>
     </div>
 
-    <div v-if="hasEdit" class="grid-perminant">
+    <div
+      v-if="hasEdit"
+      class="grid-perminant"
+    >
       <SaveButton
         class="location-span pitscout-label"
         :unsavedChanges="unsaved"
@@ -28,7 +31,10 @@
         style="margin-top: 0px; margin-left: 5px;"
       >Close</h3>
     </div>
-    <div v-else class="grid-perminant">
+    <div
+      v-else
+      class="grid-perminant"
+    >
       <h3
         @click="close()"
         class="location-span background-box background-box-hover content-centered"
@@ -94,7 +100,7 @@ export default {
     },
     getInitialScoutData() {
       var dThis = this;
-      this.localdb.get(this.docId).then(function(doc) {
+      this.localdb.getHASH(this.docId).then(function(doc) {
         for (var fieldInx in dThis.template) {
           var field = dThis.template[fieldInx];
           if (field["field"] != undefined) {
@@ -118,14 +124,14 @@ export default {
     },
     updateScoutData() {
       var dThis = this;
-      this.localdb.get(this.docId).then(function(doc) {
+      this.localdb.getHASH(this.docId).then(function(doc) {
         dThis.updateUI(doc);
       });
     },
     updateAndPutData() {
       var dThis = this;
       this.localdb
-        .get(this.docId)
+        .getHASH(this.docId)
         .then(function(doc) {
           dThis.updateUI(doc);
           return doc;
@@ -156,7 +162,7 @@ export default {
     },
     putScoutData() {
       var dThis = this;
-      this.localdb.get(this.docId).then(function(doc) {
+      this.localdb.getHASH(this.docId).then(function(doc) {
         for (var i in dThis.modifiedFields) {
           if (dThis.modifiedFields[i] === true) {
             doc[i] = dThis.scoutFields[i];
@@ -164,7 +170,7 @@ export default {
           }
         }
         doc["TOTAL-POINTS"] = dThis.getAllFieldPoints();
-        dThis.localdb.put(doc);
+        dThis.localdb.putHASH(doc);
       });
     },
     putDoc(doc) {
@@ -179,7 +185,7 @@ export default {
       this.unsaved = false;
 
       doc["TOTAL-POINTS"] = this.getAllFieldPoints();
-      this.localdb.put(doc).then(function() {
+      this.localdb.putHASH(doc).then(function() {
         dThis.callback();
       });
     },
@@ -212,7 +218,7 @@ export default {
       );
       if (confirmDelete) {
         var dThis = this;
-        this.localdb.get(this.docId).then(function(doc) {
+        this.localdb.getHASH(this.docId).then(function(doc) {
           dThis.localdb.remove(doc).then(function() {
             dThis.closeteam();
           });
@@ -224,7 +230,7 @@ export default {
     var dThis = this;
     if (this.isMatchScout === false) {
       this.localdb
-        .get("TEMPLATE_PITSCOUT")
+        .getHASH("TEMPLATE_PITSCOUT")
         .then(function(doc) {
           dThis.template = doc.fields;
         })
@@ -237,7 +243,7 @@ export default {
         });
     } else {
       this.localdb
-        .get("TEMPLATE_MATCHSCOUT")
+        .getHASH("TEMPLATE_MATCHSCOUT")
         .then(function(doc) {
           dThis.template = doc.fields;
         })

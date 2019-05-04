@@ -181,10 +181,10 @@ export default {
     loadComments: function() {
       //Load all comments from db then shove them into comments
       //Then check if sum of comment values == team.commentPoints
-      //If not then db.get file modify commentPoints then db.put
+      //If not then db.getHASH file modify commentPoints then db.putHASH
       var dThis = this;
       this.localdb
-        .allDocs({
+        .allDocsHASH({
           include_docs: true,
           startkey: "COMMENT_" + dThis.teamNumber + "_0",
           endkey: "COMMENT_" + dThis.teamNumber + "_\ufff0"
@@ -207,10 +207,10 @@ export default {
 
           dThis.$set(dThis.team, "commentPoints", totalCommentRating);
 
-          dThis.localdb.get("TEAM_" + dThis.teamNumber).then(function(doc) {
+          dThis.localdb.getHASH("TEAM_" + dThis.teamNumber).then(function(doc) {
             if (doc.commentPoints != totalCommentRating) {
               doc.commentPoints = totalCommentRating;
-              dThis.localdb.put(doc);
+              dThis.localdb.putHASH(doc);
             }
           });
         });
@@ -278,7 +278,7 @@ export default {
       var team = dThis.teamNumber;
 
       this.localdb
-        .allDocs({
+        .allDocsHASH({
           include_docs: true,
           startkey: "PITSCOUT_" + team + "_0",
           endkey: "PITSCOUT_" + team + "_\ufff0"
@@ -312,7 +312,7 @@ export default {
           return;
         })
         .then(function() {
-          return dThis.localdb.allDocs({
+          return dThis.localdb.allDocsHASH({
             include_docs: true,
             startkey: "MATCHSCOUT_" + team + "_",
             endkey: "MATCHSCOUT_" + team + "_\ufff0"
@@ -349,7 +349,7 @@ export default {
           return;
         })
         .then(function() {
-          dThis.localdb.get("TEAM_" + team).then(function(doc) {
+          dThis.localdb.getHASH("TEAM_" + team).then(function(doc) {
             var matchPoints =
               dPoints.mPoints / (dPoints.mAmount > 0 ? dPoints.mAmount : 1);
 
@@ -364,7 +364,7 @@ export default {
 
             if (doc.objectivePoints != points) {
               doc.objectivePoints = points;
-              dThis.localdb.put(doc);
+              dThis.localdb.putHASH(doc);
             }
           });
         });
@@ -376,7 +376,7 @@ export default {
       var dThis = this;
 
       this.localdb
-        .get("TEAM_" + this.teamNumber)
+        .getHASH("TEAM_" + this.teamNumber)
         .then(function(doc) {
           dThis.$set(dThis.team, "name", doc.name);
           dThis.$set(dThis.team, "number", doc.number);
@@ -390,7 +390,7 @@ export default {
         });
 
       this.localtbadb
-        .get("TEAMINFO_frc" + this.number)
+        .getHASH("TEAMINFO_frc" + this.number)
         .then(doc => {
           dThis.teaminfo = doc.json;
         })
@@ -544,7 +544,7 @@ export default {
       temp = temp.replace("TBA-", "");
 
       this.localtbadb
-        .get("MATCHSIMPLE_" + temp)
+        .getHASH("MATCHSIMPLE_" + temp)
         .then(doc => {
           dThis.matchInfo = doc.json;
           dThis.isTBAMatch = true;

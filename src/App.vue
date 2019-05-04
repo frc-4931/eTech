@@ -3,18 +3,24 @@
     <NavigationDrawer
       :user="user"
       :navigationStatus="navigationStatus"
+      v-if="loadChildren"
     />
 
     <TopBar
+      v-if="loadChildren"
       :user="user"
       :navigationStatus="navigationStatus"
     />
 
-    <Popup :popup="popup" />
+    <Popup
+      :popup="popup"
+      v-if="loadChildren"
+    />
 
-    <ConnectionError v-if="isConnectionError" />
+    <ConnectionError v-if="isConnectionError && loadChildren" />
 
     <transition
+      v-if="loadChildren"
       enter-active-class="content-fade-in"
       leave-active-class="content-fade-out"
       mode="out-in"
@@ -116,7 +122,8 @@ export default {
         onPaused: function() {},
         onBlueAllianceDbChange: function() {},
         onBlueAllianceDbPaused: function() {}
-      }
+      },
+      loadChildren: false
     };
   },
   watch: {
@@ -124,21 +131,18 @@ export default {
   },
   methods: {
     setMethods(locDB, hashObj) {
-      if (!locDB.putRAW) locDB.putRAW = locDB.put;
-      if (!locDB.getRAW) locDB.getRAW = locDB.get;
-      if (!locDB.allDocsRAW) locDB.allDocsRAW = locDB.allDocs;
-
-      locDB.put = function(doc) {
+      locDB.putHASH = function(doc) {
+        doc = JSON.parse(JSON.stringify(doc));
         doc._id = hashObj.hash + doc._id;
-        return locDB.putRAW(doc);
+        return locDB.put(doc);
       };
 
-      locDB.get = function(docID) {
+      locDB.getHASH = function(docID) {
         docID = hashObj.hash + docID;
 
         return new Promise((resolve, reject) => {
           locDB
-            .getRAW(docID)
+            .get(docID)
             .then(doc => {
               doc._id = doc._id.replace(hashObj.hash, "");
               resolve(doc);
@@ -147,13 +151,14 @@ export default {
         });
       };
 
-      locDB.allDocs = function(opts) {
+      locDB.allDocsHASH = function(opts) {
+        opts = JSON.parse(JSON.stringify(opts));
         opts.startkey = hashObj.hash + opts.startkey;
         opts.endkey = hashObj.hash + opts.endkey;
 
         return new Promise((resolve, reject) => {
           locDB
-            .allDocsRAW(opts)
+            .allDocs(opts)
             .then(docs => {
               for (let doc of docs.rows) {
                 doc.id = doc.id.replace(hashObj.hash, "");
@@ -170,10 +175,9 @@ export default {
     loadHash(remDB, obj, nameString) {
       var dThis = this;
       return new Promise(resolve => {
-        let tempGet = dThis[nameString].getRAW || dThis[nameString].get;
-
         remDB.get("DB_HASH").then(doc => {
-          tempGet("LOCAL_DB_HASH")
+          dThis[nameString]
+            .get("LOCAL_DB_HASH")
             .then(locDoc => {
               if (locDoc.db_hash === doc.db_hash) {
                 obj.hash = doc.db_hash + "_";
@@ -186,7 +190,7 @@ export default {
                   dThis[nameString] = new PouchDB(nameString);
                   dThis.setMethods(dThis[nameString], obj);
                   dThis[nameString]
-                    .putRAW({
+                    .put({
                       _id: "LOCAL_DB_HASH",
                       db_hash: doc.db_hash
                     })
@@ -204,7 +208,7 @@ export default {
                 dThis[nameString] = new PouchDB(nameString);
                 dThis.setMethods(dThis[nameString], obj);
                 dThis[nameString]
-                  .putRAW({
+                  .put({
                     _id: "LOCAL_DB_HASH",
                     db_hash: doc.db_hash
                   })
@@ -310,7 +314,21 @@ export default {
             }
 
             dThis.reloadSync();
-            resolve(dThis.user);
+
+            dThis
+              .loadHash(dThis.remotedb, dThis.user.scoutingHash, "localdb")
+              .then(() => {
+                return dThis.loadHash(
+                  dThis.bluealliancedb,
+                  dThis.user.tbaHash,
+                  "localtbadb"
+                );
+              })
+              .then(() => {
+                console.log("INTIAL SYNC LOAD");
+                dThis.reloadSync();
+                resolve(dThis.user);
+              });
           }
         });
       });
@@ -416,12 +434,14 @@ export default {
             .then(() => {
               console.log("INTIAL SYNC LOAD");
               dThis.reloadSync();
+              dThis.loadChildren = true;
             });
       })
       .catch(err => {
         if (err.status == 401 && dThis.$router.currentRoute.name != "login") {
           dThis.$router.push({ name: "login" });
         }
+        dThis.loadChildren = true;
       });
 
     this.onRouteChange();

@@ -278,7 +278,7 @@ export default {
     reloadAlliances() {
       var dThis = this;
 
-      this.localtbadb.get("ALLIANCES").then(function(doc) {
+      this.localtbadb.getHASH("ALLIANCES").then(function(doc) {
         for (let alliance in doc.json) {
           var allianceData = doc.json[alliance];
 

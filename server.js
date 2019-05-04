@@ -270,22 +270,26 @@ if (options.useSsl) {
 var getDesginDoc = (hashVal) => {
   /* eslint-disable no-undef */
   var validate = function (newDoc, oldDoc, userCtx) {
-    if (newDoc._id === "DB_HASH") {
+    if (newDoc._id == "DB_HASH") {
       if (userCtx.roles.indexOf("_admin") != -1) return true;
       throw ({ forbidden: "You must be an admin to change the hash!" })
     }
+
+    if (newDoc._id.substr(0, "_local".length).toUpperCase() == "_local".toUpperCase()) return true;
 
     if (!(newDoc._id.substr(0, DBHASHVAL.length).toUpperCase() == DBHASHVAL.toUpperCase())) throw ({ forbidden: "Doc does not start with hash!" })
 
     if (userCtx.roles.indexOf("_admin") == -1 && userCtx.roles.indexOf("edit") == -1) throw ({ forbidden: "You do not have editing privilages." })
 
     var id = newDoc._id.replace(DBHASHVAL, "");
-    if (id === "TEMPLATE_MATCHSCOUT" || id === "TEMPLATE_PITSCOUT") {
+    if (id == "TEMPLATE_MATCHSCOUT" || id == "TEMPLATE_PITSCOUT") {
       if (userCtx.roles.indexOf("_admin") == -1) throw ({ forbidden: "You must be admin to modify templates!" })
     }
   }
   var filter = function (doc) {
-    return doc._id.substr(0, DBHASHVAL.length).toUpperCase() == DBHASHVAL.toUpperCase();
+    if (doc._id.substr(0, DBHASHVAL.length).toUpperCase() == DBHASHVAL.toUpperCase()) return true;
+
+    if (doc._id == "_design/general") return true;
   }
   /* eslint-enable no-undef */
 

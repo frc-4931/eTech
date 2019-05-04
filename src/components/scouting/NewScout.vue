@@ -29,47 +29,56 @@
       class="background-box-input"
       id="match-select"
     >
-      <select v-model="matchID" class="content-input-large">
+      <select
+        v-model="matchID"
+        class="content-input-large"
+      >
         <option value="">Select A Match</option>
-        <optgroup v-if="qualMatches.length > 0" label="Qualification Matches">
+        <optgroup
+          v-if="qualMatches.length > 0"
+          label="Qualification Matches"
+        >
           <option
             v-for="match in qualMatches"
             :key="match"
             :value="'TBA-' + match"
-            >{{ getMatchTitle(match) }}</option
-          >
+          >{{ getMatchTitle(match) }}</option>
         </optgroup>
-        <optgroup v-if="qfMatches.length > 0" label="Quarter-Final Matches">
+        <optgroup
+          v-if="qfMatches.length > 0"
+          label="Quarter-Final Matches"
+        >
           <option
             v-for="match in qfMatches"
             :key="match"
             :value="'TBA-' + match"
-            >{{ getMatchTitle(match) }}</option
-          >
+          >{{ getMatchTitle(match) }}</option>
         </optgroup>
-        <optgroup v-if="sfMatches.length > 0" label="Semi-Final Matches">
+        <optgroup
+          v-if="sfMatches.length > 0"
+          label="Semi-Final Matches"
+        >
           <option
             v-for="match in sfMatches"
             :key="match"
             :value="'TBA-' + match"
-            >{{ getMatchTitle(match) }}</option
-          >
+          >{{ getMatchTitle(match) }}</option>
         </optgroup>
-        <optgroup v-if="finalMatches.length > 0" label="Final Matches">
+        <optgroup
+          v-if="finalMatches.length > 0"
+          label="Final Matches"
+        >
           <option
             v-for="match in finalMatches"
             :key="match"
             :value="'TBA-' + match"
-            >{{ getMatchTitle(match) }}</option
-          >
+          >{{ getMatchTitle(match) }}</option>
         </optgroup>
         <optgroup label="Practice Matches">
           <option value="PRACTICE">Practice Match</option>
         </optgroup>
         <optgroup label="Mnaual Matches">
-          <option value="MANUAL"
-            >Manual Match (Not recommended in most circumstances)</option
-          >
+          <option value="MANUAL">Manual Match (Not recommended in most circumstances)</option>
         </optgroup>
       </select>
     </div>
@@ -145,7 +154,7 @@ export default {
 
       if (this.selected == "PitScout") {
         this.localdb
-          .allDocs({
+          .allDocsHASH({
             include_docs: false,
             startkey: dThis.pitScoutPrefix + dThis.teamNumber + "_0",
             endkey: dThis.pitScoutPrefix + dThis.teamNumber + "_\ufff0"
@@ -166,7 +175,7 @@ export default {
 
         if (this.matchID == "MANUAL") {
           this.localdb
-            .allDocs({
+            .allDocsHASH({
               include_docs: false,
               startkey: dThis.matchScoutPrefix + dThis.teamNumber + "_0",
               endkey: dThis.matchScoutPrefix + dThis.teamNumber + "_\ufff0"
@@ -188,7 +197,7 @@ export default {
             });
         } else if (this.matchID == "PRACTICE") {
           this.localdb
-            .allDocs({
+            .allDocsHASH({
               include_docs: false,
               startkey: dThis.matchScoutPrefix + dThis.teamNumber + "_0",
               endkey: dThis.matchScoutPrefix + dThis.teamNumber + "_\ufff0"
@@ -210,7 +219,7 @@ export default {
             });
         } else if (this.matchID.startsWith("TBA")) {
           this.localdb
-            .allDocs({
+            .allDocsHASH({
               include_docs: false,
               startkey:
                 dThis.matchScoutPrefix +
@@ -263,7 +272,7 @@ export default {
         }
       }
       doc["TOTAL-POINTS"] = totalPoints;
-      this.localdb.put(doc).then(function() {
+      this.localdb.putHASH(doc).then(function() {
         dThis.callback(doc._id);
       });
     },
@@ -284,7 +293,7 @@ export default {
         }
       }
       doc["TOTAL-POINTS"] = totalPoints;
-      this.localdb.put(doc).then(function() {
+      this.localdb.putHASH(doc).then(function() {
         dThis.callback(doc._id);
       });
     },
@@ -311,7 +320,7 @@ export default {
     getTBAMatches() {
       var dThis = this;
 
-      this.localtbadb.get("TEAMMATCHES_frc" + this.teamNumber).then(doc => {
+      this.localtbadb.getHASH("TEAMMATCHES_frc" + this.teamNumber).then(doc => {
         let matches = doc.json;
 
         matches = orderBy(
@@ -384,7 +393,7 @@ export default {
       var dThis = this;
 
       this.localdb
-        .allDocs({
+        .allDocsHASH({
           include_docs: false,
           startkey: dThis.matchScoutPrefix + dThis.teamNumber + "_TBA-",
           endkey: dThis.matchScoutPrefix + dThis.teamNumber + "_TBA-\ufff0"
@@ -459,7 +468,7 @@ export default {
       this.loggedin = true;
       var dThis = this;
       this.localdb
-        .get("TEMPLATE_PITSCOUT")
+        .getHASH("TEMPLATE_PITSCOUT")
         .then(function(doc) {
           dThis.pitTemplate = doc.fields;
         })
@@ -469,7 +478,7 @@ export default {
         });
 
       this.localdb
-        .get("TEMPLATE_MATCHSCOUT")
+        .getHASH("TEMPLATE_MATCHSCOUT")
         .then(function(doc) {
           dThis.matchTemplate = doc.fields;
         })
