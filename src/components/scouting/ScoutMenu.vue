@@ -29,8 +29,7 @@
         @click="close()"
         class="location-right background-box background-box-hover content-centered"
         style="margin-top: 0px; margin-left: 5px;"
-      >Close
-      </h3>
+      >Close</h3>
     </div>
     <div
       v-else
@@ -39,8 +38,7 @@
       <h3
         @click="close()"
         class="location-span background-box background-box-hover content-centered"
-      >Close
-      </h3>
+      >Close</h3>
     </div>
   </div>
 </template>
@@ -73,7 +71,9 @@ export default {
     callback: Function,
     closeteam: Function,
     shouldUpdate: false,
-    hasEdit: Boolean
+    hasEdit: Boolean,
+    popup: Object,
+    teamNumber: Number
   },
   watch: {
     shouldUpdate() {
@@ -102,7 +102,7 @@ export default {
     },
     getInitialScoutData() {
       var dThis = this;
-      this.localdb.get(this.docId).then(function(doc) {
+      this.localdb.getHASH(this.docId).then(function(doc) {
         for (var fieldInx in dThis.template) {
           var field = dThis.template[fieldInx];
           if (field["field"] != undefined) {
@@ -126,14 +126,14 @@ export default {
     },
     updateScoutData() {
       var dThis = this;
-      this.localdb.get(this.docId).then(function(doc) {
+      this.localdb.getHASH(this.docId).then(function(doc) {
         dThis.updateUI(doc);
       });
     },
     updateAndPutData() {
       var dThis = this;
-      this.localdb
-        .get(this.docId)
+      return this.localdb
+        .getHASH(this.docId)
         .then(function(doc) {
           dThis.updateUI(doc);
           return doc;
@@ -164,7 +164,7 @@ export default {
     },
     putScoutData() {
       var dThis = this;
-      this.localdb.get(this.docId).then(function(doc) {
+      this.localdb.getHASH(this.docId).then(function(doc) {
         for (var i in dThis.modifiedFields) {
           if (dThis.modifiedFields[i] === true) {
             doc[i] = dThis.scoutFields[i];
@@ -172,7 +172,7 @@ export default {
           }
         }
         doc["TOTAL-POINTS"] = dThis.getAllFieldPoints();
-        dThis.localdb.put(doc);
+        dThis.localdb.putHASH(doc);
       });
     },
     putDoc(doc) {
@@ -187,7 +187,7 @@ export default {
       this.unsaved = false;
 
       doc["TOTAL-POINTS"] = this.getAllFieldPoints();
-      this.localdb.put(doc).then(function() {
+      this.localdb.putHASH(doc).then(function() {
         dThis.callback();
       });
     },
@@ -202,37 +202,104 @@ export default {
       return totalPoints;
     },
     save() {
-      this.updateAndPutData();
+      return this.updateAndPutData();
     },
     close() {
+      let dThis = this;
       if (this.unsaved) {
-        if (
-          confirm(
-            "You have unsaved changes!\nAre you sure you want to close this menu?"
-          )
-        )
-          this.closeteam();
+        this.popup
+          .newPopup("You have unsaved changes!", undefined, [
+            "Cancel",
+            "Discard",
+            "Save"
+          ])
+          .then(clicked => {
+            if (clicked == "Save") dThis.save().then(dThis.closeteam);
+            else if (clicked == "Discard") dThis.closeteam();
+          });
       } else this.closeteam();
     },
     deleteScout() {
-      var confirmDelete = confirm(
-        "Deleting a scout is very risky!\nThis action cannot be undone!"
-      );
-      if (confirmDelete) {
-        var dThis = this;
-        this.localdb.get(this.docId).then(function(doc) {
-          dThis.localdb.remove(doc).then(function() {
-            dThis.closeteam();
-          });
+      var dThis = this;
+      this.popup
+        .newPopup(
+          "Delete Scout?",
+          "Are you sure you want to delete " +
+            this.getMatchTitle(this.docId) +
+            "?\nThis operation cannot be undone!",
+          ["Cancel", "Delete"]
+        )
+        .then(clicked => {
+          if (clicked == "Delete") {
+            dThis.localdb.getHASH(this.docId).then(function(doc) {
+              dThis.localdb.removeHASH(doc).then(function() {
+                dThis.closeteam();
+              });
+            });
+          }
         });
+    },
+    getScoutNumber(id) {
+      var scoutString = id;
+
+      if (scoutString.includes("_")) {
+        var inx = scoutString.indexOf("_");
+        scoutString = scoutString.slice(0, inx);
       }
+      return parseInt(scoutString);
+    },
+    trimScout(id) {
+      let scoutString = id.replace("MATCHSCOUT_" + this.teamNumber + "_", "");
+
+      var inx = scoutString.lastIndexOf("_");
+      return scoutString.slice(0, inx);
+    },
+    getMatchTitle(matchString) {
+      matchString = this.trimScout(matchString);
+      let orgMatStr = matchString;
+
+      matchString = matchString.substring(matchString.indexOf("_") + 1);
+
+      if (matchString.startsWith("qm"))
+        return "Qualification Match " + matchString.replace("qm", "");
+      else if (matchString.startsWith("qf"))
+        return (
+          "Quarter-Fianl Match" +
+          matchString
+            .replace("qf", "")
+            .substring(0, matchString.indexOf("m") - 2) +
+          " - Match " +
+          matchString.substring(matchString.indexOf("m") + 1)
+        );
+      else if (matchString.startsWith("sf"))
+        return (
+          "Semi-Fianl Match " +
+          matchString
+            .replace("sf", "")
+            .substring(0, matchString.indexOf("m") - 2) +
+          " - Match " +
+          matchString.substring(matchString.indexOf("m") + 1)
+        );
+      else if (matchString.startsWith("f"))
+        return (
+          "Finals Match " + matchString.substring(matchString.indexOf("m") + 1)
+        );
+      else if (matchString == "PRACTICE")
+        return "Practice Match " + (this.getScoutNumber(orgMatStr) + 1);
+      else if (matchString == "MANUAL")
+        return "Manual Match " + (this.getScoutNumber(orgMatStr) + 1);
+      else if (orgMatStr.startsWith("PITSCOUT_"))
+        return (
+          "Pit Scout " +
+          (parseInt(matchString.replace(this.teamNumber + "_", "")) + 1)
+        );
     }
   },
   created() {
     var dThis = this;
     if (this.isMatchScout === false) {
       this.localdb
-        .get("TEMPLATE_PITSCOUT")
+        .getHASH("TEMPLATE_PITSCOUT")
         .then(function(doc) {
           dThis.template = doc.fields;
         })
@@ -245,7 +312,7 @@ export default {
         });
     } else {
       this.localdb
-        .get("TEMPLATE_MATCHSCOUT")
+        .getHASH("TEMPLATE_MATCHSCOUT")
         .then(function(doc) {
           dThis.template = doc.fields;
         })
@@ -262,14 +329,14 @@ export default {
 </script>
 
 <style>
-.pit-scout-div div {
+.scout-div div {
   margin: 5px;
 }
 .scouting-menu-fields {
   padding: 5px;
   padding-top: 0px;
 }
-.pit-scout-div:first-child {
+.scout-div:first-child {
   margin-top: 0px;
 }
 .pitscout-label {

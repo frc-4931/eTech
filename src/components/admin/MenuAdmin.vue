@@ -1,43 +1,90 @@
 <template>
   <Error v-if="!isAdmin">You must be logged in as an admin to view this page!</Error>
 
-  <div v-else class="grid">
-    <h2 class="location-span background-box content-centered">Admin Tools</h2>
+  <div
+    v-else
+    class="grid"
+  >
+    <h2 class="location-centered-small background-box content-centered">
+      Admin Tools
+    </h2>
 
-    <div class="location-left-small">
-      <h2 class="content-centered background-box">Tools</h2>
+    <TabContainer
+      :tabs="['Tools', 'Teams', 'Users']"
+      :initialTab="'Tools'"
+      class="location-centered-small"
+    >
+      <template slot="tab-panel-tools">
+        <div class="background-box">
+          <router-link :to="{ name: 'team-add' }">Add Team</router-link>
+          <br />
+          <router-link :to="{ name: 'user-add' }">Add User</router-link>
+          <br />
+          <router-link :to="{ name: 'admin-template' }">Edit Scouting Templates</router-link>
+          <br />
+        </div>
+      </template>
 
-      <div class="background-box">
-        <router-link :to="{name: 'user-add'}">Add User</router-link>
-        <br>
-        <router-link :to="{name: 'admin-template'}">Edit Scouting Templates</router-link>
-        <br>
-      </div>
-    </div>
+      <template slot="tab-panel-teams">
+        <div>
+          <div
+            v-if="teams.length != 0"
+            class="background-box admin-team"
+          >
+            <p>Team Number</p>
+            <p>Team Name</p>
+            <p>Remove Team</p>
+          </div>
 
-    <div class="location-right-small">
-      <h2 class="background-box content-centered">Members</h2>
+          <div
+            v-else
+            class="location-centered background-box content-centered"
+          >
+            <p>There aren't any teams to display.</p>
+          </div>
 
-      <div v-if="users.length != 0" class="background-box admin-user">
-        <p>Name</p>
-        <p>Username</p>
-        <p>Role</p>
-        <p>Edit User</p>
-      </div>
+          <AdminTeam
+            v-for="teamData in teams"
+            v-bind:key="teamData['_id']"
+            :teamdata="teamData"
+            :removeteam="removeTeam"
+          />
+        </div>
+      </template>
 
-      <div v-else class="background-box content-centered">
-        <p>There aren't any users to display yet.</p>
-        <router-link :to="{name: 'user-add'}">Add a user here.</router-link>
-      </div>
+      <template slot="tab-panel-users">
+        <div>
+          <div
+            v-if="users.length != 0"
+            class="background-box admin-user"
+          >
+            <p>Username</p>
+            <p>Role</p>
+            <p>Edit User</p>
+          </div>
 
-      <transition-group name="trans-group">
-        <AdminUser v-for="user in users" :key="user.username" :userdata="user"></AdminUser>
-      </transition-group>
-    </div>
+          <div
+            v-else
+            class="background-box content-centered"
+          >
+            <p>There aren't any users to display yet.</p>
+            <router-link :to="{ name: 'user-add' }">Add a user here.</router-link>
+          </div>
+
+          <AdminUser
+            v-for="user in users"
+            :key="user.username"
+            :userdata="user"
+          />
+        </div>
+      </template>
+    </TabContainer>
   </div>
 </template>
 
 <script>
+import TabContainer from "../TabContainer.vue";
+import AdminTeam from "./AdminTeam.vue";
 import AdminUser from "./AdminUser.vue";
 import orderBy from "lodash.orderby";
 import Error from "../Error.vue";
@@ -63,41 +110,73 @@ if (window.webpackHotUpdate) {
 export default {
   name: "MenuAdmin",
   components: {
+    TabContainer,
+    AdminTeam,
     AdminUser,
     Error
   },
   props: {
+    popup: Object,
     localdb: Object,
     remotedb: Object,
     sync_change: Object
   },
   data: function() {
     return {
+      teams: [],
       users: [],
       isAdmin: true,
       usersdb: new PouchDB(url, setup)
     };
   },
   methods: {
+    loadTeams() {
+      var dThis = this;
+      this.localdb
+        .allDocsHASH({
+          include_docs: true,
+          startkey: "TEAM_0",
+          endkey: "TEAM_\ufff0"
+        })
+        .then(function(result) {
+          dThis.teams = [];
+          for (var docID in result["rows"]) {
+            dThis.addToBoard(result["rows"][docID]);
+          }
+          dThis.teams = orderBy(
+            dThis.teams,
+            [
+              function(team) {
+                return team.number;
+              }
+            ],
+            ["asc"]
+          );
+        });
+    },
     addToBoard(team_doc) {
       var teamID = team_doc["doc"]["_id"];
       if (teamID !== undefined) this.teams.push(team_doc["doc"]);
     },
     removeTeam(number) {
-      var shouldDelete = confirm(
-        "Are you sure you want to delete team #" +
-          number +
-          "?\n There's no going back!"
-      );
-
-      if (shouldDelete) {
-        var dThis = this;
-        this.localdb.get("TEAM_" + number).then(function(doc) {
-          dThis.localdb.remove(doc).then(function() {
-            dThis.loadTeams();
-          });
+      this.popup
+        .newPopup(
+          "Delete Team?",
+          "Are you sure you want to delete team #" +
+            number +
+            "?\nThis operation cannot be undone!",
+          ["Cancel", "Delete"]
+        )
+        .then(option => {
+          if (option == "Delete") {
+            var dThis = this;
+            this.localdb.getHASH("TEAM_" + number).then(function(doc) {
+              dThis.localdb.removeHASH(doc).then(function() {
+                dThis.loadTeams();
+              });
+            });
+          }
         });
-      }
     },
     loadUsers() {
       var dThis = this;
@@ -134,7 +213,20 @@ export default {
       } else if (response.userCtx.roles.indexOf("_admin") !== -1) {
         dThis.isAdmin = true;
 
+        dThis.loadTeams();
         dThis.loadUsers();
+
+        dThis.sync_change.onChange = function(change) {
+          if (change["direction"] == "pull") {
+            var shouldLoadTeams = false;
+            for (var doc of change.change.docs) {
+              if (doc["_id"].startsWith("TEAM_")) {
+                shouldLoadTeams = true;
+              }
+            }
+            if (shouldLoadTeams) dThis.loadTeams();
+          }
+        };
 
         dThis.usersdb
           .changes({
@@ -160,7 +252,7 @@ export default {
 <style>
 .admin-user {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   text-align: center;
 }
 </style>

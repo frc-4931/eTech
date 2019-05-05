@@ -1,10 +1,14 @@
 <template>
-  <div class="grid-perminant pit-scout-div">
+  <div class="grid-perminant scout-div">
     <div class="pitscout-label background-box location-left">
       <p>{{ data.title }}</p>
     </div>
 
-    <div @click="increment()" class="background-box content-centered" :class="locked ? 'background-box-disabled' : 'background-box-hover'">
+    <div
+      @click="increment()"
+      class="background-box content-centered"
+      :class="locked ? 'background-box-disabled' : 'background-box-hover'"
+    >
       <p>+</p>
     </div>
 
@@ -12,7 +16,11 @@
       <p>{{ data.value }}</p>
     </div>
 
-    <div @click="decrement()" class="background-box content-centered" :class="locked ? 'background-box-disabled' : 'background-box-hover'">
+    <div
+      @click="decrement()"
+      class="background-box content-centered"
+      :class="locked ? 'background-box-disabled' : 'background-box-hover'"
+    >
       <p>-</p>
     </div>
   </div>

@@ -58,7 +58,7 @@ export default {
     reloadTeams() {
       var dThis = this;
 
-      this.localtbadb.get("RANKINGS").then(function(doc) {
+      this.localtbadb.getHASH("RANKINGS").then(function(doc) {
         dThis.teams = doc.json.rankings;
       });
     }

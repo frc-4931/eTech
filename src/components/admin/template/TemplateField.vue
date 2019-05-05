@@ -1,17 +1,22 @@
 <template>
-  <div v-if="data.type == 'TitleField'" @click="clicked()" style="margin-top: 20px" class="background-box background-box-hover content-centered">
-    <div>
-      <h2>{{data.title}}</h2>
-    </div>
-  </div>
+  <h2
+    v-if="data.type == 'TitleField'"
+    @click="clicked()"
+    class="background-box background-box-hover content-centered"
+    style="margin-top: 20px;"
+  >
+    {{ data.title }}
+  </h2>
 
-  <div v-else @click="clicked()" class="background-box background-box-hover grid-perminant">
-    <div class="location-left">
-      <p>{{data.title}}</p>
-    </div>
-    <div class="location-right content-right">
-      <p>{{data.type.replace("Field", (""))}}</p>
-    </div>
+  <div
+    v-else
+    @click="clicked()"
+    class="background-box background-box-hover grid-perminant"
+  >
+    <p class="location-left">{{ data.title }}</p>
+    <p class="location-right content-right">
+      {{ data.type.replace("Field", "") }}
+    </p>
   </div>
 </template>
 
@@ -25,7 +30,6 @@ export default {
     clicked() {
       this.$emit("clicked");
     }
-  },
-  created() {}
+  }
 };
 </script>

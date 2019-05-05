@@ -7,89 +7,120 @@
       <h3>Edit Dropdown Field</h3>
     </div>
 
-    <div class="field-edit">
+    <div class="field-edit small-margin">
       <p class="background-box">Title</p>
       <div class="background-box-input">
-        <input type="text" placeholder="Title" v-model.trim="data.title">
+        <input type="text" placeholder="Title" v-model.trim="data.title" />
       </div>
 
       <p class="background-box">Default Value</p>
       <div class="background-box-input">
         <select v-model="data.default">
-          <option v-for="option in options" :key="option" :value="option">{{option}}</option>
+          <option v-for="option in options" :key="option" :value="option">{{
+            option
+          }}</option>
         </select>
       </div>
     </div>
 
-    <div class="background-box content-centered">
-      <p>Add Dropdown Option</p>
-    </div>
+    <p class="background-box content-centered field-title">
+      Add Dropdown Option
+    </p>
 
-    <div class="field-edit">
+    <div class="field-edit small-margin">
       <p class="background-box">Option Name</p>
       <div class="background-box-input">
-        <input type="text" v-model.trim="currentOptionName" placeholder="Option Name">
+        <input
+          type="text"
+          v-model.trim="currentOptionName"
+          placeholder="Option Name"
+        />
       </div>
       <p class="background-box">Option Points</p>
       <div class="background-box-input">
-        <input type="number" v-model.number="currentPoints" placeholder="Option Points">
+        <input
+          type="number"
+          v-model.number="currentPoints"
+          placeholder="Option Points"
+        />
       </div>
     </div>
 
-    <div
+    <p
       @click="addOption()"
-      style="margin-top: 0px; margin-bottom: 20px;"
-      class="background-box background-box-hover content-centered"
+      class="background-box background-box-hover content-centered field-add"
     >
-      <p>Add</p>
-    </div>
+      Add
+    </p>
 
-    <div class="background-box content-centered">
+    <div class="background-box content-centered field-title">
       <p>Dropdown Options</p>
     </div>
 
-    <div v-for="(option, index) in options" :key="option" class="field-edit">
-      <div class="background-box-input">
-        <input type="text" v-model.trim="options[index]" placeholder="Option Name">
-      </div>
+    <div class="small-margin">
+      <div
+        v-for="(option, index) in options"
+        :key="option"
+        class="dropdown-options small-margin-sub"
+      >
+        <div class="background-box-input">
+          <input
+            type="text"
+            v-model.trim="options[index]"
+            placeholder="Option Name"
+          />
+        </div>
 
-      <div class="field-edit">
         <div class="background-box-input">
           <input
             type="number"
-            min="-999"
             v-model.number="points[index]"
             placeholder="Option Points"
-          >
+          />
         </div>
-        <div
+
+        <p
           @click="deleteOption(index)"
           class="background-box background-box-hover content-centered"
         >
-          <p>Delete</p>
-        </div>
+          Delete
+        </p>
       </div>
     </div>
 
-    <div class="grid-perminant content-centered">
-      <div @click="deleteField()" class="location-left-small background-box background-box-hover">
-        <p>Delete</p>
-      </div>
-      <div @click="moveUp()" class="location-centered-small background-box background-box-hover">
-        <p>Move Up</p>
-      </div>
-      <div @click="moveDown()" class="location-right-small background-box background-box-hover">
-        <p>Move Down</p>
-      </div>
-
-      <div class="location-span">
-        <div @click="save()" class="background-box background-box-hover">
-          <p>Save</p>
-        </div>
-        <div @click="close()" class="background-box background-box-hover">
-          <p>Cancel</p>
-        </div>
-      </div>
+    <div class="grid-perminant content-centered small-margin">
+      <p
+        @click="deleteField()"
+        class="location-left-small background-box background-box-hover"
+      >
+        Delete
+      </p>
+      <p
+        @click="moveUp()"
+        class="location-centered-small background-box background-box-hover"
+      >
+        Move Up
+      </p>
+      <p
+        @click="moveDown()"
+        class="location-right-small background-box background-box-hover"
+      >
+        Move Down
+      </p>
+    </div>
+    <div class="grid-perminant content-centered small-margin">
+      <p
+        @click="save()"
+        class="background-box background-box-hover location-span"
+      >
+        Save
+      </p>
+      <p
+        @click="close()"
+        class="background-box background-box-hover location-span"
+      >
+        Cancel
+      </p>
     </div>
 
     <div class="line"></div>
@@ -187,3 +218,18 @@ export default {
   }
 };
 </script>
+
+<style>
+.field-title {
+  margin-top: 10px;
+  margin-bottom: 0px;
+}
+.field-add {
+  margin-top: 0px;
+  margin-bottom: 20px;
+}
+.dropdown-options {
+  display: grid;
+  grid-template-columns: 2fr repeat(2, 1fr);
+}
+</style>

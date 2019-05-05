@@ -1,6 +1,9 @@
 <template>
-  <div @click="viewTeam()" class="background-box background-box-hover ranking-team-container mobile-shrink">
-    <p>{{ teamData.rank}}</p>
+  <div
+    @click="viewTeam()"
+    class="background-box background-box-hover ranking-team-container mobile-shrink"
+  >
+    <p>{{ teamData.rank }}</p>
     <p>{{ teamName }}</p>
     <p>{{ teamNumber }}</p>
     <p>{{ teamData.record.wins }}</p>
@@ -49,7 +52,7 @@ export default {
   created: function() {
     var dThis = this;
 
-    this.localdb.get("TEAM_" + this.teamNumber).then(function(doc) {
+    this.localdb.getHASH("TEAM_" + this.teamNumber).then(function(doc) {
       dThis.teamName = doc.name;
     });
   }

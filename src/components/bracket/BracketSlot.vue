@@ -2,10 +2,28 @@
   <div class="bracket-slot-container">
     <div class="bracket-slot" :class="status">
       <p>{{ bracketData[level][location]["alliance"] }}</p>
-      <router-link :to="{name: 'team', params: { number: this.bracketData[level][location]['teams'][0] }}">{{ bracketData[level][location]["teams"][0] }}</router-link>
-      <router-link :to="{name: 'team', params: { number: this.bracketData[level][location]['teams'][1] }}">{{ bracketData[level][location]["teams"][1] }}</router-link>
-      <router-link :to="{name: 'team', params: { number: this.bracketData[level][location]['teams'][2] }}">{{ bracketData[level][location]["teams"][2] }}</router-link>
-      <div class="display-status"/>
+      <router-link
+        :to="{
+          name: 'team',
+          params: { number: this.bracketData[level][location]['teams'][0] }
+        }"
+        >{{ bracketData[level][location]["teams"][0] }}</router-link
+      >
+      <router-link
+        :to="{
+          name: 'team',
+          params: { number: this.bracketData[level][location]['teams'][1] }
+        }"
+        >{{ bracketData[level][location]["teams"][1] }}</router-link
+      >
+      <router-link
+        :to="{
+          name: 'team',
+          params: { number: this.bracketData[level][location]['teams'][2] }
+        }"
+        >{{ bracketData[level][location]["teams"][2] }}</router-link
+      >
+      <div class="display-status" />
     </div>
   </div>
 </template>

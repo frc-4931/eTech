@@ -4,28 +4,28 @@
       <label class="location-left content-padding-left">
         <input
           class="radio-button"
-          v-model="seleted"
+          v-model="selected"
           value="PitScout"
           type="radio"
           name="r_scout_select"
-        >
+        />
         Pit Scout
       </label>
 
       <label class="location-right content-right content-padding-right">
         <input
           class="radio-button"
-          v-model="seleted"
+          v-model="selected"
           value="MatchScout"
           type="radio"
           name="r_scout_select"
-        >
+        />
         Match Scout
       </label>
     </div>
 
     <div
-      v-if="seleted == 'MatchScout'"
+      v-if="selected == 'MatchScout'"
       class="background-box-input"
       id="match-select"
     >
@@ -41,7 +41,7 @@
           <option
             v-for="match in qualMatches"
             :key="match"
-            :value="'TBA-'+match"
+            :value="'TBA-' + match"
           >{{ getMatchTitle(match) }}</option>
         </optgroup>
         <optgroup
@@ -51,7 +51,7 @@
           <option
             v-for="match in qfMatches"
             :key="match"
-            :value="'TBA-'+match"
+            :value="'TBA-' + match"
           >{{ getMatchTitle(match) }}</option>
         </optgroup>
         <optgroup
@@ -61,7 +61,7 @@
           <option
             v-for="match in sfMatches"
             :key="match"
-            :value="'TBA-'+match"
+            :value="'TBA-' + match"
           >{{ getMatchTitle(match) }}</option>
         </optgroup>
         <optgroup
@@ -71,7 +71,7 @@
           <option
             v-for="match in finalMatches"
             :key="match"
-            :value="'TBA-'+match"
+            :value="'TBA-' + match"
           >{{ getMatchTitle(match) }}</option>
         </optgroup>
         <optgroup label="Practice Matches">
@@ -85,8 +85,17 @@
 
     <h3
       @click="createScout()"
-      class="location-centered-small background-box background-box-hover content-centered"
-    >Create</h3>
+      class="location-centered-small background-box content-centered"
+      :class="
+        selected == 'none'
+          ? 'background-box-disabled'
+          : selected == 'MatchScout' && matchID == ''
+          ? 'background-box-disabled'
+          : 'background-box-hover'
+      "
+    >
+      Create
+    </h3>
   </div>
   <Error v-else>You must be logged in to create a new scout!</Error>
 </template>
@@ -110,7 +119,7 @@ export default {
   },
   data: function() {
     return {
-      seleted: "none",
+      selected: "none",
       pitScoutPrefix: "PITSCOUT_",
       matchScoutPrefix: "MATCHSCOUT_",
       pitTemplate: Object,
@@ -143,9 +152,9 @@ export default {
     createScout() {
       var dThis = this;
 
-      if (this.seleted == "PitScout") {
+      if (this.selected == "PitScout") {
         this.localdb
-          .allDocs({
+          .allDocsHASH({
             include_docs: false,
             startkey: dThis.pitScoutPrefix + dThis.teamNumber + "_0",
             endkey: dThis.pitScoutPrefix + dThis.teamNumber + "_\ufff0"
@@ -161,12 +170,12 @@ export default {
 
             dThis.createPitScout(pitScoutNumber);
           });
-      } else if (this.seleted == "MatchScout") {
+      } else if (this.selected == "MatchScout") {
         var id = this.matchScoutPrefix + this.teamNumber + "_";
 
         if (this.matchID == "MANUAL") {
           this.localdb
-            .allDocs({
+            .allDocsHASH({
               include_docs: false,
               startkey: dThis.matchScoutPrefix + dThis.teamNumber + "_0",
               endkey: dThis.matchScoutPrefix + dThis.teamNumber + "_\ufff0"
@@ -188,7 +197,7 @@ export default {
             });
         } else if (this.matchID == "PRACTICE") {
           this.localdb
-            .allDocs({
+            .allDocsHASH({
               include_docs: false,
               startkey: dThis.matchScoutPrefix + dThis.teamNumber + "_0",
               endkey: dThis.matchScoutPrefix + dThis.teamNumber + "_\ufff0"
@@ -210,7 +219,7 @@ export default {
             });
         } else if (this.matchID.startsWith("TBA")) {
           this.localdb
-            .allDocs({
+            .allDocsHASH({
               include_docs: false,
               startkey:
                 dThis.matchScoutPrefix +
@@ -238,8 +247,6 @@ export default {
         } else {
           //ERROR SCOUT NOT SELECTED
         }
-      } else {
-        alert("You must choose a scouting type!");
       }
     },
     createPitScout(number) {
@@ -265,7 +272,7 @@ export default {
         }
       }
       doc["TOTAL-POINTS"] = totalPoints;
-      this.localdb.put(doc).then(function() {
+      this.localdb.putHASH(doc).then(function() {
         dThis.callback(doc._id);
       });
     },
@@ -286,7 +293,7 @@ export default {
         }
       }
       doc["TOTAL-POINTS"] = totalPoints;
-      this.localdb.put(doc).then(function() {
+      this.localdb.putHASH(doc).then(function() {
         dThis.callback(doc._id);
       });
     },
@@ -313,7 +320,7 @@ export default {
     getTBAMatches() {
       var dThis = this;
 
-      this.localtbadb.get("TEAMMATCHES_frc" + this.teamNumber).then(doc => {
+      this.localtbadb.getHASH("TEAMMATCHES_frc" + this.teamNumber).then(doc => {
         let matches = doc.json;
 
         matches = orderBy(
@@ -386,7 +393,7 @@ export default {
       var dThis = this;
 
       this.localdb
-        .allDocs({
+        .allDocsHASH({
           include_docs: false,
           startkey: dThis.matchScoutPrefix + dThis.teamNumber + "_TBA-",
           endkey: dThis.matchScoutPrefix + dThis.teamNumber + "_TBA-\ufff0"
@@ -461,7 +468,7 @@ export default {
       this.loggedin = true;
       var dThis = this;
       this.localdb
-        .get("TEMPLATE_PITSCOUT")
+        .getHASH("TEMPLATE_PITSCOUT")
         .then(function(doc) {
           dThis.pitTemplate = doc.fields;
         })
@@ -471,7 +478,7 @@ export default {
         });
 
       this.localdb
-        .get("TEMPLATE_MATCHSCOUT")
+        .getHASH("TEMPLATE_MATCHSCOUT")
         .then(function(doc) {
           dThis.matchTemplate = doc.fields;
         })

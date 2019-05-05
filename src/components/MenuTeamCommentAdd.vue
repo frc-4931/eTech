@@ -1,30 +1,64 @@
 <template>
   <div id="menu-team-comment-add">
-    <div class="line"/>
+    <div class="line" />
 
     <h2 class="content-centered background-box">Add comment</h2>
 
     <div class="background-box">
-      <input v-model.trim="title" type="text" name="comment-title" placeholder="Comment Title" required>
+      <input
+        v-model.trim="title"
+        type="text"
+        name="comment-title"
+        placeholder="Comment Title"
+        required
+      />
     </div>
 
     <div class="background-box">
-      <textarea v-model.trim="comment" rows="10" type="text" name="comment-content" placeholder="Comment" required></textarea>
+      <textarea
+        v-model.trim="comment"
+        rows="10"
+        type="text"
+        name="comment-content"
+        placeholder="Comment"
+        required
+      ></textarea>
     </div>
 
     <div class="background-box">
-      <select v-model="rating" name="comment-points" required>
-        <option value="Invalid" selected="selected" disabled>Select Point Value for Comment</option>
+      <select
+        v-model="rating"
+        name="comment-points"
+        required
+      >
+        <option
+          value="Invalid"
+          selected="selected"
+          disabled
+        >Select Point Value for Comment</option>
         <option value="1">Positive</option>
         <option value="0">Neutral</option>
         <option value="-1">Negative</option>
       </select>
     </div>
 
-    <h3 @click="submitComment()" class="location-centered-small background-box content-centered" :class="[this.allFieldsValid ? 'background-box-hover' : 'background-box-disabled']">Add</h3>
-    <h3 @click="callback" class="location-centered-small background-box background-box-hover content-centered">Cancel</h3>
+    <h3
+      @click="submitComment()"
+      class="location-centered-small background-box content-centered"
+      :class="[
+        this.allFieldsValid ? 'background-box-hover' : 'background-box-disabled'
+      ]"
+    >
+      Add
+    </h3>
+    <h3
+      @click="callback"
+      class="location-centered-small background-box background-box-hover content-centered"
+    >
+      Cancel
+    </h3>
 
-    <div class="line"/>
+    <div class="line" />
   </div>
 </template>
 
@@ -63,7 +97,7 @@ export default {
               "_" +
               this.user.username
           };
-          this.localdb.put(comment).then(function() {
+          this.localdb.putHASH(comment).then(function() {
             dThis.callback();
           });
         }
@@ -79,21 +113,26 @@ export default {
     var dThis = this;
 
     this.localdb
-      .allDocs({
+      .allDocsHASH({
         include_docs: false,
         startkey: "COMMENT_" + dThis.teamNumber + "_0",
         endkey: "COMMENT_" + dThis.teamNumber + "_\ufff0"
       })
       .then(function(docs) {
         if (docs["rows"].length !== 0) {
-          var last = docs["rows"].length - 1;
-          var id = docs["rows"][last]["id"];
-          var lastCommentIDN = id.replace(
-            "COMMENT_" + dThis.teamNumber + "_",
-            ""
-          );
-          var lCommentNum = parseInt(lastCommentIDN);
-          dThis.commentNumber = lCommentNum + 1;
+          var lastCommentIDN = 0;
+
+          for (let doc of docs["rows"]) {
+            var id = doc["id"];
+            var curIDN = id.replace("COMMENT_" + dThis.teamNumber + "_", "");
+            if (curIDN.includes("_")) {
+              var inx = curIDN.indexOf("_");
+              curIDN = curIDN.slice(0, inx);
+            }
+            var num = parseInt(curIDN);
+            if (num > lastCommentIDN) lastCommentIDN = num;
+          }
+          dThis.commentNumber = lastCommentIDN + 1;
         }
       });
   }

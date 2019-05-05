@@ -1,6 +1,6 @@
 <template>
   <div class="bracket-hor-container">
-    <div class="bracket-hor-line"/>
+    <div class="bracket-hor-line" />
   </div>
 </template>
 

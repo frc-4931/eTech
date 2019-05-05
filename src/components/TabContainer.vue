@@ -1,10 +1,23 @@
 <template>
   <div>
     <ul class="background-box tabs-container">
-      <li v-for="(tab) in tabs" :key="tab" @click="switchTab(tab)" :class="activeTab == tab ? 'tab-active' : ''">{{ tab }}</li>
+      <li
+        v-for="tab in tabs"
+        :key="tab"
+        @click="switchTab(tab)"
+        :class="activeTab == tab ? 'tab-active' : ''"
+      >{{ tab }}</li>
     </ul>
 
-    <slot :name="tabPanelSlotName"/>
+    <transition
+      enter-active-class="content-fade-in"
+      leave-active-class="content-fade-out"
+      mode="out-in"
+    >
+      <keep-alive>
+        <slot :name="tabPanelSlotName"/>
+      </keep-alive>
+    </transition>
   </div>
 </template>
 
@@ -22,7 +35,7 @@ export default {
   },
   computed: {
     tabPanelSlotName: function() {
-      return "tab-panel-" + this.activeTab.toLowerCase();
+      return "tab-panel-" + this.activeTab.toLowerCase().replace(" ", "-");
     }
   },
   methods: {
@@ -47,8 +60,10 @@ export default {
 }
 .tabs-container li:hover {
   background-color: var(--box-hover-color);
+  box-shadow: var(--shadow);
 }
 .tab-active {
-  background-color: var(--neutral) !important;
+  background-color: var(--link-color) !important;
+  box-shadow: none !important;
 }
 </style>

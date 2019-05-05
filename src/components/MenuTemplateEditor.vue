@@ -1,52 +1,8 @@
 <template>
-  <div
-    v-if="isAdmin"
-    id="menu-template-editor"
-  >
+  <div v-if="isAdmin">
     <div class="grid">
-      <div class="mobile-view field-edit done-button-container">
-        <div
-          @click="goBack()"
-          class="mobile-view background-box background-box-hover content-centered"
-        >
-          <h3>Back</h3>
-        </div>
-
-        <div
-          @click="saveTemplate(curTemplate)"
-          class="mobile-view field-button background-box background-box-hover content-centered"
-        >
-          <h3>Save</h3>
-        </div>
-      </div>
-
-      <div
-        @click="goBack()"
-        class="desktop-view location-left-tiny background-box background-box-hover content-centered"
-      >
-        <h3>Back</h3>
-      </div>
-
-      <Error
-        v-if="isError"
-        class="mobile-none-margin-top location-centered background-box content-centered"
-      >{{errorMessage}}</Error>
-      <p
-        v-else-if="isMessage"
-        class="mobile-none-margin-top location-centered background-box content-centered"
-      >{{generalMessage}}</p>
-      <div
-        v-else
-        class="mobile-none-margin-top location-centered background-box content-centered"
-      >
+      <div class="location-centered-small background-box content-centered">
         <h2>Template Editor</h2>
-      </div>
-
-      <div
-        @click="saveTemplate(curTemplate)"
-        class="desktop-view location-right-tiny background-box background-box-hover content-centered"
-      >
-        <h3>Save</h3>
       </div>
 
       <div class="location-centered-small content-centered">
@@ -71,14 +27,28 @@
 
       <div class="location-centered-small">
         <!-- beautify ignore:start -->
-        <component v-for="(field, index) in fields" :key="field.field || field.title" :id="field.field || field.title.replace(/[^a-zA-Z]/g, '')" :is="fieldIs(field)" :indata="field" :data="field" @clicked="openField(field)" @save="saveField(index, ...arguments)" @close="closeField()" @delete="deleteField(index)" @move-up="moveUp(index)" @move-down="moveDown(index)"></component>
+        <component
+          v-for="(field, index) in fields"
+          :key="field.field || field.title"
+          :id="field.field || field.title.replace(/[^a-zA-Z]/g, '')"
+          :is="fieldIs(field)"
+          :indata="field"
+          :data="field"
+          @clicked="openField(field)"
+          @save="saveField(index, ...arguments)"
+          @close="closeField()"
+          @delete="deleteField(index)"
+          @move-up="moveUp(index)"
+          @move-down="moveDown(index)"
+        ></component>
         <!-- beautify ignore:end -->
-        <div class="line" />
 
         <div
           v-if="curOpen == 'field_add'"
           id="template-field-add"
         >
+          <div class="line" />
+
           <h3 class="background-box content-centered">Creating New Field</h3>
 
           <div class="field-edit">
@@ -88,10 +58,10 @@
                 type="text"
                 v-model.trim="newFieldTitle"
                 placeholder="Display Name"
-              >
+              />
             </div>
           </div>
-          <div class="field-edit">
+          <div class="field-edit small-margin">
             <p class="background-box">Type</p>
             <div class="background-box-input">
               <select v-model="newFieldType">
@@ -119,12 +89,27 @@
         </div>
 
         <div
-          v-else-if="curTemplate != 'none'"
-          @click="openFieldAdd()"
-          style="margin-top: 30px;"
-          class="location-centered-small background-box background-box-hover content-centered"
+          v-else-if="curTemplate != 'none' && curOpen == 'none'"
+          class="location-centered-small content-centered"
         >
-          <h3>Create new field</h3>
+          <div class="line" />
+
+          <div
+            @click="openFieldAdd()"
+            class=" background-box background-box-hover"
+          >
+            <h3>Create New field</h3>
+          </div>
+
+          <h3
+            @click="saveTemplate(curTemplate)"
+            class="location-centered-small background-box"
+            :class="
+              this.unsaved ? 'background-box-hover' : 'background-box-disabled'
+            "
+          >
+            Save
+          </h3>
         </div>
       </div>
     </div>
@@ -151,6 +136,7 @@ import { scroller } from "vue-scrollto/src/scrollTo";
 export default {
   name: "MenuTemplateEditor",
   props: {
+    popup: Object,
     localdb: Object,
     remotedb: Object
   },
@@ -169,10 +155,6 @@ export default {
       curOpen: "none",
       newFieldTitle: "",
       newFieldType: "TitleField",
-      isError: false,
-      isMessage: false,
-      errorMessage: "An error has occurred!",
-      generalMessage: "",
       curTemplate: "none",
       scrollTo: scroller(),
       isAdmin: true,
@@ -303,11 +285,18 @@ export default {
       this.curOpen = "none";
     },
     deleteField(index) {
-      var confirmDelete = confirm(
-        "You are about to delete '" + this.fields[index].title + "'"
-      );
-      if (confirmDelete) this.fields.splice(index, 1);
-      this.unsaved = true;
+      this.popup
+        .newPopup(
+          "Delete field?",
+          "You are about to delete '" + this.fields[index].title + "'",
+          ["Cancel", "Delete"]
+        )
+        .then(option => {
+          if (option == "Delete") {
+            this.fields.splice(index, 1);
+            this.unsaved = true;
+          }
+        });
     },
     moveUp(index) {
       if (index > 0) this.arrayMove(this.fields, index, index - 1);
@@ -320,35 +309,36 @@ export default {
     },
     loadTemplate(template) {
       var dThis = this;
-      this.isError = false;
-      this.isMessage = false;
       this.fields = [];
       if (template == "none") return;
       this.localdb
-        .get(template)
+        .getHASH(template)
         .then(function(doc) {
           dThis.fields = doc.fields;
         })
         .catch(function(err) {
           if (err.status == 404) {
-            dThis.isError = true;
-            dThis.errorMessage =
-              "Failed to load template... creating a blank template. If there is an existing template saving will overwrite it!";
+            dThis.popup.newPopup(
+              "Failed to load template",
+              "Creating a blank template instead. If there is an existing template saving will overwrite it!",
+              undefined
+            );
           }
         });
     },
     saveTemplate(template) {
       var dThis = this;
 
-      if (this.curTemplate === "none") {
-        this.isError = true;
-        this.errorMessage = "No template is open.";
-        return;
-      }
+      if (this.curTemplate === "none") return;
+
+      if (!this.unsaved) return;
 
       if (this.fields.length < 1) {
-        this.isError = true;
-        this.errorMessage = "You must have at least one field!";
+        dThis.popup.newPopup(
+          undefined,
+          "You must have at least one field!",
+          undefined
+        );
         return;
       }
 
@@ -357,62 +347,70 @@ export default {
           i.type === "DropdownField" &&
           (i.options.length < 1 || i.points.length < 1)
         ) {
-          var errorMessage = "Dropdown field '" + i.title + "' has no options.";
-          this.isError = true;
-          this.errorMessage = errorMessage;
+          this.popup.newPopup(
+            undefined,
+            "Dropdown field '" + i.title + "' has no options.",
+            undefined
+          );
 
           return;
         }
       }
 
-      this.isError = false;
-      this.isMessage = false;
-
       this.localdb
-        .get(template)
+        .getHASH(template)
         .then(function(doc) {
           doc.fields = dThis.fields;
-          dThis.localdb.put(doc).then(function() {
-            dThis.isMessage = true;
-            dThis.generalMessage = "Push successful!";
-            dThis.unsaved = false;
-            dThis.updateAllTeamPoints();
-          });
+          dThis.localdb
+            .putHASH(doc)
+            .then(function() {
+              dThis.popup.newPopup(
+                "Saved",
+                "Successfully saved to the database!",
+                undefined
+              );
+              dThis.unsaved = false;
+              dThis.updateAllTeamPoints();
+            })
+            .catch(err => {
+              dThis.popup.catchError(err);
+            });
         })
         .catch(function(err) {
           if (err.status == 404) {
-            var forcePush = confirm(
-              "Failed to retrive an existing template.\nPush anyway?\n\nWarning: Pushing will overwrite any existing template!"
-            );
-            if (forcePush) {
-              var doc = { _id: template, fields: dThis.fields };
-              dThis.localdb.put(doc).then(function() {
-                dThis.isMessage = true;
-                dThis.generalMessage = "Push successful!";
-                dThis.unsaved = false;
-                dThis.updateAllTeamPoints();
+            dThis.popup.newPopup("");
+
+            dThis.popup
+              .newPopup(
+                "Failed to load template",
+                "Failed to retrive an existing template.\nPush anyway?\n\nWarning: Pushing will overwrite any existing template!",
+                ["Cancel", "Save"]
+              )
+              .then(option => {
+                if (option == "Save") {
+                  var doc = { _id: template, fields: dThis.fields };
+                  dThis.localdb.putHASH(doc).then(function() {
+                    dThis.popup.newPopup(
+                      "Saved",
+                      "Successfully saved to the database!",
+                      undefined
+                    );
+                    dThis.unsaved = false;
+                    dThis.updateAllTeamPoints();
+                  });
+                }
               });
-            }
           }
         });
     },
     arrayMove(arr, oldIndex, newIndex) {
       arr.splice(newIndex, 0, arr.splice(oldIndex, 1)[0]);
     },
-    goBack() {
-      if (!this.unsaved) this.$router.push("/admin/");
-      else if (
-        confirm(
-          "You have unsaved changes.\nAre you sure you want to leave before saving?"
-        )
-      )
-        this.$router.push("/admin/");
-    },
     updateAllTeamPoints() {
       //Loop through all teams and update their point values
       var dThis = this;
       this.localdb
-        .allDocs({
+        .allDocsHASH({
           include_docs: false,
           startkey: "TEAM_0",
           endkey: "TEAM_\ufff0"
@@ -432,14 +430,14 @@ export default {
       var dPoints = { pPoints: 0, pAmount: 0, mPoints: 0, mAmount: 0 };
 
       this.localdb
-        .allDocs({
+        .allDocsHASH({
           include_docs: true,
           startkey: "PITSCOUT_" + team + "_0",
           endkey: "PITSCOUT_" + team + "_\ufff0"
         })
         .then(function(docs) {
           return dThis.localdb
-            .get("TEMPLATE_PITSCOUT")
+            .getHASH("TEMPLATE_PITSCOUT")
             .then(function(doc) {
               return doc["fields"];
             })
@@ -464,7 +462,7 @@ export default {
             });
         })
         .then(function() {
-          return dThis.localdb.allDocs({
+          return dThis.localdb.allDocsHASH({
             include_docs: true,
             startkey: "MATCHSCOUT_" + team + "_",
             endkey: "MATCHSCOUT_" + team + "_\ufff0"
@@ -472,7 +470,7 @@ export default {
         })
         .then(function(docs) {
           return dThis.localdb
-            .get("TEMPLATE_MATCHSCOUT")
+            .getHASH("TEMPLATE_MATCHSCOUT")
             .then(function(doc) {
               return doc["fields"];
             })
@@ -497,7 +495,7 @@ export default {
             });
         })
         .then(function() {
-          dThis.localdb.get("TEAM_" + team).then(function(doc) {
+          dThis.localdb.getHASH("TEAM_" + team).then(function(doc) {
             var matchPoints =
               dPoints.mPoints / (dPoints.mAmount > 0 ? dPoints.mAmount : 1);
 
@@ -510,7 +508,7 @@ export default {
 
             if (doc.objectivePoints != points) {
               doc.objectivePoints = points;
-              dThis.localdb.put(doc);
+              dThis.localdb.putHASH(doc);
             }
           });
         });
@@ -571,6 +569,20 @@ export default {
         dThis.isAdmin = false;
       }
     });
+  },
+  beforeRouteLeave(to, from, next) {
+    if (this.unsaved)
+      this.popup
+        .newPopup(
+          "Unsaved Changes",
+          "Are you sure you would like to leave this page, you have unsaved changes!",
+          ["Leave", "Stay"]
+        )
+        .then(option => {
+          if (option == "Leave") next();
+          if (option == "Stay") next(false);
+        });
+    else next();
   }
 };
 </script>

@@ -1,108 +1,100 @@
 <template>
-  <div
-    v-if="loggedin"
-    class="grid"
-  >
-    <div class="location-centered-small grid-perminant">
-      <h2 class="content-centered background-box location-span">Editing user: {{username}}</h2>
-
-      <Error
-        @click="isError = false"
-        v-if="isError"
-        class="background-box location-span"
-      >{{ errorMessage }}</Error>
-
-      <div class="location-left background-box content-centered">
-        <p>Name</p>
-      </div>
-
-      <div class="location-right background-box-input">
-        <input
-          v-model.trim="name"
-          type="text"
-          placeholder="Name"
-          class="content-centered"
-        >
-      </div>
-
-      <div class="location-left background-box content-centered">
-        <p>Password</p>
-      </div>
-
-      <div class="location-right background-box-input">
-        <input
-          v-model="password"
-          type="password"
-          placeholder="Password"
-          class="content-centered"
-          :disabled="lockRole"
-        >
-      </div>
-
-      <div class="location-left background-box content-centered">
-        <p>Confirm Password</p>
-      </div>
-
-      <div class="location-right background-box-input">
-        <input
-          v-model="confirmPassword"
-          type="password"
-          placeholder="Confirm Password"
-          class="content-centered"
-          :disabled="lockRole"
-        >
-      </div>
-
-      <div class="background-box content-centered location-span grid-perminant">
-        <label class="location-left-small">
-          <input
-            class="radio-button"
-            v-model="role"
-            value="admin"
-            type="radio"
-            :disabled="lockRole"
-          >
-          Admin
-        </label>
-        <label class="location-centered-small">
-          <input
-            class="radio-button"
-            v-model="role"
-            value="edit"
-            type="radio"
-            :disabled="lockRole"
-          >
-          Edit
-        </label>
-        <label class="location-right-small">
-          <input
-            class="radio-button"
-            v-model="role"
-            value="view"
-            type="radio"
-            :disabled="lockRole"
-          >
-          View
-        </label>
-      </div>
-    </div>
-
+  <div v-if="loggedin" class="grid">
     <div class="location-centered-small">
+      <h2 class="content-centered background-box">
+        Editing user: {{ username }}
+      </h2>
+
+      <div class="grid-perminant small-margin">
+        <div class="location-left background-box content-centered">
+          <p>Password</p>
+        </div>
+
+        <div class="location-right background-box-input">
+          <input
+            v-model="password"
+            type="password"
+            placeholder="Password"
+            class="content-centered"
+            :disabled="lockRole"
+          />
+        </div>
+
+        <div class="location-left background-box content-centered">
+          <p>Confirm Password</p>
+        </div>
+
+        <div class="location-right background-box-input">
+          <input
+            v-model="confirmPassword"
+            type="password"
+            placeholder="Confirm Password"
+            class="content-centered"
+            :disabled="lockRole"
+          />
+        </div>
+
+        <div
+          class="background-box content-centered location-span grid-perminant"
+        >
+          <label class="location-left-small">
+            <input
+              class="radio-button"
+              v-model="role"
+              value="admin"
+              type="radio"
+              :disabled="lockRole"
+            />
+            Admin
+          </label>
+          <label class="location-centered-small">
+            <input
+              class="radio-button"
+              v-model="role"
+              value="edit"
+              type="radio"
+              :disabled="lockRole"
+            />
+            Edit
+          </label>
+          <label class="location-right-small">
+            <input
+              class="radio-button"
+              v-model="role"
+              value="view"
+              type="radio"
+              :disabled="lockRole"
+            />
+            View
+          </label>
+        </div>
+      </div>
+
       <h3
         @click="updateUser()"
         class="background-box content-centered"
-        v-bind:class="[this.allFieldsValid ?  'background-box-hover' : 'background-box-disabled']"
-      >Save</h3>
+        v-bind:class="[
+          this.allFieldsValid
+            ? 'background-box-hover'
+            : 'background-box-disabled'
+        ]"
+      >
+        Save
+      </h3>
 
       <h3
         @click="deleteUser()"
         class="background-box background-box-hover content-centered"
-      >Delete</h3>
+      >
+        Delete
+      </h3>
 
       <h3
         @click="goBack()"
         class="background-box background-box-hover content-centered"
-      >Cancel</h3>
+      >
+        Cancel
+      </h3>
     </div>
   </div>
   <Error v-else>You must be logged in as an admin to view this page!</Error>
@@ -115,6 +107,7 @@ export default {
   name: "MenuUserEdit",
   components: { Error },
   props: {
+    popup: Object,
     localdb: Object,
     remotedb: Object,
     username: String
@@ -122,16 +115,12 @@ export default {
   data() {
     return {
       loggedin: true,
-      name: "",
-      isError: false,
-      errorMessage: "",
       role: "edit",
       editingUser: "",
       lockRole: false,
       isAdmin: false,
       password: "",
       confirmPassword: "",
-      o_name: "",
       o_role: "",
       fieldsChanged: 0
     };
@@ -144,7 +133,7 @@ export default {
         if (this.role !== "admin" && this.isAdmin == true) values++;
         if (this.role === "admin" && this.isAdmin == false) values++;
         if (this.password != "") values++;
-        if (this.o_role !== this.role || this.o_name !== this.name) values++;
+        if (this.o_role !== this.role) values++;
 
         if (values == newValue) {
           this.goBack();
@@ -168,35 +157,36 @@ export default {
             dThis.role = "view";
           }
           dThis.o_role = dThis.role;
-
-          dThis.name = response.realName || "";
-          dThis.o_name = dThis.name;
         }
       });
     },
     deleteUser() {
       var dThis = this;
 
-      if (!confirm("Are you sure you would like to delete this user?")) return;
-
-      if (this.isAdmin) {
-        this.remotedb
-          .deleteAdmin(this.username)
-          .then(function() {
-            dThis.isAdmin = false;
-          })
-          .then(function() {
-            dThis.remotedb.deleteUser(dThis.username);
-            //dThis.removeUserFromFile();
-          })
-          .catch(function(err) {
-            console.log(err);
-          });
-      } else {
-        this.remotedb.deleteUser(dThis.username);
-        //this.removeUserFromFile();
-      }
-      this.goBack();
+      this.popup
+        .newPopup(
+          "Delete User?",
+          "Are you sure you would like to delete this user?",
+          ["Cancel", "Delete"]
+        )
+        .then(option => {
+          if (option == "Delete") {
+            if (dThis.isAdmin) {
+              dThis.remotedb
+                .deleteAdmin(this.username)
+                .then(function() {
+                  dThis.isAdmin = false;
+                })
+                .then(function() {
+                  dThis.remotedb.deleteUser(dThis.username);
+                })
+                .catch(err => dThis.popup.catchError(err));
+            } else {
+              this.remotedb.deleteUser(dThis.username);
+            }
+            this.goBack();
+          }
+        });
     },
     updateUser() {
       this.fieldsChanged = 0;
@@ -220,9 +210,11 @@ export default {
                 }
               });
           } else {
-            this.isError = true;
-            this.errorMessage =
-              "You must change the password when making a user an admin.";
+            dThis.popup.newPopup(
+              "Error while editing user",
+              "You must change the password when making a user an admin.",
+              undefined
+            );
             return;
           }
         }
@@ -241,7 +233,7 @@ export default {
             });
         }
 
-        if (this.o_role !== this.role || this.o_name !== this.name) {
+        if (this.o_role !== this.role) {
           this.remotedb
             .putUser(
               this.username,
@@ -271,9 +263,11 @@ export default {
             });
         }
       } else {
-        this.isError = true;
-        this.errorMessage =
-          "You didn't change any values or passwords do not match!";
+        this.popup.newPopup(
+          undefined,
+          "You didn't change any values or passwords do not match!",
+          undefined
+        );
       }
     },
     goBack() {
@@ -302,11 +296,8 @@ export default {
   computed: {
     allFieldsValid() {
       return (
-        this.name.length !== 0 &&
         this.password === this.confirmPassword &&
-        (this.password.length !== 0 ||
-          this.o_name !== this.name ||
-          this.o_role !== this.role)
+        (this.password.length !== 0 || this.o_role !== this.role)
       );
     }
   }

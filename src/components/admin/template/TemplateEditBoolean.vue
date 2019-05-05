@@ -3,21 +3,12 @@
     <div class="line"></div>
 
     <Error v-if="isError">All Fields Are Required!</Error>
-    <div
-      v-else
-      class="background-box content-centered"
-    >
-      <h3>Edit Boolean Field</h3>
-    </div>
+    <h3 v-else class="background-box content-centered">Edit Boolean Field</h3>
 
-    <div class="field-edit">
+    <div class="field-edit small-margin">
       <p class="background-box">Title</p>
       <div class="background-box-input">
-        <input
-          type="text"
-          placeholder="Title"
-          v-model.trim="data.title"
-        >
+        <input type="text" placeholder="Title" v-model.trim="data.title" />
       </div>
 
       <p class="background-box">Default Value</p>
@@ -34,7 +25,7 @@
           type="number"
           placeholder="True Points"
           v-model.number="truePoints"
-        >
+        />
       </div>
 
       <p class="background-box">Points - False</p>
@@ -43,49 +34,50 @@
           type="number"
           placeholder="False Points"
           v-model.number="falsePoints"
-        >
+        />
       </div>
     </div>
 
-    <div class="grid-perminant content-centered">
-
-      <div
+    <div class="grid-perminant content-centered small-margin">
+      <p
         @click="deleteField()"
         class="location-left-small background-box background-box-hover"
       >
-        <p>Delete</p>
-      </div>
-      <div
+        Delete
+      </p>
+
+      <p
         @click="moveUp()"
         class="location-centered-small background-box background-box-hover"
       >
-        <p>Move Up</p>
-      </div>
-      <div
+        Move Up
+      </p>
+
+      <p
         @click="moveDown()"
         class="location-right-small background-box background-box-hover"
       >
-        <p>Move Down</p>
-      </div>
-
-      <div class="location-span">
-        <div
-          @click="save()"
-          class="background-box background-box-hover"
-        >
-          <p>Save</p>
-        </div>
-        <div
-          @click="close()"
-          class="background-box background-box-hover"
-        >
-          <p>Cancel</p>
-        </div>
-      </div>
-
+        Move Down
+      </p>
     </div>
 
-    <div class="line"></div>
+    <div class="grid-perminant content-centered small-margin">
+      <p
+        @click="save()"
+        class="background-box background-box-hover location-span"
+      >
+        Save
+      </p>
+
+      <p
+        @click="close()"
+        class="background-box background-box-hover location-span"
+      >
+        Cancel
+      </p>
+    </div>
+
+    <div class="line" />
   </div>
 </template>
 
