@@ -164,14 +164,14 @@ export default {
           "Delete Team?",
           "Are you sure you want to delete team #" +
             number +
-            "?\n There's no going back!",
+            "?\nThis operation cannot be undone!",
           ["Cancel", "Delete"]
         )
         .then(option => {
           if (option == "Delete") {
             var dThis = this;
             this.localdb.getHASH("TEAM_" + number).then(function(doc) {
-              dThis.localdb.remove(doc).then(function() {
+              dThis.localdb.removeHASH(doc).then(function() {
                 dThis.loadTeams();
               });
             });
@@ -182,7 +182,7 @@ export default {
       var dThis = this;
 
       this.usersdb
-        .allDocsHASH({
+        .allDocs({
           include_docs: true,
           startkey: "org.couchdb.user",
           endkey: "org.couchdb.user\ufff0"

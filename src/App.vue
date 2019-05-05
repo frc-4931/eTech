@@ -151,6 +151,12 @@ export default {
         });
       };
 
+      locDB.removeHASH = function(doc) {
+        doc = JSON.parse(JSON.stringify(doc));
+        doc._id = hashObj.hash + doc._id;
+        return locDB.remove(doc);
+      };
+
       locDB.allDocsHASH = function(opts) {
         opts = JSON.parse(JSON.stringify(opts));
         opts.startkey = hashObj.hash + opts.startkey;

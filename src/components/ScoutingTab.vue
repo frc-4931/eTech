@@ -116,6 +116,8 @@
         :closeteam="teamClose"
         :shouldUpdate="shouldUpdateScoutMenu"
         :hasEdit="editMode"
+        :popup="popup"
+        :teamNumber="teamNumber"
       ></ScoutMenu>
       <ScoutMenu
         :key="scoutingSelect"
@@ -127,6 +129,8 @@
         :closeteam="teamClose"
         :shouldUpdate="shouldUpdateScoutMenu"
         :hasEdit="editMode"
+        :popup="popup"
+        :teamNumber="teamNumber"
       ></ScoutMenu>
     </transition>
   </div>
@@ -179,7 +183,8 @@ export default {
     "teamClose",
     "shouldUpdateScoutMenu",
     "editMode",
-    "setScoutingSelect"
+    "setScoutingSelect",
+    "popup"
   ]
 };
 </script>

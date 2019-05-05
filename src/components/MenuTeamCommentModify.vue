@@ -106,7 +106,7 @@ export default {
         .then(option => {
           if (option == "Delete") {
             this.localdb.getHASH(this.docId).then(function(doc) {
-              dThis.localdb.remove(doc).then(function() {
+              dThis.localdb.removeHASH(doc).then(function() {
                 dThis.callback();
               });
             });

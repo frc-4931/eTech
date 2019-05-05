@@ -71,7 +71,9 @@ export default {
     callback: Function,
     closeteam: Function,
     shouldUpdate: false,
-    hasEdit: Boolean
+    hasEdit: Boolean,
+    popup: Object,
+    teamNumber: Number
   },
   watch: {
     shouldUpdate() {
@@ -130,7 +132,7 @@ export default {
     },
     updateAndPutData() {
       var dThis = this;
-      this.localdb
+      return this.localdb
         .getHASH(this.docId)
         .then(function(doc) {
           dThis.updateUI(doc);
@@ -200,30 +202,97 @@ export default {
       return totalPoints;
     },
     save() {
-      this.updateAndPutData();
+      return this.updateAndPutData();
     },
     close() {
+      let dThis = this;
       if (this.unsaved) {
-        if (
-          confirm(
-            "You have unsaved changes!\nAre you sure you want to close this menu?"
-          )
-        )
-          this.closeteam();
+        this.popup
+          .newPopup("You have unsaved changes!", undefined, [
+            "Cancel",
+            "Discard",
+            "Save"
+          ])
+          .then(clicked => {
+            if (clicked == "Save") dThis.save().then(dThis.closeteam);
+            else if (clicked == "Discard") dThis.closeteam();
+          });
       } else this.closeteam();
     },
     deleteScout() {
-      var confirmDelete = confirm(
-        "Deleting a scout is very risky!\nThis action cannot be undone!"
-      );
-      if (confirmDelete) {
-        var dThis = this;
-        this.localdb.getHASH(this.docId).then(function(doc) {
-          dThis.localdb.remove(doc).then(function() {
-            dThis.closeteam();
-          });
+      var dThis = this;
+      this.popup
+        .newPopup(
+          "Delete Scout?",
+          "Are you sure you want to delete " +
+            this.getMatchTitle(this.docId) +
+            "?\nThis operation cannot be undone!",
+          ["Cancel", "Delete"]
+        )
+        .then(clicked => {
+          if (clicked == "Delete") {
+            dThis.localdb.getHASH(this.docId).then(function(doc) {
+              dThis.localdb.removeHASH(doc).then(function() {
+                dThis.closeteam();
+              });
+            });
+          }
         });
+    },
+    getScoutNumber(id) {
+      var scoutString = id;
+
+      if (scoutString.includes("_")) {
+        var inx = scoutString.indexOf("_");
+        scoutString = scoutString.slice(0, inx);
       }
+      return parseInt(scoutString);
+    },
+    trimScout(id) {
+      let scoutString = id.replace("MATCHSCOUT_" + this.teamNumber + "_", "");
+
+      var inx = scoutString.lastIndexOf("_");
+      return scoutString.slice(0, inx);
+    },
+    getMatchTitle(matchString) {
+      matchString = this.trimScout(matchString);
+      let orgMatStr = matchString;
+
+      matchString = matchString.substring(matchString.indexOf("_") + 1);
+
+      if (matchString.startsWith("qm"))
+        return "Qualification Match " + matchString.replace("qm", "");
+      else if (matchString.startsWith("qf"))
+        return (
+          "Quarter-Fianl Match" +
+          matchString
+            .replace("qf", "")
+            .substring(0, matchString.indexOf("m") - 2) +
+          " - Match " +
+          matchString.substring(matchString.indexOf("m") + 1)
+        );
+      else if (matchString.startsWith("sf"))
+        return (
+          "Semi-Fianl Match " +
+          matchString
+            .replace("sf", "")
+            .substring(0, matchString.indexOf("m") - 2) +
+          " - Match " +
+          matchString.substring(matchString.indexOf("m") + 1)
+        );
+      else if (matchString.startsWith("f"))
+        return (
+          "Finals Match " + matchString.substring(matchString.indexOf("m") + 1)
+        );
+      else if (matchString == "PRACTICE")
+        return "Practice Match " + (this.getScoutNumber(orgMatStr) + 1);
+      else if (matchString == "MANUAL")
+        return "Manual Match " + (this.getScoutNumber(orgMatStr) + 1);
+      else if (orgMatStr.startsWith("PITSCOUT_"))
+        return (
+          "Pit Scout " +
+          (parseInt(matchString.replace(this.teamNumber + "_", "")) + 1)
+        );
     }
   },
   created() {

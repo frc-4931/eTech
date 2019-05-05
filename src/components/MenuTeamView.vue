@@ -74,6 +74,7 @@
           :shouldUpdateScoutMenu="shouldUpdateScoutMenu"
           :editMode="editMode"
           :setScoutingSelect="setScoutingSelect"
+          :popup="popup"
         ></ScoutingTab>
         <CommentTab
           slot="tab-panel-comments"
