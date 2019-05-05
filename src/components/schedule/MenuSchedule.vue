@@ -27,9 +27,10 @@
 
         <transition-group name="trans-group">
           <ScheduleMatch
-            v-for="match in filteredMatches"
+            v-for="match in filteredMatches[0]"
             :key="match.set_number + match.comp_level + match.match_number"
             :matchData="match"
+            :teamsMatched="filteredMatches[1]"
           />
         </transition-group>
       </div>
@@ -54,8 +55,7 @@ export default {
     return {
       matches: [],
       filter: "",
-      teamNames: {},
-      matchedTeams: []
+      teamNames: {}
     };
   },
   props: {
@@ -121,10 +121,11 @@ export default {
   },
   computed: {
     filteredMatches: function() {
-      this.matchedTeams.splice(0, this.matchedTeams.length);
+      // returns array [0] == Match list, [1] == List of teams matched
+      let matchedTeams = [];
       let dThis = this;
 
-      if (this.filter == "") return this.matches;
+      if (this.filter == "") return [this.matches, matchedTeams];
 
       let filterWords = this.filter.toLowerCase().split(" ");
 
@@ -143,61 +144,60 @@ export default {
         if (cur.endsWith('"')) shouldCombine = false;
       }
 
-      return lodashFilter(this.matches, function(match) {
-        let shouldInclude = 0;
-        filterWords.forEach(function(f) {
-          let invert = false;
-          let shouldInc = false;
+      return [
+        lodashFilter(this.matches, function(match) {
+          let shouldInclude = 0;
+          filterWords.forEach(function(f) {
+            let invert = false;
+            let shouldInc = false;
 
-          if (f.startsWith("!")) {
-            f = f.replace("!", "");
-            invert = true;
-          }
+            if (f.startsWith("!")) {
+              f = f.replace("!", "");
+              invert = true;
+            }
 
-          let teams = match.alliances.red.team_keys.concat(
-            match.alliances.blue.team_keys
-          );
-          teams.forEach((team, inx) => {
-            teams[inx] = team.replace("frc", "");
-          });
+            let teams = match.alliances.red.team_keys.concat(
+              match.alliances.blue.team_keys
+            );
+            teams.forEach((team, inx) => {
+              teams[inx] = team.replace("frc", "");
+            });
 
-          for (let team of teams) {
-            if (f.startsWith('"') && f.endsWith('"') && f.length >= 2) {
-              let str = f.substring(0, f.length - 1).replace('"', "");
+            for (let team of teams) {
+              if (f.startsWith('"') && f.endsWith('"') && f.length >= 2) {
+                let str = f.substring(0, f.length - 1).replace('"', "");
 
-              if (team == str) {
+                if (team == str) {
+                  shouldInc = true;
+                  if (!matchedTeams.includes(team)) matchedTeams.push(team);
+                } else if (
+                  dThis.teamNames[team] &&
+                  dThis.teamNames[team].toLowerCase() == str
+                ) {
+                  shouldInc = true;
+                  if (!matchedTeams.includes(team)) matchedTeams.push(team);
+                }
+              } else if (team.includes(f)) {
                 shouldInc = true;
-                if (!dThis.matchedTeams.includes(team))
-                  dThis.matchedTeams.push(team);
+                if (!matchedTeams.includes(team)) matchedTeams.push(team);
               } else if (
                 dThis.teamNames[team] &&
-                dThis.teamNames[team].toLowerCase() == str
+                dThis.teamNames[team].toLowerCase().includes(f)
               ) {
                 shouldInc = true;
-                if (!dThis.matchedTeams.includes(team))
-                  dThis.matchedTeams.push(team);
+                if (!matchedTeams.includes(team)) matchedTeams.push(team);
               }
-            } else if (team.includes(f)) {
-              shouldInc = true;
-              if (!dThis.matchedTeams.includes(team))
-                dThis.matchedTeams.push(team);
-            } else if (
-              dThis.teamNames[team] &&
-              dThis.teamNames[team].toLowerCase().includes(f)
-            ) {
-              shouldInc = true;
-              if (!dThis.matchedTeams.includes(team))
-                dThis.matchedTeams.push(team);
             }
-          }
 
-          if (invert) shouldInc = !shouldInc;
+            if (invert) shouldInc = !shouldInc;
 
-          if (shouldInc) shouldInclude++;
-        });
+            if (shouldInc) shouldInclude++;
+          });
 
-        return shouldInclude == filterWords.length;
-      });
+          return shouldInclude == filterWords.length;
+        }),
+        matchedTeams
+      ];
     }
   }
 };

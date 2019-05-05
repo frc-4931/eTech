@@ -12,7 +12,7 @@
             @click="activePanel = index"
           >{{ panel[1] }}</p>
 
-          <div class="line"/>
+          <div class="line" />
 
           <p
             @click="
@@ -61,12 +61,16 @@ export default {
   },
   data() {
     return {
-      panels: [
-        ["AccountInfo", "Your Account"],
-        ["AccountPassword", "Change Password"]
-      ],
       activePanel: 0
     };
+  },
+  computed: {
+    panels() {
+      let items = [["AccountInfo", "Your Account"]];
+      if (this.user.role == "_admin" || this.user.role == "edit")
+        items.push(["AccountPassword", "Change Password"]);
+      return items;
+    }
   }
 };
 </script>

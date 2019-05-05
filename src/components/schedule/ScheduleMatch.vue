@@ -1,12 +1,30 @@
 <template>
   <div class="background-box mobile-shrink schedule-match">
     <p>{{ match }}</p>
-    <p :class="blueClass" @click="viewTeam(matchData.alliances.blue.team_keys[0])">{{ matchData.alliances.blue.team_keys[0].replace("frc", "") }}</p>
-    <p @click="viewTeam(matchData.alliances.blue.team_keys[1])" :class="blueClass">{{ matchData.alliances.blue.team_keys[1].replace("frc", "") }}</p>
-    <p @click="viewTeam(matchData.alliances.blue.team_keys[2])" :class="blueClass">{{ matchData.alliances.blue.team_keys[2].replace("frc", "") }}</p>
-    <p @click="viewTeam(matchData.alliances.red.team_keys[0])" :class="redClass">{{ matchData.alliances.red.team_keys[0].replace("frc", "") }}</p>
-    <p @click="viewTeam(matchData.alliances.red.team_keys[1])" :class="redClass">{{ matchData.alliances.red.team_keys[1].replace("frc", "") }}</p>
-    <p @click="viewTeam(matchData.alliances.red.team_keys[2])" :class="redClass">{{ matchData.alliances.red.team_keys[2].replace("frc", "") }}</p>
+    <p
+      @click="viewTeam(matchData.alliances.blue.team_keys[0])"
+      :class="blueClass0"
+    >{{ matchData.alliances.blue.team_keys[0].replace("frc", "") }}</p>
+    <p
+      @click="viewTeam(matchData.alliances.blue.team_keys[1])"
+      :class="blueClass1"
+    >{{ matchData.alliances.blue.team_keys[1].replace("frc", "") }}</p>
+    <p
+      @click="viewTeam(matchData.alliances.blue.team_keys[2])"
+      :class="blueClass2"
+    >{{ matchData.alliances.blue.team_keys[2].replace("frc", "") }}</p>
+    <p
+      @click="viewTeam(matchData.alliances.red.team_keys[0])"
+      :class="redClass0"
+    >{{ matchData.alliances.red.team_keys[0].replace("frc", "") }}</p>
+    <p
+      @click="viewTeam(matchData.alliances.red.team_keys[1])"
+      :class="redClass1"
+    >{{ matchData.alliances.red.team_keys[1].replace("frc", "") }}</p>
+    <p
+      @click="viewTeam(matchData.alliances.red.team_keys[2])"
+      :class="redClass2"
+    >{{ matchData.alliances.red.team_keys[2].replace("frc", "") }}</p>
     <p>{{ matchData.alliances.blue.score }}</p>
     <p>{{ matchData.alliances.red.score }}</p>
     <p>{{ scheduledTime }}</p>
@@ -17,7 +35,8 @@
 export default {
   name: "ScheduleMatch",
   props: {
-    matchData: Object
+    matchData: Object,
+    teamsMatched: Array
   },
   methods: {
     viewTeam: function(number) {
@@ -47,15 +66,77 @@ export default {
 
       return comp + this.matchData.match_number;
     },
-    redClass: function() {
-      return this.matchData.winning_alliance == "red"
-        ? "schedule-match-red"
-        : "";
+    blueClass0: function() {
+      return (
+        (this.matchData.winning_alliance == "blue"
+          ? "schedule-match-blue"
+          : "") +
+        " " +
+        (this.teamsMatched.indexOf(
+          this.matchData.alliances.blue.team_keys[0].replace("frc", "")
+        ) != -1
+          ? "schedule-matched"
+          : "")
+      );
     },
-    blueClass: function() {
-      return this.matchData.winning_alliance == "blue"
-        ? "schedule-match-blue"
-        : "";
+    blueClass1: function() {
+      return (
+        (this.matchData.winning_alliance == "blue"
+          ? "schedule-match-blue"
+          : "") +
+        " " +
+        (this.teamsMatched.indexOf(
+          this.matchData.alliances.blue.team_keys[1].replace("frc", "")
+        ) != -1
+          ? "schedule-matched"
+          : "")
+      );
+    },
+    blueClass2: function() {
+      return (
+        (this.matchData.winning_alliance == "blue"
+          ? "schedule-match-blue"
+          : "") +
+        " " +
+        (this.teamsMatched.indexOf(
+          this.matchData.alliances.blue.team_keys[2].replace("frc", "")
+        ) != -1
+          ? "schedule-matched"
+          : "")
+      );
+    },
+    redClass0: function() {
+      return (
+        (this.matchData.winning_alliance == "red" ? "schedule-match-red" : "") +
+        " " +
+        (this.teamsMatched.indexOf(
+          this.matchData.alliances.red.team_keys[0].replace("frc", "")
+        ) != -1
+          ? "schedule-matched"
+          : "")
+      );
+    },
+    redClass1: function() {
+      return (
+        (this.matchData.winning_alliance == "red" ? "schedule-match-red" : "") +
+        " " +
+        (this.teamsMatched.indexOf(
+          this.matchData.alliances.red.team_keys[1].replace("frc", "")
+        ) != -1
+          ? "schedule-matched"
+          : "")
+      );
+    },
+    redClass2: function() {
+      return (
+        (this.matchData.winning_alliance == "red" ? "schedule-match-red" : "") +
+        " " +
+        (this.teamsMatched.indexOf(
+          this.matchData.alliances.red.team_keys[2].replace("frc", "")
+        ) != -1
+          ? "schedule-matched"
+          : "")
+      );
     }
   }
 };
@@ -80,5 +161,9 @@ export default {
 }
 .schedule-match-red {
   background-color: var(--tba-alliance-red);
+}
+.schedule-matched {
+  color: black;
+  font-weight: 1000;
 }
 </style>
