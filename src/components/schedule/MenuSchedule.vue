@@ -27,7 +27,7 @@
 
         <transition-group name="trans-group">
           <ScheduleMatch
-            v-for="match in matches"
+            v-for="match in filteredMatches"
             :key="match.set_number + match.comp_level + match.match_number"
             :matchData="match"
           />
@@ -53,11 +53,14 @@ export default {
   data: function() {
     return {
       matches: [],
-      filter: ""
+      filter: "",
+      teamNames: {},
+      matchedTeams: []
     };
   },
   props: {
     localtbadb: Object,
+    localdb: Object,
     sync_change: Object,
     user: Object
   },
@@ -87,7 +90,18 @@ export default {
             ["asc"]
           );
 
-          //console.log(dThis.matches);
+          dThis.localdb
+            .allDocsHASH({
+              include_docs: true,
+              startkey: "TEAM_",
+              endkey: "TEAM_\ufff0"
+            })
+            .then(docs => {
+              for (let docID in docs["rows"]) {
+                let doc = docs["rows"][docID]["doc"];
+                dThis.$set(dThis.teamNames, doc.number.toString(), doc.name);
+              }
+            });
         });
     }
   },
@@ -107,9 +121,12 @@ export default {
   },
   computed: {
     filteredMatches: function() {
+      this.matchedTeams.splice(0, this.matchedTeams.length);
+      let dThis = this;
+
       if (this.filter == "") return this.matches;
 
-      var filterWords = this.filter.toLowerCase().split(" ");
+      let filterWords = this.filter.toLowerCase().split(" ");
 
       let shouldCombine = false;
       let index = 0;
@@ -127,7 +144,7 @@ export default {
       }
 
       return lodashFilter(this.matches, function(match) {
-        var shouldInclude = 0;
+        let shouldInclude = 0;
         filterWords.forEach(function(f) {
           let invert = false;
           let shouldInc = false;
@@ -137,16 +154,41 @@ export default {
             invert = true;
           }
 
-          if (f.startsWith('"') && f.endsWith('"') && f.length >= 2) {
-            f = f.substring(0, f.length - 1).replace('"', "");
+          let teams = match.alliances.red.team_keys.concat(
+            match.alliances.blue.team_keys
+          );
+          teams.forEach((team, inx) => {
+            teams[inx] = team.replace("frc", "");
+          });
 
-            if (team.name.toLowerCase() == f || team.number.toString() == f)
+          for (let team of teams) {
+            if (f.startsWith('"') && f.endsWith('"') && f.length >= 2) {
+              let str = f.substring(0, f.length - 1).replace('"', "");
+
+              if (team == str) {
+                shouldInc = true;
+                if (!dThis.matchedTeams.includes(team))
+                  dThis.matchedTeams.push(team);
+              } else if (
+                dThis.teamNames[team] &&
+                dThis.teamNames[team].toLowerCase() == str
+              ) {
+                shouldInc = true;
+                if (!dThis.matchedTeams.includes(team))
+                  dThis.matchedTeams.push(team);
+              }
+            } else if (team.includes(f)) {
               shouldInc = true;
-          } else if (
-            team.name.toLowerCase().includes(f) ||
-            team.number.toString().includes(f)
-          ) {
-            shouldInc = true;
+              if (!dThis.matchedTeams.includes(team))
+                dThis.matchedTeams.push(team);
+            } else if (
+              dThis.teamNames[team] &&
+              dThis.teamNames[team].toLowerCase().includes(f)
+            ) {
+              shouldInc = true;
+              if (!dThis.matchedTeams.includes(team))
+                dThis.matchedTeams.push(team);
+            }
           }
 
           if (invert) shouldInc = !shouldInc;
